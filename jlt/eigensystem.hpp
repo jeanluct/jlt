@@ -133,7 +133,6 @@ int matrix_eigenvalues(matrix<std::complex<T> >& A,
 
   // Now allocate the memory for the workspace.
   cworksize = (int)ctmpwork[0].real();
-  std::cerr << cworksize << std::endl;
   std::vector<std::complex<T> > cwork(cworksize);
 
   lapack::geev(&jobVL, &jobVR, &N, &(*A.begin()), &N,
