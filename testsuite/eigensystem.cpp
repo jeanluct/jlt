@@ -21,7 +21,7 @@ int main()
   U(0,1) = -2;
   U(0,2) = 1;
   U(1,1) = 1;
-  U(1,2) = 0;
+  U(1,2) = 3;
   U(2,2) = 1;
 
   // Symmetrise.
@@ -34,11 +34,13 @@ int main()
     }
 
   cout << "Symmetric matrix M =\n";
+  cout.precision(3);
+  cout.setf(std::ios::fixed);
   U.printMatrixForm(cout);
 
   symmetric_matrix_eigensystem(U,w);
 
-  cout << "\nM = U.diag(w).inverse(U), where\n";
+  cout << "\nM = inverse(U).diag(w).U, where\n";
   cout << "\nU =\n"; U.printMatrixForm(cout);
   cout << "\nw = " << w << endl;
 
@@ -54,7 +56,7 @@ int main()
   U(0,2) = 1;
   U(1,0) = -1;
   U(1,1) = -2;
-  U(1,2) = 0;
+  U(1,2) = 3;
   U(2,0) = 0;
   U(2,1) = 1;
   U(2,2) = 1;
