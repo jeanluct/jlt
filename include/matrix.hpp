@@ -56,7 +56,6 @@
 #  define MATRIX_ASSERT(x)
 #endif
 
-using namespace std;
 
 namespace jlt {
 
@@ -160,8 +159,8 @@ public:
 #ifdef MATRIX_CHECK_BOUNDS
       static bool only_once = true;
       if (only_once) {
-	cerr << "Warning: no bounds checking done on second argument of [][]";
-	cerr << " in matrix.\n";
+	std::cerr << "Warning: no bounds checking done on second";
+	std::cerr << " argument of [][] in matrix.\n";
 	only_once = false;
       }
       if (i >= m)
@@ -175,8 +174,8 @@ public:
 #ifdef MATRIX_CHECK_BOUNDS
       static bool only_once = true;
       if (only_once) {
-	cerr << "Warning: no bounds checking done on second argument of [][]";
-	cerr << " in matrix.\n";
+	std::cerr << "Warning: no bounds checking done on second";
+	std::cerr << " argument of [][] in matrix.\n";
 	only_once = false;
       }
       if (i >= m)
@@ -265,7 +264,7 @@ public:
 	{
 	  // Not square: use temporary matrix.
 
-	  cerr << "transpose(): Not implemented for nonsquare matrices yet.\n";
+	  std::cerr << "transpose(): Not implemented for nonsquare matrices yet.\n";
 	}
 
       return *this;
@@ -298,7 +297,7 @@ public:
 	  {
 	    strm << *j << "\t";
 	  }
-	strm << *(i+n-1) << endl; 	// To avoid dangling tab.
+	strm << *(i+n-1) << std::endl; 	// To avoid dangling tab.
       }
 
       return strm;

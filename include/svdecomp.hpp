@@ -3,6 +3,7 @@
 
 #include <nr.h>
 #include <nrutil.h>
+#include <jlt/matrix.hpp>
 
 #if defined(__PGI)
 #  include <assert.h>
@@ -10,7 +11,6 @@
 #  include <cassert>
 #endif
 
-using namespace numrec;
 
 namespace jlt {
 
@@ -28,7 +28,7 @@ namespace jlt {
 
 int singular_value_decomp(matrix<double>& A,
 			  matrix<double>& V,
-			  vector<double>& W)
+			  std::vector<double>& W)
 {
   int m = A.dim1(), n = A.dim2();	// Dimensions of matrix.
 
@@ -37,9 +37,9 @@ int singular_value_decomp(matrix<double>& A,
   assert(n == (int)V.dim1() && n == (int)V.dim2());
 
   // Allocate NRC-style matrices and vectors.
-  double **a = dmatrix(1,m,1,n);
-  double **v = dmatrix(1,n,1,n);
-  double *w = dvector(1,n);
+  double **a = numrec::dmatrix(1,m,1,n);
+  double **v = numrec::dmatrix(1,n,1,n);
+  double *w = numrec::dvector(1,n);
 
   // Copy the matrix.
   for (int i = 1; i <= m; ++i) {
@@ -48,8 +48,8 @@ int singular_value_decomp(matrix<double>& A,
     }
   }
 
-  svdcmp(a,m,n,w,v);
-  svdsrt(a,m,n,w,v);
+  numrec::svdcmp(a,m,n,w,v);
+  numrec::svdsrt(a,m,n,w,v);
 
   // Copy the result.
   for (int i = 1; i <= m; ++i) {
@@ -64,9 +64,9 @@ int singular_value_decomp(matrix<double>& A,
     }
   }
 
-  free_dmatrix(a,1,n,1,n);
-  free_dmatrix(v,1,n,1,n);
-  free_dvector(w,1,n);
+  numrec::free_dmatrix(a,1,n,1,n);
+  numrec::free_dmatrix(v,1,n,1,n);
+  numrec::free_dvector(w,1,n);
 
   return 0;
 }
@@ -74,7 +74,7 @@ int singular_value_decomp(matrix<double>& A,
 
 int singular_value_decomp(matrix<long double>& A,
 			  matrix<long double>& V,
-			  vector<long double>& W)
+			  std::vector<long double>& W)
 {
   int m = A.dim1(), n = A.dim2();	// Dimensions of matrix.
 
@@ -83,9 +83,9 @@ int singular_value_decomp(matrix<long double>& A,
   assert(n == (int)V.dim1() && n == (int)V.dim2());
 
   // Allocate NRC-style matrices and vectors.
-  long double **a = ldmatrix(1,m,1,n);
-  long double **v = ldmatrix(1,n,1,n);
-  long double  *w = ldvector(1,n);
+  long double **a = numrec::ldmatrix(1,m,1,n);
+  long double **v = numrec::ldmatrix(1,n,1,n);
+  long double  *w = numrec::ldvector(1,n);
 
   // Copy the matrix.
   for (int i = 1; i <= m; ++i) {
@@ -94,8 +94,8 @@ int singular_value_decomp(matrix<long double>& A,
     }
   }
 
-  svdcmpl(a,m,n,w,v);
-  svdsrtl(a,m,n,w,v);
+  numrec::svdcmpl(a,m,n,w,v);
+  numrec::svdsrtl(a,m,n,w,v);
 
   // Copy the result.
   for (int i = 1; i <= m; ++i) {
@@ -110,9 +110,9 @@ int singular_value_decomp(matrix<long double>& A,
     }
   }
 
-  free_ldmatrix(a,1,n,1,n);
-  free_ldmatrix(v,1,n,1,n);
-  free_ldvector(w,1,n);
+  numrec::free_ldmatrix(a,1,n,1,n);
+  numrec::free_ldmatrix(v,1,n,1,n);
+  numrec::free_ldvector(w,1,n);
 
   return 0;
 }

@@ -9,6 +9,9 @@ typedef double Real;
 
 int main()
 {
+  using std::cout;
+  using std::endl;
+
   const int N = 10;
   Real dx = (Real)1./N;
   Real fuzz = .1;

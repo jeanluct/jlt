@@ -7,10 +7,9 @@
 
 #include <iostream>
 #include <string>
-#include <math.hpp>
-#include <bcvector.hpp>
+#include <jlt/math.hpp>
+#include <jlt/bcvector.hpp>
 
-using namespace std;
 
 namespace jlt {
 
@@ -216,7 +215,7 @@ public:
     } catch (std::out_of_range oor) {
       // We're going to run out of capacity.
       // Grow the vector.
-      cap = 2*(size_t)(max(pmax,n) - min(pmin,n) + 1);
+      cap = 2*(size_t)(std::max(pmax,n) - std::min(pmin,n) + 1);
       // Reserve more memory space.
       coeff.reserve(cap);
       // Also tell the vector it can grow to its full size.
@@ -309,7 +308,8 @@ public:
     return strm;
   }
 
-  std::ostream& printFancy(std::ostream& strm, const string var = "x") const
+  std::ostream& printFancy(std::ostream& strm, const std::string var = "x")
+    const
   {
     bool first = true;
 

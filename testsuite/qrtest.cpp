@@ -1,15 +1,17 @@
 #include <iostream>
 #include <cstdlib>
-#include <jlt/mathvector.hpp>
+#include <vector>
 #include <jlt/mathmatrix.hpp>
 #include <jlt/matrixutil.hpp>
 #include <jlt/stlio.hpp>
 
 using namespace jlt;
-using namespace std;
 
 int main()
 {
+  using std::cout;
+  using std::endl;
+
   int n = 10;
   mathmatrix<double> M(n,n), Q(n,n), R(n,n);
 
@@ -26,7 +28,7 @@ int main()
 
 #ifndef GSTEST
   // QR decomposition of M.
-  QRdecomp<double,matrix<double>,vector<double> >(Md,Q,R);
+  QRdecomp<double,matrix<double>,std::vector<double> >(Md,Q,R);
 #else
   // Test Gram-Schmidt instead.
   Md.transpose();

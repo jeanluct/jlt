@@ -16,15 +16,15 @@
 // combine to give a fourth-order result and an error estimate.
 //
 
-using namespace std;
 
 namespace jlt {
 
 template<class T, class S>
-void finitediff1(const vector<T>& x, const vector<S>& y, vector<S>& dydx)
+void finitediff1(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx)
 {
   int n = x.size();
-  vector<T> dx(n);
+  std::vector<T> dx(n);
 
   for (int i = 1; i < n; ++i) {
     dx[i] = x[i] - x[i-1];
@@ -38,10 +38,11 @@ void finitediff1(const vector<T>& x, const vector<S>& y, vector<S>& dydx)
 }
 
 template<class T, class S>
-void finitediff2(const vector<T>& x, const vector<S>& y, vector<S>& dydx)
+void finitediff2(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx)
 {
   int n = x.size();
-  vector<T> dx(n);
+  std::vector<T> dx(n);
 
   for (int i = 1; i < n; ++i) {
     dx[i] = x[i] - x[i-1];
@@ -57,12 +58,12 @@ void finitediff2(const vector<T>& x, const vector<S>& y, vector<S>& dydx)
 }
 
 template<class T, class S>
-void finitediff2(const vector<T>& x, const vector<S>& y,
-		 vector<S>& dydx, vector<S>& err)
+void finitediff2(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx, std::vector<S>& err)
 {
   int n = x.size();
   S dydx2;
-  vector<T> dx(n);
+  std::vector<T> dx(n);
 
   for (int i = 1; i < n; ++i) {
     dx[i] = x[i] - x[i-1];
@@ -92,10 +93,11 @@ void finitediff2(const vector<T>& x, const vector<S>& y,
 }
 
 template<class T, class S>
-void finitediff4(const vector<T>& x, const vector<S>& y, vector<S>& dydx)
+void finitediff4(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx)
 {
   int n = x.size();
-  vector<T> dx(n);
+  std::vector<T> dx(n);
 
   for (int i = 1; i < n; ++i) dx[i] = x[i] - x[i-1];
 
@@ -109,12 +111,12 @@ void finitediff4(const vector<T>& x, const vector<S>& y, vector<S>& dydx)
 }
 
 template<class T, class S>
-void finitediff4(const vector<T>& x, const vector<S>& y,
-		 vector<S>& dydx, vector<S>& err)
+void finitediff4(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx, std::vector<S>& err)
 {
   int n = x.size();
   S dydx2;
-  vector<T> dx(n);
+  std::vector<T> dx(n);
 
   for (int i = 1; i < n; ++i) {
     dx[i] = x[i] - x[i-1];
@@ -161,21 +163,21 @@ void finitediff4(const vector<T>& x, const vector<S>& y,
 
 template<class T, class S>
 inline
-S ForwardDiff1Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S ForwardDiff1Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   return (y[i+1] - y[i])/dx[i+1];
 }
 
 template<class T, class S>
 inline
-S BackwardDiff1Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S BackwardDiff1Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   return (y[i] - y[i-1])/dx[i];
 }
 
 template<class T, class S>
 inline
-S CentralDiff2Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S CentralDiff2Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   T a2 = dx[i]*dx[i], b2 = dx[i+1]*dx[i+1];
 
@@ -185,7 +187,7 @@ S CentralDiff2Stencil(const vector<T>& dx, const vector<S>& y, int i)
 
 template<class T, class S>
 inline
-S ForwardDiff2Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S ForwardDiff2Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   T a = (dx[i+1] + dx[i+2]);
 
@@ -195,7 +197,7 @@ S ForwardDiff2Stencil(const vector<T>& dx, const vector<S>& y, int i)
 
 template<class T, class S>
 inline
-S BackwardDiff2Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S BackwardDiff2Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   T a = (dx[i-1] + dx[i]);
 
@@ -205,7 +207,7 @@ S BackwardDiff2Stencil(const vector<T>& dx, const vector<S>& y, int i)
 
 template<class T, class S>
 inline
-S ForwardDiff3Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S ForwardDiff3Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   return
       y[i+3] * (dx[i+1]*(dx[i+1] + dx[i+2])) /
@@ -221,7 +223,7 @@ S ForwardDiff3Stencil(const vector<T>& dx, const vector<S>& y, int i)
 
 template<class T, class S>
 inline
-S BackwardDiff3Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S BackwardDiff3Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   return
     - y[i-3] * (dx[i]*(dx[i] + dx[i-1])) /
@@ -237,7 +239,7 @@ S BackwardDiff3Stencil(const vector<T>& dx, const vector<S>& y, int i)
 
 template<class T, class S>
 inline
-S CentralDiff4Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S CentralDiff4Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   return
     y[i+1] * (dx[i]*(dx[i-1] + dx[i])*(dx[i+1] + dx[i+2])) /
@@ -259,7 +261,7 @@ S CentralDiff4Stencil(const vector<T>& dx, const vector<S>& y, int i)
 
 template<class T, class S>
 inline
-S ForwardDiff4Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S ForwardDiff4Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   return
     -y[i+4] * (dx[i+1]*(dx[i+1] + dx[i+2])*(dx[i+1] + dx[i+2] + dx[i+3])) /
@@ -285,7 +287,7 @@ S ForwardDiff4Stencil(const vector<T>& dx, const vector<S>& y, int i)
 
 template<class T, class S>
 inline
-S BackwardDiff4Stencil(const vector<T>& dx, const vector<S>& y, int i)
+S BackwardDiff4Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 {
   return
     y[i-4] * (dx[i]*(dx[i-1] + dx[i])*(dx[i-2] + dx[i-1] + dx[i])) /

@@ -5,9 +5,9 @@
 #include <iomanip>
 #include <vector>
 #include <valarray>
+#include <list>
 #include <map>
 
-using namespace std;
 
 namespace jlt {
 
@@ -82,32 +82,32 @@ struct format_traits<long double> {
 };
 
 template<class T>
-ostream& operator<<(ostream& strm, const vector<T>& vv)
+std::ostream& operator<<(std::ostream& strm, const std::vector<T>& vv)
 {
   if (vv.size() == 0) return strm;
 
-  ios::fmtflags old_options = strm.flags();
+  std::ios::fmtflags old_options = strm.flags();
   const int prec = strm.precision();	// Precision (number of digits - 1).
   int wid = format_traits<T>::field_width;	// Width of output field.
 
-  strm.setf(ios::showpoint);			// Print trailing zeros.
-  strm.setf(ios::right,ios::adjustfield);	// Adjust to the right.
+  strm.setf(std::ios::showpoint);		// Print trailing zeros.
+  strm.setf(std::ios::right,std::ios::adjustfield);	// Adjust to the right.
 
   // If the notation is scientific we can predict the width, so adjust
   // accordingly.
-  if (strm.flags() & ios::scientific)
+  if (strm.flags() & std::ios::scientific)
       wid = prec + format_traits<T>::extra_width_scientific;
 
   for (unsigned int i = 0; i < vv.size()-1; ++i)
     {
 #     if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-        strm << setw(wid) << vv[i] << field_sep;
+        strm << std::setw(wid) << vv[i] << field_sep;
 #     else
-        strm << setw(wid) << vv[i] << format_traits<T>::field_sep;
+        strm << std::setw(wid) << vv[i] << format_traits<T>::field_sep;
 #     endif
     }
 
-  strm << setw(wid) << vv[vv.size()-1];		// To avoid dangling tab.
+  strm << std::setw(wid) << vv[vv.size()-1];	// To avoid dangling tab.
 
   // Restore format flags.
   strm.flags(old_options);
@@ -116,32 +116,32 @@ ostream& operator<<(ostream& strm, const vector<T>& vv)
 }
 
 template<class T>
-ostream& operator<<(ostream& strm, const valarray<T>& vv)
+std::ostream& operator<<(std::ostream& strm, const std::valarray<T>& vv)
 {
   if (vv.size() == 0) return strm;
 
-  ios::fmtflags old_options = strm.flags();
+  std::ios::fmtflags old_options = strm.flags();
   const int prec = strm.precision();	// Precision (number of digits - 1).
   int wid = format_traits<T>::field_width;	// Width of output field.
 
-  strm.setf(ios::showpoint);			// Print trailing zeros.
-  strm.setf(ios::right,ios::adjustfield);	// Adjust to the right.
+  strm.setf(std::ios::showpoint);		// Print trailing zeros.
+  strm.setf(std::ios::right,std::ios::adjustfield);	// Adjust to the right.
 
   // If the notation is scientific we can predict the width, so adjust
   // accordingly.
-  if (strm.flags() & ios::scientific)
+  if (strm.flags() & std::ios::scientific)
       wid = prec + format_traits<T>::extra_width_scientific;
 
   for (unsigned int i = 0; i < vv.size()-1; ++i)
     {
 #     if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-        strm << setw(wid) << vv[i] << field_sep;
+        strm << std::setw(wid) << vv[i] << field_sep;
 #     else
-        strm << setw(wid) << vv[i] << format_traits<T>::field_sep;
+        strm << std::setw(wid) << vv[i] << format_traits<T>::field_sep;
 #     endif
     }
 
-  strm << setw(wid) << vv[vv.size()-1];		// To avoid dangling tab.
+  strm << std::setw(wid) << vv[vv.size()-1];	// To avoid dangling tab.
 
   // Restore format flags.
   strm.flags(old_options);
@@ -150,17 +150,35 @@ ostream& operator<<(ostream& strm, const valarray<T>& vv)
 }
 
 
+//
+//  A quick-and-dirty way to print lists (or vectors).
+//  Not using format info as with other methods yet.
+//
+template<class T>
+std::ostream& operator<<(std::ostream& strm, const std::list<T>& ll)
+{
+  if (ll.empty()) return strm;
+
+#ifdef __PGI
+  copy(ll.begin(), ll.end(), std::ostream_iterator<T,char>(strm, "\t"));
+#else
+  copy(ll.begin(), ll.end(), std::ostream_iterator<T>(strm, "\t"));
+#endif
+  return strm;
+}
+
+
 template<class K, class T>
-ostream& operator<<(ostream& strm, const map<K,T>& mm)
+std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
   {
-    for (typename map<K,T>::const_iterator it = mm.begin();
+    for (typename std::map<K,T>::const_iterator it = mm.begin();
 	 it != mm.end(); ++it)
       {
 #       if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-	  strm << it->first << field_sep << it->second << endl;
+	  strm << it->first << field_sep << it->second << std::endl;
 #       else
 	  strm << it->first << format_traits<T>::field_sep << it->second
-	       << endl;
+	       << std::endl;
 #       endif
       }
 
@@ -170,24 +188,24 @@ ostream& operator<<(ostream& strm, const map<K,T>& mm)
 // Specialization: if the independent variable is of type double,
 // print in scientific notation at fixed width and precision.
 template<class T>
-ostream& operator<<(ostream& strm, const map<double,T>& mm)
+std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
   {
     const int prec = 5;		// Precision (number of digits - 1).
     const int wid = prec + 7;	// Extra characters in scientific notation.
 
-    for (typename map<double,T>::const_iterator it = mm.begin();
+    for (typename std::map<double,T>::const_iterator it = mm.begin();
 	 it != mm.end(); ++it)
       {
 	// Should save ios flags and restore them at the end.
 	strm.precision(prec);
-	strm.setf(ios::scientific);
+	strm.setf(std::ios::scientific);
 
 #       if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-	  strm << setw(wid) << it->first << field_sep;
+	  strm << std::setw(wid) << it->first << field_sep;
 #       else
-	  strm << setw(wid) << it->first << format_traits<T>::field_sep;
+	  strm << std::setw(wid) << it->first << format_traits<T>::field_sep;
 #       endif
-	strm << it->second  << endl;
+	strm << it->second  << std::endl;
       }
 
     return strm;
@@ -200,9 +218,9 @@ ostream& operator<<(ostream& strm, const map<double,T>& mm)
 
 // Read vv.size() elements from strm, overwriting content of vv.
 template<class T>
-istream& operator>>(istream& strm, vector<T>& vv)
+std::istream& operator>>(std::istream& strm, std::vector<T>& vv)
 {
-  for (typename vector<T>::iterator i = vv.begin(); i != vv.end(); ++i)
+  for (typename std::vector<T>::iterator i = vv.begin(); i != vv.end(); ++i)
     {
       strm >> *i;
     }

@@ -8,8 +8,8 @@
 #include <matrix.hpp>
 #include <math.hpp>
 
-using namespace std;
-using namespace jlt;
+/*using namespace std;*/
+/*using namespace jlt;*/
 
 namespace rodent {
 

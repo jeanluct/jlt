@@ -2,10 +2,12 @@
 #include <jlt/polynomial.hpp>
 
 using namespace jlt;
-using namespace std;
 
 int main()
 {
+  using std::cout;
+  using std::endl;
+
   polynomial<double> p(0,0), q(2);
 
   p.add_to_coeff(1,.5);

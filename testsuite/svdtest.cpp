@@ -5,10 +5,12 @@
 #include <jlt/stlio.hpp>
 
 using namespace jlt;
-using namespace std;
 
 int main()
 {
+  using std::cout;
+  using std::endl;
+
   int m = 3, n = 2;
   mathmatrix<double> U(m,n), V(n,n);
   mathvector<double> w(n);

@@ -25,8 +25,8 @@
 // fixvector to be a vector? Can I think of applications where I would
 // want to substitute a fixvector for a vector?
 
-#include <bcvector.hpp>
-#include <mathvector.hpp>
+#include <jlt/bcvector.hpp>
+#include <jlt/mathvector.hpp>
 
 namespace jlt {
 

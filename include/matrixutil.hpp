@@ -157,7 +157,7 @@ bool QRdecomp(T_Matrix& A, T_Vector& c, T_Vector& d, int m)
 
   for (int k = 0; k < m-1; ++k)
     {
-      for (int i = k; i < m; ++i) scale = max(scale, Abs(A(i,k)));
+      for (int i = k; i < m; ++i) scale = std::max(scale, Abs(A(i,k)));
       if (scale == 0.)
 	{
 	  sing = true;

@@ -9,11 +9,14 @@ typedef double Real;
 
 int main()
 {
+  using std::cout;
+  using std::endl;
+
   const int N = 100;
   Real dx = (Real)1./N;
 
-  vector<Real> x(N);
-  vector<fixmathvector<Real,2> > y(N), yp(N), ypexact(N);
+  std::vector<Real> x(N);
+  std::vector<fixmathvector<Real,2> > y(N), yp(N), ypexact(N);
 
   for (int i = 0; i < N; ++i) {
     x[i] = i*dx;

@@ -11,6 +11,11 @@ using namespace jlt;
 
 int main()
 {
+  using std::cin;
+  using std::cout;
+  using std::cerr;
+  using std::endl;
+
   mathvector<double> a(3);
   mathvector<double> b(3);
   mathvector<double> ma(3);
@@ -45,7 +50,7 @@ int main()
 
   mathvector<mathvector<double>,double> aa(2);
   for (int i = 0; i < 2; ++i) {
-    aa[i] = vector<double>(4);
+    aa[i] = std::vector<double>(4);
     for (int j = 0; j < 4; ++j) aa[i][j] = (i+1)*(j+1);
   }
 

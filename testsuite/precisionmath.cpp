@@ -3,10 +3,12 @@
 #include <jlt/math.hpp>
 
 using namespace jlt;
-using namespace std;
 
 int main()
 {
+  using std::cout;
+  using std::endl;
+
   long double al = 1./9.L;
   long double bl = 1./3.L;
   long double cl = 1.e-30L;
@@ -15,7 +17,7 @@ int main()
   double aad=.9;
   float aaf=.9;
 
-  cout.setf(ios::fixed);
+  cout.setf(std::ios::fixed);
   cout.precision(40);
 
   cout << ".9l = " << aal << endl;
@@ -43,7 +45,7 @@ int main()
     cout << Pow(10.,-(double)i) << endl;
   }
 
-  cout.setf(ios::scientific);
+  cout.setf(std::ios::scientific);
 
   cout << endl;
   cout << "Sin:\n";

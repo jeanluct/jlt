@@ -32,28 +32,24 @@ extern "C"
 #include <nr.h>
 #include <nrutil.h>
 
-using namespace numrec;
-
 #endif // JLT_USE_LAPACK
-
-using namespace std;
 
 namespace jlt {
 
 template<class T>
 int symmetric_matrix_eigensystem(matrix<T>& A,
-				 vector<T>& eigvals,
-				 vector<T>& work)
+				 std::vector<T>& eigvals,
+				 std::vector<T>& work)
 {
-  cerr << "symmetric_matrix_eigensystem:\n";
-  cerr << "You cannot perform this math operation on this type.\n";
+  std::cerr << "symmetric_matrix_eigensystem:\n";
+  std::cerr << "You cannot perform this math operation on this type.\n";
   exit(1);
 }
 
 #ifdef JLT_USE_LAPACK
 int symmetric_matrix_eigensystem(matrix<float>& A,
-				 vector<float>& eigvals,
-				 vector<float>& work)
+				 std::vector<float>& eigvals,
+				 std::vector<float>& work)
 {
   char jobz = 'V';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
   char uplo = 'L';	// 'L'ower or 'U'pper triangle stored (opposite)
@@ -75,8 +71,8 @@ int symmetric_matrix_eigensystem(matrix<float>& A,
 }
 
 int symmetric_matrix_eigensystem(matrix<double>& A,
-				 vector<double>& eigvals,
-				 vector<double>& work)
+				 std::vector<double>& eigvals,
+				 std::vector<double>& work)
 {
   char jobz = 'V';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
   char uplo = 'L';	// 'L'ower or 'U'pper triangle stored (opposite)
@@ -98,31 +94,31 @@ int symmetric_matrix_eigensystem(matrix<double>& A,
 }
 
 int symmetric_matrix_eigensystem(matrix<float>& A,
-				 vector<float>& eigvals)
+				 std::vector<float>& eigvals)
 {
   // Allocate the workspace before calling LAPACK.  Inefficient, but
   // will do if speed not an issue.  The minimum worksize is 3N - 1,
   // but the optimal number is much larger, as returned in work[0]
   // after a call to ssyev or dsyev (see man page for ssyev or dsyev).
   int worksize = 3 * A.dim1();
-  vector<float> work(worksize);
+  std::vector<float> work(worksize);
 
   return symmetric_matrix_eigensystem(A,eigvals,work);
 }
 
 int symmetric_matrix_eigensystem(matrix<double>& A,
-				 vector<double>& eigvals)
+				 std::vector<double>& eigvals)
 {
   // See comment in float version.
   int worksize = 3 * A.dim1();
-  vector<double> work(worksize);
+  std::vector<double> work(worksize);
 
   return symmetric_matrix_eigensystem(A,eigvals,work);
 }
 
 #else
 int symmetric_matrix_eigensystem(matrix<double>& A,
-				 vector<double>& eigvals)
+				 std::vector<double>& eigvals)
 {
   int n = A.dim1();	// Dimensions of matrix.
 
@@ -132,9 +128,9 @@ int symmetric_matrix_eigensystem(matrix<double>& A,
 # endif
 
   // Allocate NRC-style matrices and vectors.
-  double **a = dmatrix(1,n,1,n);
-  double *e = dvector(1,n);
-  double *d = dvector(1,n);
+  double **a = numrec::dmatrix(1,n,1,n);
+  double *e = numrec::dvector(1,n);
+  double *d = numrec::dvector(1,n);
 
   // Copy the matrices.
   for (int i = 1; i <= n; ++i) {
@@ -143,11 +139,11 @@ int symmetric_matrix_eigensystem(matrix<double>& A,
     }
   }
 
-  tred2(a,n,d,e);
-  tqli(d,e,n,a);
+  numrec::tred2(a,n,d,e);
+  numrec::tqli(d,e,n,a);
 
   // Sort eigenvalues in descending order.
-  eigsrt(d,a,n);
+  numrec::eigsrt(d,a,n);
 
   // Copy the result, storing the eigenvectors in the rows.
   for (int i = 1; i <= n; ++i) {
@@ -157,15 +153,15 @@ int symmetric_matrix_eigensystem(matrix<double>& A,
     }
   }
 
-  free_dmatrix(a,1,n,1,n);
-  free_dvector(e,1,n);
-  free_dvector(d,1,n);
+  numrec::free_dmatrix(a,1,n,1,n);
+  numrec::free_dvector(e,1,n);
+  numrec::free_dvector(d,1,n);
 
   return 0;
 }
 
 int symmetric_matrix_eigensystem(matrix<long double>& A,
-				 vector<long double>& eigvals)
+				 std::vector<long double>& eigvals)
 {
   int n = A.dim1();	// Dimensions of matrix.
 
@@ -175,9 +171,9 @@ int symmetric_matrix_eigensystem(matrix<long double>& A,
 # endif
 
   // Allocate NRC-style matrices and vectors.
-  long double **a = ldmatrix(1,n,1,n);
-  long double *e = ldvector(1,n);
-  long double *d = ldvector(1,n);
+  long double **a = numrec::ldmatrix(1,n,1,n);
+  long double *e = numrec::ldvector(1,n);
+  long double *d = numrec::ldvector(1,n);
 
   // Copy the matrices.
   for (int i = 1; i <= n; ++i) {
@@ -186,11 +182,11 @@ int symmetric_matrix_eigensystem(matrix<long double>& A,
     }
   }
 
-  tred2l(a,n,d,e);
-  tqlil(d,e,n,a);
+  numrec::tred2l(a,n,d,e);
+  numrec::tqlil(d,e,n,a);
 
   // Sort eigenvalues in descending order.
-  eigsrtl(d,a,n);
+  numrec::eigsrtl(d,a,n);
 
   // Copy the result, storing the eigenvectors in the rows.
   for (int i = 1; i <= n; ++i) {
@@ -200,9 +196,9 @@ int symmetric_matrix_eigensystem(matrix<long double>& A,
     }
   }
 
-  free_ldmatrix(a,1,n,1,n);
-  free_ldvector(e,1,n);
-  free_ldvector(d,1,n);
+  numrec::free_ldmatrix(a,1,n,1,n);
+  numrec::free_ldvector(e,1,n);
+  numrec::free_ldvector(d,1,n);
 
   return 0;
 }
