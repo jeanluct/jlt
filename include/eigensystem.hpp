@@ -2,6 +2,7 @@
 #define JLT_EIGENSYSTEM_HPP
 
 #include <vector>
+#include <complex>
 #include <jlt/matrix.hpp>
 #if defined(__PGI)
 #  include <assert.h>
@@ -11,21 +12,42 @@
 #include <algorithm>
 
 #ifdef JLT_USE_LAPACK
+// Symmetric real matrices
 #define F77_SSYEV   ssyev_
 #define F77_DSYEV   dsyev_
+// Nonymmetric real matrices
+#define F77_SGEEV   sgeev_
+#define F77_DGEEV   dgeev_
+// Hermitian complex matrices
+#define F77_CHEEV   cheev_
+#define F77_ZHEEV   zheev_
+// Nonsymmetric complex matrices
+#define F77_CGEEV   cgeev_
+#define F77_ZGEEV   zgeev_
 
 // Fortran routine from LAPACK
 extern "C"
 {
   // Eigenvalues and eigenvectors routines
 
-  // Symmetric matrix (single precision)
-  void F77_SSYEV(char* jobz, char* uplo, int* N, float* A, int* lda, 
-		   float* W, float* work, int* lwork, int* info);
+  // Symmetric real matrix (single precision)
+  void F77_SSYEV(char* jobz, char* uplo, int* N, float* A, int* ldA,
+		 float* W, float* work, int* lwork, int* info);
 
-  // Symmetric matrix (double precision)
-  void F77_DSYEV(char* jobz, char* uplo, int* N, double* A, int* lda, 
-		   double* W, double* work, int* lwork, int* info);
+  // Symmetric real matrix (double precision)
+  void F77_DSYEV(char* jobz, char* uplo, int* N, double* A, int* ldA,
+		 double* W, double* work, int* lwork, int* info);
+
+  // Nonsymmetric real matrix (double precision)
+  void F77_DGEEV(char* jobVL, char* jobVR, int* N, double* A, int* ldA,
+		 double* Wr, double* Wi,
+		 double *VL, int *ldVL, double *VR, int *ldVR,
+		 double* work, int* lwork, int* info);
+
+  // Nonsymmetric complex matrix (double precision)
+  void F77_ZGEEV(char* jobVL, char* jobVR, int* N, double* A, int* ldA,
+		 double* W, double *VL, int *ldVL, double *VR, int *ldVR,
+		 double* cwork, int* lwork, double* rwork, int* info);
 }
 #else // JLT_USE_LAPACK
 
@@ -46,7 +68,22 @@ int symmetric_matrix_eigensystem(matrix<T>& A,
   exit(1);
 }
 
+template<class T>
+int matrix_eigenvalues(matrix<T>& A,
+		       std::vector<T>& eigvals,
+		       std::vector<T>& work)
+{
+  std::cerr << "matrix_eigenvalues:\n";
+  std::cerr << "You cannot perform this math operation on this type.\n";
+  exit(1);
+}
+
 #ifdef JLT_USE_LAPACK
+
+//
+// Fortran LAPACK Version
+//
+
 int symmetric_matrix_eigensystem(matrix<float>& A,
 				 std::vector<float>& eigvals,
 				 std::vector<float>& work)
@@ -59,13 +96,13 @@ int symmetric_matrix_eigensystem(matrix<float>& A,
 # ifdef __PGI
 # else
     assert(N == (int)A.dim2() && N == (int)eigvals.size());
-    assert((int)work.size() >= max(1,3*N-1));
+    assert((int)work.size() >= std::max(1,3*N-1));
 # endif
 
   int info = 0;		// Output eigenvalues in ascending order.
 
-  F77_SSYEV(&jobz, &uplo, &N, A.begin(), &N, eigvals.begin(), work.begin(),
-	    &worksize, &info);
+  F77_SSYEV(&jobz, &uplo, &N, &(*A.begin()), &N,
+	    &(*eigvals.begin()), &(*work.begin()), &worksize, &info);
 
   return info;
 }
@@ -82,13 +119,13 @@ int symmetric_matrix_eigensystem(matrix<double>& A,
 # ifdef __PGI
 # else
     assert(N == (int)A.dim2() && N == (int)eigvals.size());
-    assert((int)work.size() >= max(1,3*N-1));
+    assert((int)work.size() >= std::max(1,3*N-1));
 # endif
 
   int info = 0;		// Output eigenvalues in ascending order.
 
-  F77_DSYEV(&jobz, &uplo, &N, A.begin(), &N, eigvals.begin(), work.begin(),
-	    &worksize, &info);
+  F77_DSYEV(&jobz, &uplo, &N, &(*A.begin()), &N,
+	    &(*eigvals.begin()), &(*work.begin()), &worksize, &info);
 
   return info;
 }
@@ -116,7 +153,96 @@ int symmetric_matrix_eigensystem(matrix<double>& A,
   return symmetric_matrix_eigensystem(A,eigvals,work);
 }
 
+
+int matrix_eigenvalues(matrix<double>& A,
+		       std::vector<std::complex<double> >& eigvals,
+		       std::vector<double>& work)
+{
+  char jobVL = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
+  char jobVR = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
+  int N = A.dim1();	// Dimensions of matrix.
+  int worksize = work.size();
+
+# ifdef __PGI
+# else
+    assert(N == (int)A.dim2() && N == (int)eigvals.size());
+    /*
+    if (jobVL == 'V' || jobVR == 'V')
+      assert((int)work.size() >= std::max(1,4*N));
+    else
+    */
+    assert((int)work.size() >= std::max(1,3*N));
+# endif
+
+  int info = 0, ldVL = 1, ldVR = 1;
+
+  std::vector<double> evr(N), evi(N);
+
+  F77_DGEEV(&jobVL, &jobVR, &N, &(*A.begin()), &N,
+	    &(*evr.begin()), &(*evi.begin()), 0, &ldVL, 0, &ldVR,
+	    &(*work.begin()), &worksize, &info);
+
+  for (int n = 0; n < N; ++n)
+    {
+      eigvals[n] = std::complex<double>(evr[n],evi[n]);
+    }
+
+  return info;
+}
+
+int matrix_eigenvalues(matrix<std::complex<double> >& A,
+		       std::vector<std::complex<double> >& eigvals,
+		       std::vector<std::complex<double> >& cwork,
+		       std::vector<double>& rwork)
+{
+  char jobVL = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
+  char jobVR = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
+  int N = A.dim1();	// Dimensions of matrix.
+  int cworksize = cwork.size();
+
+# ifdef __PGI
+# else
+    assert((int)cwork.size() >= std::max(1,2*N));
+    assert((int)rwork.size() >= std::max(1,2*N));
+# endif
+
+  int info = 0, ldVL = 1, ldVR = 1;
+
+  F77_ZGEEV(&jobVL, &jobVR, &N, (double *)&(*A.begin()), &N,
+	    (double *)&(*eigvals.begin()), 0, &ldVL, 0, &ldVR,
+	    (double *)&(*cwork.begin()), &cworksize, &(*rwork.begin()), &info);
+
+  return info;
+}
+
+int matrix_eigenvalues(matrix<double>& A,
+		       std::vector<std::complex<double> >& eigvals)
+{
+  // See comment in float version.
+  int worksize = 3 * A.dim1();
+  std::vector<double> work(worksize);
+
+  return matrix_eigenvalues(A,eigvals,work);
+}
+
+int matrix_eigenvalues(matrix<std::complex<double> >& A,
+		       std::vector<std::complex<double> >& eigvals)
+{
+  // See comment in float version.
+  int cworksize = 2 * A.dim1();
+  std::vector<std::complex<double> > cwork(cworksize);
+  int rworksize = 2 * A.dim1();
+  std::vector<double> rwork(rworksize);
+
+  return matrix_eigenvalues(A,eigvals,cwork,rwork);
+}
+
 #else
+
+//
+// Numerical Recipes Version
+//
+
 int symmetric_matrix_eigensystem(matrix<double>& A,
 				 std::vector<double>& eigvals)
 {

@@ -18,6 +18,7 @@
 #include <cmath>
 #endif
 #include <iostream>
+#include <complex>
 
 namespace jlt {
 
@@ -44,6 +45,12 @@ inline long double Abs(const long double a)
 # else
     return ::fabsl(a);
 # endif
+}
+
+template<class T>
+inline T Abs(const std::complex<T> a)
+{
+  return abs(a);
 }
 
 
@@ -211,6 +218,23 @@ inline long double Pow(const long double a, const S b)
 # endif
 }
 
+template<class T>
+inline T Pow(const std::complex<T> a, int b)
+{
+  return pow(a,b);
+}
+
+template<class T>
+inline T Pow(const std::complex<T> a, const T b)
+{
+  return pow(a,b);
+}
+
+template<class T>
+inline T Pow(const std::complex<T> a, const std::complex<T> b)
+{
+  return pow(a,b);
+}
 
 //
 // The Mod function differs from the fmod function from <cmath>: it

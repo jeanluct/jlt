@@ -30,7 +30,7 @@ int main()
   cout << "\nM = U.diag(w).transp(V), where\n";
   cout << "\nU =\n"; U.printMatrixForm(cout);
   cout << "\nV =\n"; V.printMatrixForm(cout);
-  cout << "\nw = " << w<< endl;
+  cout << "\nw = " << w << endl;
 
   cout << "\nU.diag(w).transp(V) =\n";
   mathmatrix<double> M = U*diagonal_matrix(w)*V.transpose();

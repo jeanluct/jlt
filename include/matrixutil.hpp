@@ -28,7 +28,7 @@ void LUdecomp(T_Matrix& A, int* row_index, int* perm)
     {
       big = 0.0;
       for (int j = 0; j < n; ++j)
-	if ((temp = Abs(A(i,j))) > big) big = temp;
+	if (Abs(temp = Abs(A(i,j))) > Abs(big)) big = temp;
       if (big == 0.0)
 	{
 	  std::cerr << "Singular Matrix in LUdecomp\n";
@@ -49,7 +49,7 @@ void LUdecomp(T_Matrix& A, int* row_index, int* perm)
 	for (int k = 0; k < j; ++k)
 	  sum -= A(i,k)*A(k,j);
 	A(i,j) = sum;
-	if ((dum = vv[i]*Abs(sum)) >= big) {
+	if (Abs(dum = vv[i]*Abs(sum)) >= Abs(big)) {
 	  big = dum;
 	  imax = i;
 	}
@@ -91,7 +91,7 @@ void LUbacksub(T_Matrix& A, int* row_index, T* b)
       if (i_nonzero >= 0)
 	for (int j = i_nonzero; j < i; ++j) sum -= A(i,j)*b[j];
       else
-	if (sum) i_nonzero = i;
+	if (Abs(sum)) i_nonzero = i;
 
       b[i] = sum;
     }

@@ -4,6 +4,7 @@
 #  include <assert.h>
 #endif
 #include <iostream>
+#include <complex>
 #include <jlt/mathvector.hpp>
 #include <jlt/mathmatrix.hpp>
 
@@ -89,4 +90,16 @@ int main()
 
   cout << "identity_matrix(5) =" << endl;
   cout << identity_matrix<double>(5) << endl;
+
+  mathmatrix<std::complex<double> > Ac(3,3,std::complex<double>(1,1));
+  Ac(0,0) = 0.;
+  Ac(1,1) = 0.;
+  Ac(2,2) = 0.;
+  cout << "\nComplex matrix:\n";
+  cout << Ac << endl;
+  mathmatrix<std::complex<double> > Aci(Ac.inverse());
+  cout << "and its inverse:\n";
+  cout << Aci << endl;
+  cout << "Check:\n";
+  cout << Ac*Aci << endl;
 }
