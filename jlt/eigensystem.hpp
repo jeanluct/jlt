@@ -4,6 +4,7 @@
 #include <vector>
 #include <complex>
 #include <jlt/matrix.hpp>
+
 #if defined(__PGI)
 #  include <assert.h>
 #else
@@ -11,7 +12,6 @@
 #endif
 #include <algorithm>
 
-#ifdef JLT_USE_LAPACK
 // Symmetric real matrices
 #define F77_SSYEV   ssyev_
 #define F77_DSYEV   dsyev_
@@ -25,7 +25,7 @@
 #define F77_CGEEV   cgeev_
 #define F77_ZGEEV   zgeev_
 
-// Fortran routine from LAPACK
+// Fortran routines from LAPACK
 extern "C"
 {
   // Eigenvalues and eigenvectors routines
@@ -49,12 +49,6 @@ extern "C"
 		 double* W, double *VL, int *ldVL, double *VR, int *ldVR,
 		 double* cwork, int* lwork, double* rwork, int* info);
 }
-#else // JLT_USE_LAPACK
-
-#include <nr.h>
-#include <nrutil.h>
-
-#endif // JLT_USE_LAPACK
 
 namespace jlt {
 
@@ -77,8 +71,6 @@ int matrix_eigenvalues(matrix<T>& A,
   std::cerr << "You cannot perform this math operation on this type.\n";
   exit(1);
 }
-
-#ifdef JLT_USE_LAPACK
 
 //
 // Fortran LAPACK Version
@@ -236,99 +228,6 @@ int matrix_eigenvalues(matrix<std::complex<double> >& A,
 
   return matrix_eigenvalues(A,eigvals,cwork,rwork);
 }
-
-#else
-
-//
-// Numerical Recipes Version
-//
-
-int symmetric_matrix_eigensystem(matrix<double>& A,
-				 std::vector<double>& eigvals)
-{
-  int n = A.dim1();	// Dimensions of matrix.
-
-# ifdef __PGI
-# else
-    assert(n == (int)A.dim2() && n == (int)eigvals.size());
-# endif
-
-  // Allocate NRC-style matrices and vectors.
-  double **a = numrec::dmatrix(1,n,1,n);
-  double *e = numrec::dvector(1,n);
-  double *d = numrec::dvector(1,n);
-
-  // Copy the matrices.
-  for (int i = 1; i <= n; ++i) {
-    for (int j = 1; j <= n; ++j) {
-      a[i][j] = A(i-1,j-1);
-    }
-  }
-
-  numrec::tred2(a,n,d,e);
-  numrec::tqli(d,e,n,a);
-
-  // Sort eigenvalues in descending order.
-  numrec::eigsrt(d,a,n);
-
-  // Copy the result, storing the eigenvectors in the rows.
-  for (int i = 1; i <= n; ++i) {
-    eigvals[i-1] = d[i];
-    for (int j = 1; j <= n; ++j) {
-      A(j-1,i-1) = a[i][j];
-    }
-  }
-
-  numrec::free_dmatrix(a,1,n,1,n);
-  numrec::free_dvector(e,1,n);
-  numrec::free_dvector(d,1,n);
-
-  return 0;
-}
-
-int symmetric_matrix_eigensystem(matrix<long double>& A,
-				 std::vector<long double>& eigvals)
-{
-  int n = A.dim1();	// Dimensions of matrix.
-
-# ifdef __PGI
-# else
-    assert(n == (int)A.dim2() && n == (int)eigvals.size());
-# endif
-
-  // Allocate NRC-style matrices and vectors.
-  long double **a = numrec::ldmatrix(1,n,1,n);
-  long double *e = numrec::ldvector(1,n);
-  long double *d = numrec::ldvector(1,n);
-
-  // Copy the matrices.
-  for (int i = 1; i <= n; ++i) {
-    for (int j = 1; j <= n; ++j) {
-      a[i][j] = A(i-1,j-1);
-    }
-  }
-
-  numrec::tred2l(a,n,d,e);
-  numrec::tqlil(d,e,n,a);
-
-  // Sort eigenvalues in descending order.
-  numrec::eigsrtl(d,a,n);
-
-  // Copy the result, storing the eigenvectors in the rows.
-  for (int i = 1; i <= n; ++i) {
-    eigvals[i-1] = d[i];
-    for (int j = 1; j <= n; ++j) {
-      A(j-1,i-1) = a[i][j];
-    }
-  }
-
-  numrec::free_ldmatrix(a,1,n,1,n);
-  numrec::free_ldvector(e,1,n);
-  numrec::free_ldvector(d,1,n);
-
-  return 0;
-}
-#endif
 
 } // namespace jlt
 

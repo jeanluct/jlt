@@ -589,6 +589,20 @@ inline mathmatrix<T,S> diagonal_matrix(const mathvector<T,S>& v)
   return diag;
 }
 
+template<class T, class S>
+inline mathmatrix<T,S> diagonal_matrix(const mathvector<T,S>& v,
+				       typename mathmatrix<T>::size_type m,
+				       typename mathmatrix<T>::size_type n)
+{
+  typename mathmatrix<T>::size_type d = std::min(m,n);
+  assert(v.size() == d);
+  mathmatrix<T,S> diag(m,n);
+
+  for (typename mathmatrix<T,S>::size_type i = 0; i < d; ++i) diag(i,i) = v[i];
+
+  return diag;
+}
+
 } // namespace jlt
 
 #endif // JLT_MATHMATRIX_HPP

@@ -208,8 +208,6 @@ void QRextract(const T_Matrix& A, const T_Vector& c, const T_Vector& d,
   // QRdecomp returns a product of Householder matrices.  Need to
   // multiply these to obtain Q.
   //
-  // Inspired by the NRC algorithm qrsolv, p. 100 of Second edition.
-  //
 
   for (int k = 0; k < m; ++k) {
     for (int l = 0; l < m; ++l) Q(k,l) = (k == l ? 1 : 0);

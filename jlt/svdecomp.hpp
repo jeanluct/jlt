@@ -11,110 +11,153 @@
 #  include <cassert>
 #endif
 
+// Symmetric real matrices
+#define F77_SGESDD   sgesdd_
+#define F77_DGESDD   dgesdd_
+
+// Fortran routines from LAPACK
+extern "C"
+{
+  // Singular value decomposition routines
+
+  // M by N real matrix (single precision)
+  void F77_SGESDD(char* jobz, int* M, int* N, float* A, int* ldA,
+		  float* S, float* U, int* ldU, float* VT, int* ldVT,
+		  float* work, int* lwork, int* iwork, int* info);
+
+  // M by N real matrix (double precision)
+  void F77_DGESDD(char* jobz, int* M, int* N, double* A, int* ldA,
+		  double* S, double* U, int* ldU, double* VT, int* ldVT,
+		  double* work, int* lwork, int* iwork, int* info);
+}
 
 namespace jlt {
 
 //
 // Given a matrix A, compute the singular value decomposition
 //
-//   M = U.diag(w).transp(V)
+//   A = U.diag(w).transp(V) = U.diag(w).Vt
 //
 // where U and V are orthogonal, and w is a vector of singular values.
 // The singular values are positive and sorted by decreasing size.
 //
-// The m by n matrix A is the input (m>n), and is overwritten by U
-// on return.
+// The M by N matrix A is the input, is destroyed on return.
 //
 
-int singular_value_decomp(matrix<double>& A,
-			  matrix<double>& V,
-			  std::vector<double>& W)
+template<class T>
+int singular_value_decomp(matrix<T>& A,
+			  matrix<T>& U,
+			  matrix<T>& Vt,
+			  std::vector<T>& w)
 {
-  int m = A.dim1(), n = A.dim2();	// Dimensions of matrix.
+  std::cerr << "singular_value_decomp:\n";
+  std::cerr << "You cannot perform this math operation on this type.\n";
+  exit(1);
+}
 
-  assert(m >= n);
-  assert(n == (int)W.size());
-  assert(n == (int)V.dim1() && n == (int)V.dim2());
+int singular_value_decomp(matrix<float>& A,
+			  matrix<float>& U,
+			  matrix<float>& Vt,
+			  std::vector<float>& w)
+{
+  char jobz = 'A';			// 'A' - all M columns of U
+					// and all N rows of V^T are
+					// returned in the matrices U
+					// and Vt.
 
-  // Allocate NRC-style matrices and vectors.
-  double **a = numrec::dmatrix(1,m,1,n);
-  double **v = numrec::dmatrix(1,n,1,n);
-  double *w = numrec::dvector(1,n);
+  int M = A.dim1(), N = A.dim2();	// Dimensions of matrix.
+  int info;
 
-  // Copy the matrix.
-  for (int i = 1; i <= m; ++i) {
-    for (int j = 1; j <= n; ++j) {
-      a[i][j] = A(i-1,j-1);
-    }
-  }
+  std::vector<int> iwork(8*std::min(M,N));
 
-  numrec::svdcmp(a,m,n,w,v);
-  numrec::svdsrt(a,m,n,w,v);
+  // Call the routine with worksize = -1, to get the ideal size of workspace.
+  int worksize = -1;
+  float tmpwork[1];
+  F77_SGESDD(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+	     &(*Vt.begin()), &N, &(*U.begin()), &M,
+	     tmpwork, &worksize, &(*iwork.begin()), &info);
 
-  // Copy the result.
-  for (int i = 1; i <= m; ++i) {
-    for (int j = 1; j <= n; ++j) {
-      A(i-1,j-1) = a[i][j];
-    }
-  }
-  for (int i = 1; i <= n; ++i) {
-    W[i-1] = w[i];
-    for (int j = 1; j <= n; ++j) {
-      V(i-1,j-1) = v[i][j];
-    }
-  }
+  worksize = (int)tmpwork[0];
+  std::vector<float> work(worksize);
 
-  numrec::free_dmatrix(a,1,n,1,n);
-  numrec::free_dmatrix(v,1,n,1,n);
-  numrec::free_dvector(w,1,n);
+  F77_SGESDD(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+	     &(*Vt.begin()), &N, &(*U.begin()), &M,
+	     &(*work.begin()), &worksize, &(*iwork.begin()), &info);
 
-  return 0;
+  return info;
 }
 
 
-int singular_value_decomp(matrix<long double>& A,
-			  matrix<long double>& V,
-			  std::vector<long double>& W)
+int singular_value_decomp(matrix<float>& A, std::vector<float>& w)
 {
-  int m = A.dim1(), n = A.dim2();	// Dimensions of matrix.
+  char jobz = 'N';			// 'N' - only singular values
+					// are computed.
 
-  assert(m >= n);
-  assert(n == (int)W.size());
-  assert(n == (int)V.dim1() && n == (int)V.dim2());
+  int M = A.dim1(), N = A.dim2();	// Dimensions of matrix.
+  int info;
 
-  // Allocate NRC-style matrices and vectors.
-  long double **a = numrec::ldmatrix(1,m,1,n);
-  long double **v = numrec::ldmatrix(1,n,1,n);
-  long double  *w = numrec::ldvector(1,n);
+  std::vector<int> iwork(8*std::min(M,N));
 
-  // Copy the matrix.
-  for (int i = 1; i <= m; ++i) {
-    for (int j = 1; j <= n; ++j) {
-      a[i][j] = A(i-1,j-1);
-    }
-  }
+  int worksize = 3*std::min(M,N) +  std::max(std::max(M,N),6*std::min(M,N));
+  std::vector<float> work(worksize);
 
-  numrec::svdcmpl(a,m,n,w,v);
-  numrec::svdsrtl(a,m,n,w,v);
+  F77_SGESDD(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()), 0, &N, 0, &M,
+	     &(*work.begin()), &worksize, &(*iwork.begin()), &info);
 
-  // Copy the result.
-  for (int i = 1; i <= m; ++i) {
-    for (int j = 1; j <= n; ++j) {
-      A(i-1,j-1) = a[i][j];
-    }
-  }
-  for (int i = 1; i <= n; ++i) {
-    W[i-1] = w[i];
-    for (int j = 1; j <= n; ++j) {
-      V(i-1,j-1) = v[i][j];
-    }
-  }
+  return info;
+}
 
-  numrec::free_ldmatrix(a,1,n,1,n);
-  numrec::free_ldmatrix(v,1,n,1,n);
-  numrec::free_ldvector(w,1,n);
 
-  return 0;
+int singular_value_decomp(matrix<double>& A,
+			  matrix<double>& U,
+			  matrix<double>& Vt,
+			  std::vector<double>& w)
+{
+  char jobz = 'A';			// 'A' - all M columns of U
+					// and all N rows of V^T are
+					// returned in the matrices U
+					// and Vt.
+
+  int M = A.dim1(), N = A.dim2();	// Dimensions of matrix.
+  int info;
+
+  std::vector<int> iwork(8*std::min(M,N));
+
+  // Call the routine with worksize = -1, to get the ideal size of workspace.
+  int worksize = -1;
+  double tmpwork[1];
+  F77_DGESDD(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+	     &(*Vt.begin()), &N, &(*U.begin()), &M,
+	     tmpwork, &worksize, &(*iwork.begin()), &info);
+
+  worksize = (int)tmpwork[0];
+  std::vector<double> work(worksize);
+
+  F77_DGESDD(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+	     &(*Vt.begin()), &N, &(*U.begin()), &M,
+	     &(*work.begin()), &worksize, &(*iwork.begin()), &info);
+
+  return info;
+}
+
+
+int singular_value_decomp(matrix<double>& A, std::vector<double>& w)
+{
+  char jobz = 'N';			// 'N' - only singular values
+					// are computed.
+
+  int M = A.dim1(), N = A.dim2();	// Dimensions of matrix.
+  int info;
+
+  std::vector<int> iwork(8*std::min(M,N));
+
+  int worksize = 3*std::min(M,N) +  std::max(std::max(M,N),6*std::min(M,N));
+  std::vector<double> work(worksize);
+
+  F77_DGESDD(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()), 0, &N, 0, &M,
+	     &(*work.begin()), &worksize, &(*iwork.begin()), &info);
+
+  return info;
 }
 
 } // namespace jlt
