@@ -1,5 +1,5 @@
-#ifndef LAPACK_HPP
-#define LAPACK_HPP
+#ifndef JLT_LAPACK_HPP
+#define JLT_LAPACK_HPP
 
 #include <complex>
 
@@ -239,4 +239,4 @@ namespace lapack {
 } // namespace lapack
 } // namespace jlt
 
-#endif // LAPACK_HPP
+#endif // JLT_LAPACK_HPP

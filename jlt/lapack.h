@@ -1,5 +1,5 @@
-#ifndef LAPACK_H
-#define LAPACK_H
+#ifndef JLT_LAPACK_H
+#define JLT_LAPACK_H
 
 //
 // Fortran routines from LAPACK
@@ -133,4 +133,4 @@ void dgesdd_(char* jobz,
 	     int* iwork,
 	     int* info);
 
-#endif // LAPACK_H
+#endif // JLT_LAPACK_H
