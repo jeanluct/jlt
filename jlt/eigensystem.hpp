@@ -50,6 +50,7 @@ extern "C"
 		 double* cwork, int* lwork, double* rwork, int* info);
 }
 
+
 namespace jlt {
 
 template<class T>
@@ -72,10 +73,6 @@ int matrix_eigenvalues(matrix<T>& A,
   exit(1);
 }
 
-//
-// Fortran LAPACK Version
-//
-
 int symmetric_matrix_eigensystem(matrix<float>& A,
 				 std::vector<float>& eigvals,
 				 std::vector<float>& work)
@@ -91,10 +88,15 @@ int symmetric_matrix_eigensystem(matrix<float>& A,
     assert((int)work.size() >= std::max(1,3*N-1));
 # endif
 
-  int info = 0;		// Output eigenvalues in ascending order.
+  int info;
+
+  std::vector<float> eigs(N);
 
   F77_SSYEV(&jobz, &uplo, &N, &(*A.begin()), &N,
-	    &(*eigvals.begin()), &(*work.begin()), &worksize, &info);
+	    &(*eigs.begin()), &(*work.begin()), &worksize, &info);
+
+  // Output eigenvalues in *descending* order.
+  for (int i = 0; i < N; ++i) eigvals[i] = eigs[N-i-1];
 
   return info;
 }
@@ -114,10 +116,15 @@ int symmetric_matrix_eigensystem(matrix<double>& A,
     assert((int)work.size() >= std::max(1,3*N-1));
 # endif
 
-  int info = 0;		// Output eigenvalues in ascending order.
+  int info;
+
+  std::vector<double> eigs(N);
 
   F77_DSYEV(&jobz, &uplo, &N, &(*A.begin()), &N,
-	    &(*eigvals.begin()), &(*work.begin()), &worksize, &info);
+	    &(*eigs.begin()), &(*work.begin()), &worksize, &info);
+
+  // Output eigenvalues in *descending* order.
+  for (int i = 0; i < N; ++i) eigvals[i] = eigs[N-i-1];
 
   return info;
 }
@@ -166,7 +173,7 @@ int matrix_eigenvalues(matrix<double>& A,
     assert((int)work.size() >= std::max(1,3*N));
 # endif
 
-  int info = 0, ldVL = 1, ldVR = 1;
+  int info, ldVL = 1, ldVR = 1;
 
   std::vector<double> evr(N), evi(N);
 
@@ -198,7 +205,7 @@ int matrix_eigenvalues(matrix<std::complex<double> >& A,
     assert((int)rwork.size() >= std::max(1,2*N));
 # endif
 
-  int info = 0, ldVL = 1, ldVR = 1;
+  int info, ldVL = 1, ldVR = 1;
 
   F77_ZGEEV(&jobVL, &jobVR, &N, (double *)&(*A.begin()), &N,
 	    (double *)&(*eigvals.begin()), 0, &ldVL, 0, &ldVR,
