@@ -87,7 +87,7 @@ public:
   //
   // Elementary Matrix Operations
   //
-  
+
   // These are all inefficient.
   // Only use when abstraction is more important than speed.
 
@@ -169,6 +169,20 @@ public:
 	}
 
       return *this;
+    }
+
+  //
+  // Comparison Operators
+  //
+
+  bool operator==(mathmatrix<T,S>& A)
+    {
+      const_iterator j = A.begin();
+      for (iterator i = begin(); i != end(); ++i, ++j)
+	{
+	  if (*i != *j) return false;
+	}
+      return true;
     }
 
   //
