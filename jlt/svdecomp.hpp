@@ -1,8 +1,6 @@
 #ifndef JLT_SVDECOMP_HPP
 #define JLT_SVDECOMP_HPP
 
-#include <nr.h>
-#include <nrutil.h>
 #include <jlt/matrix.hpp>
 #include <jlt/lapack.hpp>
 
