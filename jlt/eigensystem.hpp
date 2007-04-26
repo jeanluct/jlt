@@ -143,6 +143,23 @@ int matrix_eigenvalues(matrix<std::complex<T> >& A,
 }
 
 
+template<class T>
+T spectral_radius(matrix<T>& A)
+{
+  typedef typename std::vector<std::complex<T> >::const_iterator it;
+  std::vector<std::complex<T> > ev(A.dim1());
+  matrix_eigenvalues(A,ev);
+
+  T spec = 0;
+  for (it i = ev.begin(); i != ev.end(); ++i)
+    {
+      if (Abs(*i) > spec) spec = Abs(*i);
+    }
+
+  return spec;
+}
+
+
 } // namespace jlt
 
 #endif // JLT_EIGENSYSTEM_HPP
