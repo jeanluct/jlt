@@ -175,7 +175,7 @@ public:
   // Comparison Operators
   //
 
-  bool operator==(mathmatrix<T,S>& A)
+  bool operator==(const mathmatrix<T,S>& A) const
     {
       const_iterator j = A.begin();
       for (iterator i = begin(); i != end(); ++i, ++j)
@@ -183,6 +183,48 @@ public:
 	  if (*i != *j) return false;
 	}
       return true;
+    }
+
+  bool operator!=(const mathmatrix<T,S>& A) const
+    {
+      return !(operator==(A));
+    }
+
+  // Equality to a single T: every element has to equal that T.
+  bool operator==(const_reference a) const
+    {
+      for (const_iterator i = begin(); i != end(); ++i)
+	{
+	  if (*i != a) return false;
+	}
+
+      return true;
+    }
+
+  // Reducible matrix: a high-enough power does not contain any zeros.
+  bool isReducible() const
+    {
+      int n = dim1();
+
+      if (n == 0) return false;
+
+      // See Ham and Song preprint (2006), p. 9.
+      // Take log2 since we nest the multiplications.
+      int pmax = (int)ceil(log2(n*n - 2*n + 2));
+
+      jlt::mathmatrix<double> Mp(*this);
+
+      for (int p = 0; p < pmax; ++p)
+	{
+	  Mp = Mp * (*this);
+	}
+
+      for (const_iterator i = Mp.begin(); i != Mp.end(); ++i)
+	{
+	  if (*i == T()) return true;
+	}
+
+      return false;
     }
 
   //
