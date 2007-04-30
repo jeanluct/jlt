@@ -178,7 +178,7 @@ public:
   bool operator==(const mathmatrix<T,S>& A) const
     {
       const_iterator j = A.begin();
-      for (iterator i = begin(); i != end(); ++i, ++j)
+      for (const_iterator i = begin(); i != end(); ++i, ++j)
 	{
 	  if (*i != *j) return false;
 	}
@@ -190,6 +190,8 @@ public:
       return !(operator==(A));
     }
 
+#if 0
+  /* Bad idea, since above I declare operator= differently. */
   // Equality to a single T: every element has to equal that T.
   bool operator==(const_reference a) const
     {
@@ -200,8 +202,9 @@ public:
 
       return true;
     }
+#endif
 
-  // Reducible matrix: a high-enough power does not contain any zeros.
+  // Reducible matrix: a high-enough power still contains zeros.
   bool isReducible() const
     {
       int n = dim1();
@@ -214,9 +217,9 @@ public:
 
       jlt::mathmatrix<double> Mp(*this);
 
-      for (int p = 0; p < pmax; ++p)
+      for (int p = 1; p < pmax; ++p)
 	{
-	  Mp = Mp * (*this);
+	  Mp = Mp * Mp;
 	}
 
       for (const_iterator i = Mp.begin(); i != Mp.end(); ++i)
@@ -428,9 +431,10 @@ public:
 
       T tr = 0;
 
-      for (size_type i = 0; i < dim1(); ++i) {
-	tr += this->operator()(i,i);
-      }
+      for (size_type i = 0; i < dim1(); ++i)
+	{
+	  tr += this->operator()(i,i);
+	}
 
       return tr;
     }
