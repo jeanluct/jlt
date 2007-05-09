@@ -303,6 +303,26 @@ public:
       return strm;
     }
 
+  std::ostream& printMathematicaForm(std::ostream& strm) const
+    {
+      if (start == 0) return strm;
+
+      strm << "{";
+      for (const_iterator i = start; i != finish; i += n) {
+	strm << "{";
+	for (const_iterator j = i; j != i+n-1; ++j)
+	  {
+	    strm << *j << ",";
+	  }
+	if (i != finish-n)
+	  strm << *(i+n-1) << "},";
+	else
+	  strm << *(i+n-1) << "}";
+      }
+      strm << "}";
+
+      return strm;
+    }
 };
 
 template<class T>

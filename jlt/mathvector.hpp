@@ -112,7 +112,7 @@ public:
 
   mathvector<T,S>& operator+=(const mathvector<T,S>& v)
     {
-      VECTOR_ASSERT(size() == v.size());
+      VECTOR_ASSERT(this->size() == v.size());
 
       iterator k = begin();
       for (const_iterator i = v.begin(); i != v.end(); ++i, ++k)
@@ -125,7 +125,7 @@ public:
 
   mathvector<T,S>& operator-=(const mathvector<T,S>& v)
     {
-      VECTOR_ASSERT(size() == v.size());
+      VECTOR_ASSERT(this->size() == v.size());
 
       iterator k = begin();
       for (const_iterator i = v.begin(); i != v.end(); ++i, ++k)
@@ -159,7 +159,7 @@ public:
   // Component-wise division.
   mathvector<T,S>& operator/=(const mathvector<T,S>& v)
     {
-      VECTOR_ASSERT(size() == v.size());
+      VECTOR_ASSERT(this->size() == v.size());
 
       iterator k = begin();
       for (const_iterator i = v.begin(); i != v.end(); ++i, ++k)

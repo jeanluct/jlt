@@ -13,6 +13,9 @@
 #endif
 #include <algorithm>
 
+//
+// All these routines destroy the data in A!
+//
 
 namespace jlt {
 
@@ -143,6 +146,8 @@ int matrix_eigenvalues(matrix<std::complex<T> >& A,
 }
 
 
+/* The spectral_radius function is inefficient: should only require
+   the largest eigenvalue in magniture, but it finds them all. */
 template<class T>
 T spectral_radius(matrix<T>& A)
 {
@@ -150,6 +155,25 @@ T spectral_radius(matrix<T>& A)
   std::vector<std::complex<T> > ev(A.dim1());
   matrix_eigenvalues(A,ev);
 
+  // Find the eigenvalue with the largest magnitude.
+  T spec = 0;
+  for (it i = ev.begin(); i != ev.end(); ++i)
+    {
+      if (Abs(*i) > spec) spec = Abs(*i);
+    }
+
+  return spec;
+}
+
+
+template<class T>
+T spectral_radius(matrix<std::complex<T> >& A)
+{
+  typedef typename std::vector<std::complex<T> >::const_iterator it;
+  std::vector<std::complex<T> > ev(A.dim1());
+  matrix_eigenvalues(A,ev);
+
+  // Find the eigenvalue with the largest magnitude.
   T spec = 0;
   for (it i = ev.begin(); i != ev.end(); ++i)
     {

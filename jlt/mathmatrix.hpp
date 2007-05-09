@@ -207,28 +207,75 @@ public:
   // Reducible matrix: a high-enough power still contains zeros.
   bool isReducible() const
     {
-      int n = dim1();
+#if 0
+        size_type ma = A.dim1();
+  size_type na = A.dim2();
+  size_type nb = B.dim2();
+
+  MATRIX_ASSERT(na == B.dim1());
+
+  mathmatrix<T,S> res(ma,nb);
+
+  for (size_type i = 0; i < ma; ++i)
+    {
+      for (size_type j = 0; j < nb; ++j)
+	{
+	  for (size_type k = 0; k < na; ++k) res(i,j) += A(i,k)*B(k,j);
+	}
+    }
+#endif
+
+      MATRIX_ASSERT(isSquare());
+      size_type n = dim1();
 
       if (n == 0) return false;
 
       // See Ham and Song preprint (2006), p. 9.
       // Take log2 since we nest the multiplications.
-      int pmax = (int)ceil(log2(n*n - 2*n + 2));
+      size_type pmax = (size_type)ceil(log2(n*n - 2*n + 2));
 
-      jlt::mathmatrix<double> Mp(*this);
-
-      for (int p = 1; p < pmax; ++p)
+      // Take powers of matrix.  Do this in place since we need to
+      // renormalise to avoid blow-up.
+      mathmatrix<T,S> Mp(n,n), M(*this);
+      for (size_type p = 1; p < pmax; ++p)
 	{
-	  Mp = Mp * Mp;
+	  for (size_type i = 0; i < n; ++i)
+	    {
+	      // Mp = M*M.
+	      for (size_type j = 0; j < n; ++j)
+		{
+		  Mp(i,j) = M(i,0)*M(0,j);
+		  for (size_type k = 1; k < n; ++k)
+		    {
+		      Mp(i,j) += M(i,k)*M(k,j);
+		    }
+		  // Renormalise: all that matters is whether an element
+		  // is zero or not.
+		  if (Mp(i,j) != T()) Mp(i,j) = 1;
+		}
+	    }
+	  // Copy the result back to M.
+	  M = Mp;
 	}
 
-      for (const_iterator i = Mp.begin(); i != Mp.end(); ++i)
+      // Now look for zeros.
+      for (const_iterator i = M.begin(); i != M.end(); ++i)
 	{
 	  if (*i == T()) return true;
 	}
 
       return false;
     }
+
+  // Replace nonzero entries by 1.
+  mathmatrix<T,S>& ones_and_zeros()
+  {
+    for (iterator i = begin(); i != end(); ++i)
+      {
+	if (*i != T()) *i = 1;
+      }
+    return *this;
+  }
 
   //
   // Friends
