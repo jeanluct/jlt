@@ -19,6 +19,7 @@
 #endif
 
 #include <vector>
+#include <iostream>
 #include <jlt/stlio.hpp>
 #include <jlt/exceptions.hpp>
 
@@ -90,6 +91,21 @@ public:
   std::vector<T>& operator=(const std::vector<T>& v)
     {
       return std::vector<T>::operator=(v);
+    }
+
+  std::ostream& printMathematicaForm(std::ostream& strm) const
+    {
+      if (this->empty()) return strm;
+
+      strm << "{";
+      for (typename std::vector<T>::const_iterator i = this->begin();
+	   i != this->end()-1; ++i)
+	{
+	  strm << *i << ",";
+	}
+      strm << this->back() << "}";
+
+      return strm;
     }
 };
 
