@@ -68,14 +68,13 @@ inline mathvector<T,S> cross(const mathvector<T,S>& v,
 template<class T, class S = T>
 class mathvector : public bcvector<T>
 {
-private:
+public:
   typedef typename std::vector<T>::size_type		size_type;
   typedef typename std::vector<T>::reference		reference;
   typedef typename std::vector<T>::const_reference	const_reference;
   typedef typename std::vector<T>::iterator		iterator;
   typedef typename std::vector<T>::const_iterator	const_iterator;
 
-public:
   typedef S		scalar_type;
   typedef const S	const_scalar_type;
   typedef S&		scalar_reference;
