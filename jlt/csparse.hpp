@@ -24,7 +24,7 @@ template<class T>
 csparse::cs* mathmatrix_to_cs_sparse_matrix(const mathmatrix<T>& M)
 {
   int m = M.dim1(), n = M.dim2();
-  csparse::cs *csM ;
+  csparse::cs *csM, *csM_comp ;
 
   csM = csparse::cs_spalloc(0,0,1,1,1) ;
 
@@ -33,7 +33,13 @@ csparse::cs* mathmatrix_to_cs_sparse_matrix(const mathmatrix<T>& M)
       if (M(i,j) != 0)
 	if (!csparse::cs_entry(csM,i,j,M(i,j))) return csparse::cs_spfree(csM);
 
-  return csM;
+  // Column-compress the sparse matrix.
+  csM_comp = csparse::cs_compress(csM);
+
+  // Free the triplet sparse matrix.
+  csparse::cs_spfree(csM);
+
+  return csM_comp;
 }
 
 template<class T>
