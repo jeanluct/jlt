@@ -6,7 +6,7 @@
 //
 
 #include <stdexcept>
-#include <jlt/bcvector.hpp>
+#include <jlt/vector.hpp>
 #include <jlt/math.hpp>
 #include <jlt/stlio.hpp>
 
@@ -66,7 +66,7 @@ inline mathvector<T,S> cross(const mathvector<T,S>& v,
 //
 
 template<class T, class S = T>
-class mathvector : public bcvector<T>
+class mathvector : public vector<T>
 {
 public:
   typedef typename std::vector<T>::size_type		size_type;
@@ -80,26 +80,26 @@ public:
   typedef S&		scalar_reference;
   typedef const S&	const_scalar_reference;
 
-  using bcvector<T>::begin;
-  using bcvector<T>::end;
+  using vector<T>::begin;
+  using vector<T>::end;
 
   //
   // Constructors
   //
 
   // Empty vector of size 0.
-  mathvector() : bcvector<T>() {}
+  mathvector() : vector<T>() {}
 
   // mathvector of size _n filled with _x.
   explicit mathvector(size_type _n, const_reference _x = T())
-    : bcvector<T>(_n,_x) {}
+    : vector<T>(_n,_x) {}
 
   // Copy constructor.
-  mathvector(const bcvector<T>& _v) : bcvector<T>(_v) {}
+  mathvector(const vector<T>& _v) : vector<T>(_v) {}
 
-  const bcvector<T>& operator=(const bcvector<T>& v)
+  const vector<T>& operator=(const vector<T>& v)
     {
-      return bcvector<T>::operator=(v);
+      return vector<T>::operator=(v);
     }
 
   //

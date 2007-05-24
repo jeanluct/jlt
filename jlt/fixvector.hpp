@@ -25,13 +25,13 @@
 // fixvector to be a vector? Can I think of applications where I would
 // want to substitute a fixvector for a vector?
 
-#include <jlt/bcvector.hpp>
+#include <jlt/vector.hpp>
 #include <jlt/mathvector.hpp>
 
 namespace jlt {
 
 template<class T, unsigned int N>
-class fixvector : public bcvector<T>
+class fixvector : public vector<T>
 {
 public:
 
@@ -40,11 +40,11 @@ public:
   //
 
   // Vector of size N filled with _x.
-  explicit fixvector(typename bcvector<T>::const_reference _x = T())
-    : bcvector<T>(N,_x) {}
+  explicit fixvector(typename vector<T>::const_reference _x = T())
+    : vector<T>(N,_x) {}
 
   // Copy constructor.
-  fixvector(const bcvector<T>& _v) : bcvector<T>(_v) {}
+  fixvector(const vector<T>& _v) : vector<T>(_v) {}
 }; // class fixvector
 
 template<class T, unsigned int N, class S = T>
@@ -57,7 +57,7 @@ public:
   //
 
   // Vector of size N filled with _x.
-  explicit fixmathvector(typename bcvector<T>::const_reference _x = T())
+  explicit fixmathvector(typename vector<T>::const_reference _x = T())
     : mathvector<T,S>(N,_x) {}
 
   // Copy constructor.

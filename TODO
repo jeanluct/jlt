@@ -8,10 +8,7 @@
   wrong for complex numbers.  Need to call a magnitude function for
   the type.  Maybe also need a magnitude type.  Define with traits?
 
-- Rename bcvector to vector, since I'm now using them fairly
-  generically?  Namespaces will ensure no ambiguity arises.
-
-- bcvector no longer needs to instantiate at() for gcc-3.x.
+- vector no longer needs to instantiate at() for gcc-3.x.
 
 - Combine GramSchmidtOrthonorm and QRdecomp.  Really the same thing,
 right?.  See if my decomposition is better.  Seems simpler.
@@ -25,6 +22,9 @@ right?.  See if my decomposition is better.  Seems simpler.
   rows() and columns() of blitz::Array<T,2>.  Move rodent's traits to jlt.
 
 - Precompile some stuff if possible. [not possible for templates?]
+
++ Rename bcvector to vector, since I'm now using them fairly
+  generically?  Namespaces will ensure no ambiguity arises.
 
 + Integrate as part of jlt lib:
 

@@ -1,8 +1,8 @@
-#ifndef JLT_BCVECTOR_HPP
-#define JLT_BCVECTOR_HPP
+#ifndef JLT_VECTOR_HPP
+#define JLT_VECTOR_HPP
 
 //
-// bcvector.hpp
+// vector.hpp
 //
 
 // Bounds-checked version of std::vector.
@@ -26,7 +26,7 @@
 namespace jlt {
 
 template<class T>
-class bcvector : public std::vector<T>
+class vector : public std::vector<T>
 {
 public:
   typedef typename std::vector<T>::size_type		size_type;
@@ -40,14 +40,14 @@ public:
   //
 
   // Empty vector of size 0.
-  bcvector() : std::vector<T>() {}
+  vector() : std::vector<T>() {}
 
   // mathvector of size _n filled with _x.
-  explicit bcvector(size_type _n, const_reference _x = T())
+  explicit vector(size_type _n, const_reference _x = T())
     : std::vector<T>(_n,_x) {}
 
   // Copy constructor.
-  bcvector(const std::vector<T>& _v) : std::vector<T>(_v) {}
+  vector(const std::vector<T>& _v) : std::vector<T>(_v) {}
 
   //
   // Element access.
@@ -75,7 +75,7 @@ public:
   reference at(size_type i) 
     {
       if (i >= size())
-	_THROW(std::out_of_range("Out of range exception in bcvector.\n"));
+	_THROW(std::out_of_range("Out of range exception in vector.\n"));
 
       return std::vector<T>::operator[](i);
     }
@@ -83,7 +83,7 @@ public:
   const_reference at(size_type i) const
     {
       if (i >= size())
-	_THROW(std::out_of_range("Out of range exception in bcvector.\n"));
+	_THROW(std::out_of_range("Out of range exception in vector.\n"));
 
       return std::vector<T>::operator[](i);
     }
@@ -111,4 +111,4 @@ public:
 
 } // namespace jlt
 
-#endif // JLT_BCVECTOR_HPP
+#endif // JLT_VECTOR_HPP

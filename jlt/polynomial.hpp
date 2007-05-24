@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 #include <jlt/math.hpp>
-#include <jlt/bcvector.hpp>
+#include <jlt/vector.hpp>
 
 
 namespace jlt {
@@ -53,7 +53,7 @@ private:
   size_t cap;
   static const size_t initial_cap = 50;
 
-  bcvector<T> coeff;
+  vector<T> coeff;
 
 public:
   typedef unsigned int	size_type;
