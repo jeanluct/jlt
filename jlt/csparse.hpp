@@ -1,6 +1,8 @@
 #ifndef JLT_CSPARSE_HPP
 #define JLT_CSPARSE_HPP
 
+#include <iostream>
+#include <memory>
 #include <jlt/mathmatrix.hpp>
 
 namespace csparse {
@@ -20,30 +22,87 @@ extern "C" {
 
 namespace jlt {
 
+// auto_ptr wrappers for csparse pointers that will take care of
+// freeing the memory when we're done with a matrix.
+
+// Derived wrapper for csparse::cs pointers.
+class cs_auto_ptr : public std::auto_ptr<csparse::cs>
+{
+public:
+  cs_auto_ptr(csparse::cs* p_ = 0) : std::auto_ptr<csparse::cs>(p_) {}
+
+  // Conversion to normal dumb pointer.
+  operator csparse::cs*() { return get(); }
+
+  // Returns true if pointer is null.
+  bool operator!() const { return (get() == 0); }
+
+  ~cs_auto_ptr()
+  {
+    // Free the internals of the csparse pointer.
+    //
+    // From csparse::cs_spfree defined in cs_util.c
+    //
+    // We do not call this function directly, since we have to let the
+    // base auto_ptr<> free the actual pointer.
+    if (!get())
+      {
+	csparse::cs_free(get()->p);
+	csparse::cs_free(get()->i);
+	csparse::cs_free(get()->x);
+      }
+  }
+};
+
+// Derived wrapper for csparse::csd pointers.
+class csd_auto_ptr : public std::auto_ptr<csparse::csd>
+{
+public:
+  csd_auto_ptr(csparse::csd* p_ = 0) : std::auto_ptr<csparse::csd>(p_) {}
+
+  // Conversion to normal dumb pointer.
+  operator csparse::csd*() { return get(); }
+
+  // Returns true if pointer is null.
+  bool operator!() const { return (get() == 0); }
+
+  ~csd_auto_ptr()
+  {
+    // Free the internals of the csparse pointer.
+    //
+    // From csparse::cs_dfree defined in cs_util.c
+    //
+    // We do not call this function directly, since we have to let the
+    // base auto_ptr<> free the actual pointer.
+    if (!get())
+      {
+	csparse::cs_free(get()->p);
+	csparse::cs_free(get()->q);
+	csparse::cs_free(get()->r);
+	csparse::cs_free(get()->s);
+      }
+  }
+};
+
+// Note that we return a pointer, not an auto_ptr, since the return
+// value is a temporary.
 template<class T>
 csparse::cs* mathmatrix_to_cs_sparse_matrix(const mathmatrix<T>& M)
 {
   int m = M.rows(), n = M.columns();
-  csparse::cs *csM, *csM_comp ;
-
-  csM = csparse::cs_spalloc(0,0,1,1,1) ;
+  cs_auto_ptr csM(csparse::cs_spalloc(0,0,1,1,1));
 
   for (int i = 0; i < m; ++i)
     for (int j = 0; j < n; ++j)
       if (M(i,j) != 0)
-	if (!csparse::cs_entry(csM,i,j,M(i,j))) return csparse::cs_spfree(csM);
+	csparse::cs_entry(csM,i,j,M(i,j));
 
   // Column-compress the sparse matrix.
-  csM_comp = csparse::cs_compress(csM);
-
-  // Free the triplet sparse matrix.
-  csparse::cs_spfree(csM);
-
-  return csM_comp;
+  return csparse::cs_compress(csM);
 }
 
 template<class T>
-mathmatrix<T> cs_sparse_matrix_to_mathmatrix(const csparse::cs* csM)
+mathmatrix<T> cs_sparse_matrix_to_mathmatrix(const cs_auto_ptr& csM)
 {
   if (!csM) return mathmatrix<T>();
 

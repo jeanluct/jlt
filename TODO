@@ -1,8 +1,12 @@
+- Use the trick in "effective C++" to automatically generate all the
+  +-style ops from their += counterpart.  Less code maintenance.  Put
+  the header file into a bits subfolder?
+
 - Some problems with taking magnitudes: if I have a mathvector of
-complex numbers, then the magnitude should return a real, not complex,
-number.  Also, it shouldn't be defined as x*x, as this is wrong for
-complex numbers.  Need to call a magnitude function for the type.
-Maybe also need a magnitude type.  Define with traits?
+  complex numbers, then the magnitude should return a real, not
+  complex, number.  Also, it shouldn't be defined as x*x, as this is
+  wrong for complex numbers.  Need to call a magnitude function for
+  the type.  Maybe also need a magnitude type.  Define with traits?
 
 - Rename bcvector to vector, since I'm now using them fairly
   generically?  Namespaces will ensure no ambiguity arises.
