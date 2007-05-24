@@ -34,7 +34,7 @@ int singular_value_decomp(matrix<T>& A,
 					// returned in the matrices U
 					// and Vt.
 
-  int M = A.dim1(), N = A.dim2();	// Dimensions of matrix.
+  int M = A.rows(), N = A.columns();	// Dimensions of matrix.
   int info;
 
   std::vector<int> iwork(8*std::min(M,N));
@@ -63,7 +63,7 @@ int singular_value_decomp(matrix<T>& A, std::vector<T>& w)
   char jobz = 'N';			// 'N' - only singular values
 					// are computed.
 
-  int M = A.dim1(), N = A.dim2();	// Dimensions of matrix.
+  int M = A.rows(), N = A.columns();	// Dimensions of matrix.
   int info;
 
   std::vector<int> iwork(8*std::min(M,N));

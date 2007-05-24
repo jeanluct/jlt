@@ -25,11 +25,11 @@ int symmetric_matrix_eigensystem(matrix<T>& A,
 {
   char jobz = 'V';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
   char uplo = 'L';	// 'L'ower or 'U'pper triangle stored (opposite)
-  int N = A.dim1();	// Dimensions of matrix.
+  int N = A.rows();	// Dimensions of matrix.
 
 # ifdef __PGI
 # else
-    assert(N == (int)A.dim2() && N == (int)eigvals.size());
+    assert(N == (int)A.columns() && N == (int)eigvals.size());
 # endif
 
   int info;
@@ -73,11 +73,11 @@ int matrix_eigenvalues(matrix<T>& A,
 {
   char jobVL = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
   char jobVR = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
-  int N = A.dim1();	// Dimensions of matrix.
+  int N = A.rows();	// Dimensions of matrix.
 
 # ifdef __PGI
 # else
-    assert(N == (int)A.dim2() && N == (int)eigvals.size());
+    assert(N == (int)A.columns() && N == (int)eigvals.size());
 # endif
 
   int info, ldVL = 1, ldVR = 1;
@@ -115,13 +115,13 @@ int matrix_eigenvalues(matrix<std::complex<T> >& A,
 {
   char jobVL = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
   char jobVR = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
-  int N = A.dim1();	// Dimensions of matrix.
-  int rworksize = 2 * A.dim1();
+  int N = A.rows();	// Dimensions of matrix.
+  int rworksize = 2 * A.rows();
   std::vector<T> rwork(rworksize);
 
 # ifdef __PGI
 # else
-    assert(N == (int)A.dim2() && N == (int)eigvals.size());
+    assert(N == (int)A.columns() && N == (int)eigvals.size());
 # endif
 
   int info, ldVL = 1, ldVR = 1;
@@ -152,7 +152,7 @@ template<class T>
 T spectral_radius(matrix<T>& A)
 {
   typedef typename std::vector<std::complex<T> >::const_iterator it;
-  std::vector<std::complex<T> > ev(A.dim1());
+  std::vector<std::complex<T> > ev(A.rows());
   matrix_eigenvalues(A,ev);
 
   // Find the eigenvalue with the largest magnitude.
@@ -170,7 +170,7 @@ template<class T>
 T spectral_radius(matrix<std::complex<T> >& A)
 {
   typedef typename std::vector<std::complex<T> >::const_iterator it;
-  std::vector<std::complex<T> > ev(A.dim1());
+  std::vector<std::complex<T> > ev(A.rows());
   matrix_eigenvalues(A,ev);
 
   // Find the eigenvalue with the largest magnitude.

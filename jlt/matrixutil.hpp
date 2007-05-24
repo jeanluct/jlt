@@ -243,8 +243,8 @@ template<class T, class T_Matrix, class T_Vector>
 bool QRdecomp(T_Matrix& A, T_Matrix& Q, T_Matrix& R)
 {
   bool sing;
-  int m = A.dim1();
-  MATRIX_ASSERT(m == A.dim2());		// It's hip to be square.
+  int m = A.rows();
+  MATRIX_ASSERT(m == A.columns());	// It's hip to be square.
 
   T_Vector c(m), d(m);
 

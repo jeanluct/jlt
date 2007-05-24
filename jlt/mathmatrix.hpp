@@ -69,8 +69,8 @@ public:
 
   using matrix<T>::begin;
   using matrix<T>::end;
-  using matrix<T>::dim1;
-  using matrix<T>::dim2;
+  using matrix<T>::rows;
+  using matrix<T>::columns;
 
   //
   // Constructors
@@ -107,7 +107,7 @@ public:
     {
       MATRIX_ASSERT(isSquare());
 
-      for (size_type i = 0; i < dim1(); ++i)
+      for (size_type i = 0; i < rows(); ++i)
 	{
 	  (*this)(i,i) += a;
 	}
@@ -131,7 +131,7 @@ public:
     {
       MATRIX_ASSERT(isSquare());
 
-      for (size_type i = 0; i < dim1(); ++i)
+      for (size_type i = 0; i < rows(); ++i)
 	{
 	  (*this)(i,i) -= a;
 	}
@@ -152,7 +152,7 @@ public:
   // Multiply matrix by a*Identity.
   mathmatrix<T,S>& operator*=(const_scalar_reference a)
     {
-      for (size_type i = 0; i < dim1(); ++i)
+      for (size_type i = 0; i < rows(); ++i)
 	{
 	  (*this)(i,i) *= a;
 	}
@@ -163,7 +163,7 @@ public:
   // Divide matrix by a*Identity.
   mathmatrix<T,S>& operator/=(const_scalar_reference a)
     {
-      for (size_type i = 0; i < dim1(); ++i)
+      for (size_type i = 0; i < rows(); ++i)
 	{
 	  (*this)(i,i) /= a;
 	}
@@ -208,11 +208,11 @@ public:
   bool isReducible() const
     {
 #if 0
-        size_type ma = A.dim1();
-  size_type na = A.dim2();
-  size_type nb = B.dim2();
+        size_type ma = A.rows();
+  size_type na = A.columns();
+  size_type nb = B.columns();
 
-  MATRIX_ASSERT(na == B.dim1());
+  MATRIX_ASSERT(na == B.rows());
 
   mathmatrix<T,S> res(ma,nb);
 
@@ -226,7 +226,7 @@ public:
 #endif
 
       MATRIX_ASSERT(isSquare());
-      size_type n = dim1();
+      size_type n = rows();
 
       if (n == 0) return false;
 
@@ -336,7 +336,7 @@ public:
   void invert()
     {
       MATRIX_ASSERT(isSquare());
-      unsigned int n = dim1();
+      unsigned int n = rows();
 
       int perm;
       int* row_index = new int[n];
@@ -369,7 +369,7 @@ public:
   void invert(mathmatrix<T,S>& Ainv)
     {
       MATRIX_ASSERT(m == Ainv.m && m == Ainv.n && isSquare());
-      unsigned int n = dim1();
+      unsigned int n = rows();
 
       int perm;
       int* row_index = new int[n];
@@ -394,7 +394,7 @@ public:
   mathmatrix<T,S> inverse() const
     {
       MATRIX_ASSERT(isSquare());
-      unsigned int n = dim1();
+      unsigned int n = rows();
 
       int perm;
       int* row_index = new int[n];
@@ -425,7 +425,7 @@ public:
   mathmatrix<T,S> inverse(mathmatrix<T,S>& Ainv) const
     {
       MATRIX_ASSERT(m == Ainv.m && m == Ainv.n && isSquare());
-      unsigned int n = dim1();
+      unsigned int n = rows();
 
       int perm;
       int* row_index = new int[n];
@@ -460,14 +460,14 @@ public:
 
       T det = 1;
       int perm;
-      int* row_index = new int[dim2()];
+      int* row_index = new int[columns()];
 
       // The price to pay to leave the object intact is creating a temporary.
       mathmatrix<T,S> A_LU(*this);
 
       LUdecomp<T,mathmatrix<T,S> >(A_LU, row_index, &perm);
 
-      for (size_type i = 0; i < dim2(); ++i) det *= A_LU(i,i);
+      for (size_type i = 0; i < columns(); ++i) det *= A_LU(i,i);
 
       return (perm*det);
     }
@@ -478,7 +478,7 @@ public:
 
       T tr = 0;
 
-      for (size_type i = 0; i < dim1(); ++i)
+      for (size_type i = 0; i < rows(); ++i)
 	{
 	  tr += this->operator()(i,i);
 	}
@@ -504,9 +504,9 @@ public:
     {
       MATRIX_ASSERT(isSquare());
 
-      for (size_type i = 0; i < dim1(); ++i)
+      for (size_type i = 0; i < rows(); ++i)
 	{
-	  for (size_type j = 0; j < dim2(); ++j)
+	  for (size_type j = 0; j < columns(); ++j)
 	    {
 	      this->operator()(i,j) = (i == j ? a : 0);
 	    }
@@ -529,7 +529,7 @@ inline mathmatrix<T,S> operator+(const mathmatrix<T,S>& A)
 template<class T, class S>
 inline mathmatrix<T,S> operator-(const mathmatrix<T,S>& A)
 {
-  mathmatrix<T,S> res(A.dim1(),A.dim2());
+  mathmatrix<T,S> res(A.rows(),A.columns());
 
   typename mathmatrix<T,S>::iterator k = res.begin();
   for (typename mathmatrix<T,S>::const_iterator i = A.begin();
@@ -545,7 +545,7 @@ template<class T, class S>
 inline mathmatrix<T,S> operator+(const mathmatrix<T,S>& A,
 				 const mathmatrix<T,S>& B)
 {
-  mathmatrix<T,S> res(A.dim1(),A.dim2());
+  mathmatrix<T,S> res(A.rows(),A.columns());
 
   typename mathmatrix<T,S>::iterator k = res.begin();
   for (typename mathmatrix<T,S>::const_iterator i = A.begin(), j = B.begin();
@@ -561,7 +561,7 @@ template<class T, class S>
 inline mathmatrix<T,S> operator-(const mathmatrix<T,S>& A,
 				 const mathmatrix<T,S>& B)
 {
-  mathmatrix<T,S> res(A.dim1(),A.dim2());
+  mathmatrix<T,S> res(A.rows(),A.columns());
 
   typename mathmatrix<T,S>::iterator k = res.begin();
   for (typename mathmatrix<T,S>::const_iterator i = A.begin(), j = B.begin();
@@ -576,7 +576,7 @@ inline mathmatrix<T,S> operator-(const mathmatrix<T,S>& A,
 template<class T, class S>
 inline mathmatrix<T,S> operator*(const S& a, const mathmatrix<T,S>& A)
 {
-  mathmatrix<T,S> res(A.dim1(),A.dim2());
+  mathmatrix<T,S> res(A.rows(),A.columns());
 
   typename mathmatrix<T,S>::iterator k = res.begin();
   for (typename mathmatrix<T,S>::const_iterator i = A.begin();
@@ -592,8 +592,8 @@ template<class T, class S_T, class V, class S_V>
 inline mathvector<V,S_V> operator*(const mathmatrix<T,S_T>& A,
 				   const mathvector<V,S_V>& v)
 {
-  typename mathmatrix<T,S_T>::size_type m = A.dim1();
-  typename mathmatrix<T,S_T>::size_type n = A.dim2();
+  typename mathmatrix<T,S_T>::size_type m = A.rows();
+  typename mathmatrix<T,S_T>::size_type n = A.columns();
 
   MATRIX_ASSERT(n == v.size());
 
@@ -613,7 +613,7 @@ inline mathvector<V,S_V> operator*(const mathmatrix<T,S_T>& A,
 template<class T, class S>
 inline mathmatrix<T,S> operator*(const mathmatrix<T,S>& A, const S& a)
 {
-  mathmatrix<T,S> res(A.dim1(),A.dim2());
+  mathmatrix<T,S> res(A.rows(),A.columns());
 
   typename mathmatrix<T,S>::iterator k = res.begin();
   for (typename mathmatrix<T,S>::const_iterator i = A.begin();
@@ -628,7 +628,7 @@ inline mathmatrix<T,S> operator*(const mathmatrix<T,S>& A, const S& a)
 template<class T, class S>
 inline mathmatrix<T,S> operator/(const mathmatrix<T,S>& A, const S& a)
 {
-  mathmatrix<T,S> res(A.dim1(),A.dim2());
+  mathmatrix<T,S> res(A.rows(),A.columns());
 
   typename mathmatrix<T,S>::iterator k = res.begin();
   for (typename mathmatrix<T,S>::const_iterator i = A.begin();
@@ -646,11 +646,11 @@ inline mathmatrix<T,S> operator*(const mathmatrix<T,S>& A,
 {
   typedef typename mathmatrix<T,S>::size_type size_type;
 
-  size_type ma = A.dim1();
-  size_type na = A.dim2();
-  size_type nb = B.dim2();
+  size_type ma = A.rows();
+  size_type na = A.columns();
+  size_type nb = B.columns();
 
-  MATRIX_ASSERT(na == B.dim1());
+  MATRIX_ASSERT(na == B.rows());
 
   mathmatrix<T,S> res(ma,nb);
 

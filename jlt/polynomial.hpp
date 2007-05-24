@@ -77,7 +77,8 @@ public:
   polynomial(const_coeff_type _coeff = 0, const_power_type _pow = 0) :
     pmin(_pow), pmax(_pow), cap(initial_cap)
   {
-    coeff.resize(cap);
+    coeff.resize(cap); /* Is this the best thing to do? */
+			      /* I think it would be preferable to let the vector manage this. */
     coeff[0] = _coeff;
   }
 
@@ -217,7 +218,7 @@ public:
       // Grow the vector.
       cap = 2*(size_t)(std::max(pmax,n) - std::min(pmin,n) + 1);
       // Reserve more memory space.
-      coeff.reserve(cap);
+      coeff.reserve(cap); /* This is redundant in light of the next call, non? */
       // Also tell the vector it can grow to its full size.
       coeff.resize(cap);
       // Try to set the coefficient again.

@@ -23,7 +23,7 @@ namespace jlt {
 template<class T>
 csparse::cs* mathmatrix_to_cs_sparse_matrix(const mathmatrix<T>& M)
 {
-  int m = M.dim1(), n = M.dim2();
+  int m = M.rows(), n = M.columns();
   csparse::cs *csM, *csM_comp ;
 
   csM = csparse::cs_spalloc(0,0,1,1,1) ;

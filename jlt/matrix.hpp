@@ -201,8 +201,8 @@ public:
   size_type dim() const { return n; }
   // size_type dim() const { MATRIX_ASSERT(m=n); return n; }
 
-  size_type dim1() const { return m; }	// Number of rows.
-  size_type dim2() const { return n; }	// Number of columns.
+  size_type rows() const { return m; }		// Number of rows.
+  size_type columns() const { return n; }	// Number of columns.
 
   //
   // Queries
@@ -225,8 +225,8 @@ public:
     {
       if (&M == this) return *this;
 
-      m = M.dim1();
-      n = M.dim2();
+      m = M.rows();
+      n = M.columns();
       size_type mn = size();
 
       // Free the matrix if not empty.
@@ -247,12 +247,12 @@ public:
   //
   const matrix<T>& transpose()
     {
-      if (dim1() == dim2())
+      if (rows() == columns())
 	{
 	  // Square: do transpose "in place"
-	  for (size_type i = 0; i < dim1()-1; ++i)
+	  for (size_type i = 0; i < rows()-1; ++i)
 	    {
-	      for (size_type j = i+1; j < dim2(); ++j)
+	      for (size_type j = i+1; j < columns(); ++j)
 		{
 		  double temp = (*this)(j,i);
 		  (*this)(j,i) = (*this)(i,j);
