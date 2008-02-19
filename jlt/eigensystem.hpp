@@ -42,15 +42,15 @@ int symmetric_matrix_eigensystem(matrix<T>& A,
   int worksize = -1;
   T tmpwork[1];
 
-  lapack::syev(&jobz, &uplo, &N, &(*U.begin()), &N,
-	       &(*eigs.begin()), tmpwork, &worksize, &info);
+  lapack::syev(&jobz, &uplo, &N, U.data(), &N, eigs.data(),
+	       tmpwork, &worksize, &info);
 
   // Now allocate the memory for the workspace.
   worksize = (int)tmpwork[0];
   std::vector<T> work(worksize);
 
-  lapack::syev(&jobz, &uplo, &N, &(*U.begin()), &N,
-	       &(*eigs.begin()), &(*work.begin()), &worksize, &info);
+  lapack::syev(&jobz, &uplo, &N, U.data(), &N, eigs.data(),
+	       work.data(), &worksize, &info);
 
   // Output eigenvalues in *descending* order.
   for (int i = 0; i < N; ++i) eigvals[i] = eigs[N-i-1];
@@ -88,17 +88,17 @@ int matrix_eigenvalues(matrix<T>& A,
   int worksize = -1;
   T tmpwork[1];
 
-  lapack::geev(&jobVL, &jobVR, &N, &(*A.begin()), &N,
-	       &(*evr.begin()), &(*evi.begin()), 0, &ldVL, 0, &ldVR,
+  lapack::geev(&jobVL, &jobVR, &N, A.data(), &N,
+	       evr.data(), evi.data(), 0, &ldVL, 0, &ldVR,
 	       tmpwork, &worksize, &info);
 
   // Now allocate the memory for the workspace.
   worksize = (int)tmpwork[0];
   std::vector<T> work(worksize);
 
-  lapack::geev(&jobVL, &jobVR, &N, &(*A.begin()), &N,
-	       &(*evr.begin()), &(*evi.begin()), 0, &ldVL, 0, &ldVR,
-	       &(*work.begin()), &worksize, &info);
+  lapack::geev(&jobVL, &jobVR, &N, A.data(), &N,
+	       evr.data(), evi.data(), 0, &ldVL, 0, &ldVR,
+	       work.data(), &worksize, &info);
 
   for (int n = 0; n < N; ++n)
     {
@@ -130,17 +130,17 @@ int matrix_eigenvalues(matrix<std::complex<T> >& A,
   int cworksize = -1;
   std::complex<T> ctmpwork[1];
 
-  lapack::geev(&jobVL, &jobVR, &N, &(*A.begin()), &N,
-	       &(*eigvals.begin()), 0, &ldVL, 0, &ldVR,
-	       ctmpwork, &cworksize, &(*rwork.begin()), &info);
+  lapack::geev(&jobVL, &jobVR, &N, A.data(), &N,
+	       eigvals.data(), 0, &ldVL, 0, &ldVR,
+	       ctmpwork, &cworksize, rwork.data(), &info);
 
   // Now allocate the memory for the workspace.
   cworksize = (int)ctmpwork[0].real();
   std::vector<std::complex<T> > cwork(cworksize);
 
-  lapack::geev(&jobVL, &jobVR, &N, &(*A.begin()), &N,
-	       &(*eigvals.begin()), 0, &ldVL, 0, &ldVR,
-	       &(*cwork.begin()), &cworksize, &(*rwork.begin()), &info);
+  lapack::geev(&jobVL, &jobVR, &N, A.data(), &N,
+	       eigvals.data(), 0, &ldVL, 0, &ldVR,
+	       cwork.data(), &cworksize, rwork.data(), &info);
 
   return info;
 }
