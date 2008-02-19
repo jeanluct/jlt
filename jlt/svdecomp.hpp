@@ -29,6 +29,9 @@ int singular_value_decomp(matrix<T>& A,
 			  matrix<T>& Vt,
 			  std::vector<T>& w)
 {
+  using std::min;
+  using std::max;
+
   char jobz = 'A';			// 'A' - all M columns of U
 					// and all N rows of V^T are
 					// returned in the matrices U
@@ -37,21 +40,16 @@ int singular_value_decomp(matrix<T>& A,
   int M = A.rows(), N = A.columns();	// Dimensions of matrix.
   int info;
 
-  std::vector<int> iwork(8*std::min(M,N));
+  std::vector<int> iwork(8*min(M,N));
 
-  // Call the routine with worksize = -1, to get the ideal size of workspace.
-  int worksize = -1;
-  T tmpwork[1];
-  lapack::gesdd(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		&(*Vt.begin()), &N, &(*U.begin()), &M,
-		tmpwork, &worksize, &(*iwork.begin()), &info);
-
-  worksize = (int)tmpwork[0];
+  // For some reason, calling the routine with worksize=-1 first to
+  // get the ideal worksize no longer works.  Removed as of r22.
+  int worksize = 3*min(M,N)*min(M,N)
+                 + max(max(M,N),4*min(M,N)*min(M,N) + 4*min(M,N));
   std::vector<T> work(worksize);
 
-  lapack::gesdd(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		&(*Vt.begin()), &N, &(*U.begin()), &M,
-		&(*work.begin()), &worksize, &(*iwork.begin()), &info);
+  lapack::gesdd(&jobz, &N, &M, A.data(), &N, w.data(), Vt.data(), &N,
+		U.data(), &M, work.data(), &worksize, iwork.data(), &info);
 
   return info;
 }
@@ -60,20 +58,22 @@ int singular_value_decomp(matrix<T>& A,
 template<class T>
 int singular_value_decomp(matrix<T>& A, std::vector<T>& w)
 {
+  using std::min;
+  using std::max;
+
   char jobz = 'N';			// 'N' - only singular values
 					// are computed.
 
   int M = A.rows(), N = A.columns();	// Dimensions of matrix.
   int info;
 
-  std::vector<int> iwork(8*std::min(M,N));
+  std::vector<int> iwork(8*min(M,N));
 
-  int worksize = 3*std::min(M,N) +  std::max(std::max(M,N),6*std::min(M,N));
+  int worksize = 3*min(M,N) +  max(max(M,N),6*min(M,N));
   std::vector<T> work(worksize);
 
-  lapack::gesdd(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		0, &N, 0, &M,
-		&(*work.begin()), &worksize, &(*iwork.begin()), &info);
+  lapack::gesdd(&jobz, &N, &M, A.data(), &N, w.data(), 0, &N, 0, &M,
+		work.data(), &worksize, iwork.data(), &info);
 
   return info;
 }

@@ -184,6 +184,18 @@ public:
       return (start + n*i);
     }
 
+  // data() returns a pointer to the beginning of the data.
+  pointer data()
+    {
+      return start;
+    }
+
+  // data() const returns a const_pointer to the beginning of the data.
+  const_pointer data() const
+    {
+      return start;
+    }
+
   std::vector<T> row(size_type i) const
     {
 #ifdef MATRIX_CHECK_BOUNDS
