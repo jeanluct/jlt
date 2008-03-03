@@ -1,0 +1,159 @@
+head	1.4;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+
+
+1.4
+date	2008.03.02.19.55.25;	author jeanluc;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.08.17.21.47.36;	author jeanluc;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.08.17.21.42.42;	author jeanluc;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2005.08.15.14.27.44;	author jeanluc;	state Exp;
+branches;
+next	;
+
+
+desc
+@Enforce reality symmetry of an FFT array.
+@
+
+
+1.4
+log
+@Maintenance check in.
+@
+text
+@function Fr = realify(F)
+%REALIFY   Enforce reality symmetry of an FFT array.
+%   FR = REALIFY(F) takes the complex array F and applies the
+%   symmetries needed to enfore the reality condition on F.
+
+% $Id: realify.m,v 1.3 2005/08/17 21:47:36 jeanluc Exp $
+
+% Inspired by looking at the code for fftshift.m.
+
+numDims = ndims(F);
+
+ic = cell(1,numDims);
+
+for k = 1:numDims
+  N = size(F,k);
+  % ic{k} is the index array corresponding to the conjugate
+  % elements in that dimension.
+  ic{k} = [1 N:-1:2];
+end
+
+% Just add to the conjugate and divide by 2!
+Fr = (F + conj(F(ic{:})))/2;
+@
+
+
+1.3
+log
+@Super-simple!  Works in any dimension now, for even or odd N.
+@
+text
+@a4 1
+%
+d6 1
+a6 1
+% $Id: realify.m,v 1.2 2005/08/17 21:42:42 jeanluc Exp $
+@
+
+
+1.2
+log
+@Progress: much simpler algorithm, based on adding the array to its
+real-symmetric conjugate and dividing by two.
+@
+text
+@a5 2
+%   BUGS: Does not yet work for dimensions greater than 2, or for
+%   arrays of unequal dimensions.
+d7 1
+a7 1
+% $Id: realify.m,v 1.1 2005/08/15 14:27:44 jeanluc Exp $
+d9 1
+a9 15
+sz = size(F);
+if sz(1) == 1
+  N = sz(2);
+  ndim = 1;
+elseif sz(2) == 1
+  N = sz(1);
+  ndim = 1;
+else
+  N = sz(1);
+  ndim = length(sz);
+end
+
+if ndim > 1 & sum(abs(sz-N*ones(size(sz))))
+  error('Array should have equal dimensions')
+end
+d11 1
+a11 2
+if ndim == 1
+  Fr = (F + conj(F([1 N:-1:2])))/2;
+d13 1
+a13 2
+elseif ndim == 2
+  ic = [1 N:-1:2];
+d15 5
+a19 3
+  Fr = (F + conj(F(ic,ic)))/2;
+else
+  error('Not yet implemented in dimension %d',ndim)
+d21 3
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 2
+a7 2
+%   BUGS: Does not yet work for dimensions greater than 2, or when
+%   N is even.
+d9 1
+a9 1
+% $Id$
+d23 1
+a23 1
+if ~sum(abs(sz-N*ones(size(sz))))
+a26 2
+N2 = (N-1)/2;
+
+d28 1
+a28 6
+  A = F(2:N2+1);
+  if sz(1) == 1
+    Fr = [real(F(1)) A conj(A(end:-1:1))];
+  else
+    Fr = [real(F(1));A;conj(A(end:-1:1))];
+  end
+d31 3
+a33 8
+  a = F(1,2:N2+1);
+  b = F(2:N2+1,1);
+  A = F(2:N2+1,2:N2+1);
+  B = F(N2 + [2:N2+1],2:N2+1);
+
+  Fr = [real(F(1,1)) a conj(a(end:-1:1));
+	b A conj(B(end:-1:1,end:-1:1));
+	conj(b(end:-1:1)) B conj(A(end:-1:1,end:-1:1))];
+@

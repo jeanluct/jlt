@@ -1,0 +1,79 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+
+
+1.2
+date	2007.05.19.09.25.19;	author jeanluc;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2005.08.15.13.47.08;	author jeanluc;	state Exp;
+branches;
+next	;
+
+
+desc
+@Unpack a vector into an array.
+@
+
+
+1.2
+log
+@Changed name to unpk to avoid matlab name clash.
+@
+text
+@function A = unpk(V,sz)
+%UNPK   Unpack a vector into an array.
+%   A = UNPK(V) returns a square matrix of size N*N corresponding
+%   to the vector V of length N^2.
+%
+%   A = UNPK(V,SIZE), where SIZE is a vector of integers, unpacks
+%   the vector V of length prod(SIZE) into an array with dimensions
+%   SIZE.
+%
+%   See also PK.
+
+% $Id: unpack.m,v 1.1 2005/08/15 13:47:08 jeanluc Exp $
+
+if nargin < 2
+  % Assume square matrix.
+  M = sqrt(length(V));
+  if (M ~= floor(M))
+    error('Specify size with UNPK(V,SIZE), or use V of length N^2.')
+  end
+  sz = [M,M];
+end
+
+A = zeros(sz);
+
+A(:) = V(:);
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 3
+a3 3
+function A = unpack(V,sz)
+%UNPACK   Unpack a vector into an array.
+%   A = UNPACK(V) returns a square matrix of size N*N corresponding
+d6 1
+a6 1
+%   A = UNPACK(V,SIZE), where SIZE is a vector of integers, unpacks
+d10 1
+a10 1
+%   See also PACK.
+d12 1
+a12 1
+% $Id$
+d18 1
+a18 1
+    error('Specify size with UNPACK(V,SIZE), or use V of length N^2.')
+@

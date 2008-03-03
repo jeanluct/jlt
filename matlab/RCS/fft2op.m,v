@@ -1,0 +1,81 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+
+
+1.2
+date	2007.05.19.09.26.59;	author jeanluc;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2005.08.19.08.44.43;	author jeanluc;	state Exp;
+branches;
+next	;
+
+
+desc
+@Fourier transform an operator in 2D.
+@
+
+
+1.2
+log
+@Use pk/unpk rather than pack/unpack.
+@
+text
+@function Lk = fft2op(L)
+%FFT2OP   Fourier transform an operator in 2D.
+%   LK = FFT2OP(L) computes LK = F2*L*inv(F2), where F2 is the matrix
+%   of the 2D FFT.  L must be a matrix of size M^2*N^2.  L acts on
+%   column vectors of length N^2 obtained from PK(A), where A is an
+%   N*N matrix.
+%
+%   See also IFFT2OP, PK, UNPK, FFTOP, IFFTOP.
+
+% $Id: fft2op.m,v 1.1 2005/08/19 08:44:43 jeanluc Exp $
+
+% Note that F2 = F2.' , inv(F2) = inv(F2).', so the transform can be
+% taken to the left or right.
+
+[M2,N2] = size(L);
+
+FL = zeros(M2,N2);
+Lk = zeros(M2,N2);
+
+% FFT the columns
+for jj = 1:N2
+  ft = fft2(full(unpk(L(:,jj))));
+  FL(:,jj) = ft(:);
+end
+% Then IFFT the rows
+for ii = 1:M2
+  ft = ifft2(full(unpk(FL(ii,:))));
+  Lk(ii,:) = ft(:);
+end
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+%   column vectors of length N^2 obtained from PACK(A), where A is an
+d8 1
+a8 1
+%   See also IFFT2OP, PACK, UNPACK, FFTOP, IFFTOP.
+d10 1
+a10 1
+% $Id$
+d22 1
+a22 1
+  ft = fft2(full(unpack(L(:,jj))));
+d27 1
+a27 1
+  ft = ifft2(full(unpack(FL(ii,:))));
+@

@@ -1,0 +1,349 @@
+head	1.9;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+
+
+1.9
+date	2008.03.02.20.12.27;	author jeanluc;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2001.12.12.15.54.42;	author jeanluc;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2001.08.05.23.34.08;	author jeanluc;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2001.08.05.20.21.06;	author jeanluc;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2001.08.05.20.05.55;	author jeanluc;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2001.08.05.18.26.35;	author jeanluc;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2001.08.02.15.00.03;	author jeanluc;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.08.01.15.20.35;	author jeanluc;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.07.23.18.09.30;	author jeanluc;	state Exp;
+branches;
+next	;
+
+
+desc
+@Construct PDF of a list of data.
+@
+
+
+1.9
+log
+@A good estimate of the quality of the binning is how small the
+difference between the sample mean and the distribution mean is.
+@
+text
+@function [yb,Py] = pdfy(x,y,dydx,ny,intmethod,tol)
+%PDFY   Construct PDF of a list of data.
+%   [YB,PY] = PDFY(X,Y,DYDX,NY,INTMET,TOL) returns the
+%   unnormalized probability distribution function (PDF)
+%   of Y given the vectors (X,Y,DYDX), where DYDX is the
+%   derivative of Y at X.  NY bins are used (default 50).
+%   TOL is the tolerance used by the root-finding method
+%   (default 1e-10), and INTMET is the interpolation method
+%   to be used by interp1 (default 'cubic').
+%
+%   See also INTERPY, INTERP1, PDFFIT.
+
+%   $Id: pdfy.m,v 1.8 2001/12/12 15:54:42 jeanluc Exp $
+
+if nargin < 4
+    % Number of y points to the PDF.
+    ny = 50;
+end
+
+if nargin < 5
+    % Interpolation method.
+    intmethod = 'linear';
+end
+
+if nargin < 6
+    % Tolerance for root finding.
+    tol = 1.0e-10;
+end
+
+% Interpolation function for y.
+yfunc = 'interpy';
+
+%
+% Make sure x is ordered properly
+%
+
+% Find the "direction" of the data.
+i = 2; tau_sign = 0;
+while tau_sign == 0,
+    tau_sign = sign(x(i) - x(1));
+    i = i + 1;
+end
+
+n = length(x);
+z = zeros(1,n);		% Pre-allocate array as row-vector.
+% Always keep first point.
+z(1) = 1;
+z(2:n) = tau_sign*(x(2:n) - x(1:(n-1)));
+
+% Drop repeated or out-of-order points
+x = x(find(z>0));
+y = y(find(z>0));
+dydx = dydx(find(z>0));
+n = length(x);
+
+
+eps = 0;			% How much to "skim" off the top and bottom.
+ymin = min(y) + eps;
+yrange = max(y) - ymin - 2*eps;
+
+% The y "bins".
+yb = ymin + yrange * [0:ny-1] / (ny-1);
+
+Py = zeros(1,ny);		% Pre-allocate array as row-vector.
+for il = 1:ny
+    clear x0; nz = 0;
+    Py(il) = 0;
+    y1 = y(1) - yb(il);
+    for ix = 2:n
+	y2 = y(ix) - yb(il);
+        % Check for sign change of y1 -> y2.
+        if (y1*y2 <= 0)
+            nz = nz + 1;
+            %
+            % Find the dydx where y=yb.
+            %
+            if (y2 == 0)
+                % The point is dead on.
+                dydx0 = dydx(ix);
+            else
+                if strcmp(intmethod,'linear')
+                    % Use linear interpolation: very fast.
+                    sl = (dydx(ix) - dydx(ix-1))/(y(ix) - y(ix-1));
+                    dydx0 = sl*(yb(il) - y(ix-1)) + dydx(ix-1);
+                else
+                    [x0 y0] = fzero(yfunc,[x(ix-1) x(ix)], ...
+                                  optimset('TolX',tol),x,y,yb(il),intmethod)
+                    dydx0 = interp1(x,dydx,x0,intmethod);
+                end
+            end
+            % Add up all the 1/|dydx| where y=yb to yield probability density.
+            Py(il) = Py(il) + (1 / abs(dydx0));
+        end
+        y1 = y2;
+    end
+    % Output result.
+    [il yb(il) Py(il)]
+end
+
+% Normalize the distribution.
+Py = Py/trapz(yb,Py);
+
+% A good estimate of the quality of the binning is how small the
+% difference between the sample mean and the distribution mean is.
+'Sample mean:'
+trapz(x,y)/(x(n) - x(1))
+'Distribution mean:'
+trapz(yb,yb.*Py)
+@
+
+
+1.8
+log
+@Distribution is normalized using trapz.
+@
+text
+@d13 1
+a13 1
+%   $Id: pdfy.m,v 1.7 2001/08/05 23:34:08 jeanluc Exp $
+d102 7
+@
+
+
+1.7
+log
+@'eps' parameter added.
+@
+text
+@d13 1
+a13 1
+%   $Id: pdfy.m,v 1.6 2001/08/05 20:21:06 jeanluc Exp $
+d99 3
+@
+
+
+1.6
+log
+@Cleaned up.
+@
+text
+@d13 1
+a13 1
+%   $Id: pdfy.m,v 1.5 2001/08/05 20:05:55 jeanluc Exp $
+d57 1
+a57 1
+eps = .01;
+@
+
+
+1.5
+log
+@- Simplified a bit.
+- Made 'linear' interpolation the default.
+@
+text
+@d13 1
+a13 1
+%   $Id: pdfy.m,v 1.4 2001/08/05 18:26:35 jeanluc Exp $
+d57 3
+a59 2
+ymin = min(y);
+yrange = max(y) - ymin;
+d74 3
+a80 1
+                % Find the x0 where y=yb.
+d91 2
+a92 2
+            % Add up all the x0 where y=yb to yield probability density.
+            Py(il) = Py(il) + (1 ./ abs(dydx0));
+@
+
+
+1.4
+log
+@- Vectorized z.
+- 'linear' interpolation done in place, without using interp1.  Very
+- fast.
+- Interchanged order of TOL and INTMETHOD arguments.
+@
+text
+@d13 1
+a13 1
+%   $Id: pdfy.m,v 1.3 2001/08/02 15:00:03 jeanluc Exp $
+d22 1
+a22 1
+    intmethod = 'cubic';
+d33 1
+d35 1
+d56 1
+d58 1
+a58 2
+ymax = max(y);
+yrange = ymax - ymin;
+a74 2
+                x0 = x(ix);
+                y0 = 0;
+d83 2
+a84 3
+                    [x0 y0] = ...
+                        fzero(yfunc,[x(ix-1) x(ix)], ...
+                              optimset('TolX',tol),x,y,yb(il),intmethod)
+@
+
+
+1.3
+log
+@- Preallocation of arrays.
+- Keep all points if ordered properly.
+@
+text
+@d1 1
+a1 1
+function [yb,Py] = pdfy(x,y,dydx,ny,tol,intmethod)
+d3 1
+a3 1
+%   [YB,PY] = PDFY(X,Y,DYDX,NY,TOL,INTMET) returns the
+d9 1
+a9 1
+%   to be used  by interp1 (default 'cubic').
+d13 1
+a13 1
+%   $Id: pdfy.m,v 1.2 2001/08/01 15:20:35 jeanluc Exp $
+d21 2
+a22 2
+    % Tolerance for root finding.
+    tol = 1.0e-10;
+d26 2
+a27 2
+    % Interpolation method.
+    intmethod = 'cubic';
+d42 2
+a43 1
+z = zeros(1,length(x));		% Pre-allocate array as row-vector.
+d46 1
+a46 3
+for i = 2:length(x)
+    z(i) = tau_sign*(x(i) - x(i-1));
+end
+d52 1
+d66 1
+a66 1
+    for ix = 2:length(x)
+d75 1
+d78 10
+a87 3
+                [x0 y0] = ...
+                    fzero(yfunc,[x(ix-1) x(ix)], ...
+                          optimset('TolX',tol),x,y,yb(il),intmethod)
+d90 1
+a90 1
+            Py(il) = Py(il) + (1 ./ abs(interp1(x,dydx,x0,intmethod)));
+@
+
+
+1.2
+log
+@Bigfix: tau_sign was not set properly if first points were degenerate.
+@
+text
+@d13 1
+a13 1
+%   $Id: pdfy.m,v 1.1 2001/07/23 18:09:30 jeanluc Exp $
+d42 5
+a46 2
+for i = 2:size(x)
+    z(i-1) = tau_sign*(x(i) - x(i-1));
+d61 1
+d66 1
+a66 1
+    for ix = 2:size(x)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d13 1
+a13 1
+%   $Id$
+d34 8
+a41 1
+tau_sign = x(2) - x(1);
+@

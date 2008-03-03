@@ -1,0 +1,148 @@
+head	1.4;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+
+
+1.4
+date	2005.11.14.01.05.36;	author jeanluc;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.09.06.11.39.43;	author jeanluc;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.09.05.01.24.24;	author jeanluc;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2005.08.26.19.34.38;	author jeanluc;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute the Fourier representation of u.grad.
+@
+
+
+1.4
+log
+@Use the transpose of the velocity field: the meshgrid format uses the
+-rows- as y, and the -columns- as x, but fft2udotgrad_helper assumes
+the usual (ix,jy) indexing.
+@
+text
+@function Ak = fft2udotgrad(ux,uy,L,zcutoff)
+%FFT2UDOTGRAD   Compute the Fourier representation of u.grad.
+%   AK = FFT2UDOTGRAD(UX,UY) return the Fourier representation of
+%   the operator (UX UY).(d/dX d/dY).  The matrices UX and UY must
+%   be N by N, and AK is returned as a sparse matrix of dimension
+%   N^2 by N^2 that act on column vectors VK(:), where VK is the
+%   2D FFT of the function V(:,:) discretized on an N by N grid.
+%
+%   AK = FFT2UDOTGRAD(UX,UY,L) specifies the domain size to be L (L
+%   defaults to 2pi).  AK = FFT2UDOTGRAD(UX,UY,L,ZCUTOFF) also
+%   specifies the cutoff for elements to be considered zero in the
+%   sparsification of the FFT of U.
+
+% $Id: fft2udotgrad.m,v 1.3 2005/09/06 11:39:43 jeanluc Exp $
+
+if nargin < 4
+  % If the cutoff is too small, spurious nonzero elements occur.
+  % 1e-8 seems like a sweet spot good for N=1000.
+  zcutoff = 1e-8*max(max(max(abs(ux))),max(max(abs(uy))));
+end
+
+if nargin < 3
+  L = 2*pi;
+end
+
+N = size(ux,1);
+
+if size(ux,2) ~= N | size(uy,1) ~= N | size(uy,2) ~= N
+  error('Matrices must be square and of the same dimension.')
+end
+
+kmin = floor(-(N-1)/2);
+kmax = floor( (N-1)/2);
+
+% FFT the velocity field, sparsifying with cutoff.
+% Note that we use the transpose of the velocity field: the meshgrid
+% format uses the -rows- as y, and the -columns- as x, but
+% fft2udotgrad_helper assumes the usual (ix,jy) indexing.
+uxk = sparsify(fft2(ux.'),zcutoff);
+uyk = sparsify(fft2(uy.'),zcutoff);
+
+% Make a list of the nonzero elements of uxk and uyk.
+inz = find(abs(uxk) | abs(uyk));
+uxknz = full(uxk(inz));
+uyknz = full(uyk(inz));
+% Row/columns of nonzero elements.
+[nzx,nzy] = find(abs(uxk) | abs(uyk));
+
+% The function that does the real work is written in C, since it is
+% difficult to vectorise.
+Ak = fft2udotgrad_helper(N,uxknz,uyknz,nzx,nzy,L);
+@
+
+
+1.3
+log
+@Tidied-up a bit.
+@
+text
+@d14 1
+a14 1
+% $Id: fft2udotgrad.m,v 1.2 2005/09/05 01:24:24 jeanluc Exp $
+a33 1
+ik = [0 1:kmax kmin:-1];
+d36 5
+a40 2
+uxk = sparsify(fft2(ux),zcutoff);
+uyk = sparsify(fft2(uy),zcutoff);
+@
+
+
+1.2
+log
+@Make cutoff more generous.
+@
+text
+@d4 1
+a4 1
+%   the operator (ux uy).(d/dx d/dy).  The matrices UX and UY must
+d8 1
+a8 1
+%   
+d14 1
+a14 1
+% $Id: fft2udotgrad.m,v 1.1 2005/08/26 19:34:38 jeanluc Exp $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+a7 1
+%   2D FFT of the function V(:,:) discretized an N by N grid.
+d14 1
+a14 1
+% $Id$
+d17 3
+a19 1
+  zcutoff = 1e-10*max(max(max(abs(ux))),max(max(abs(uy))));
+d37 2
+a38 2
+uxk = sparsify(fft2(ux),zcutoff)
+uyk = sparsify(fft2(uy),zcutoff)
+d47 2
+@

@@ -1,0 +1,211 @@
+head	1.6;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+
+
+1.6
+date	2008.03.03.15.13.37;	author jeanluc;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2006.07.02.09.19.14;	author jeanluc;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2006.03.13.08.52.53;	author jeanluc;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2006.03.12.22.53.26;	author jeanluc;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2006.02.25.15.34.06;	author jeanluc;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2006.02.25.14.41.08;	author jeanluc;	state Exp;
+branches;
+next	;
+
+
+desc
+@Interpolate a 2D periodic function.
+@
+
+
+1.6
+log
+@Trivial change
+Should really vectorise: see interpp.m
+@
+text
+@function fi = interpp2(f,XX)
+%INTERPP2   Interpolate a 2D periodic function.
+%   FI = INTERPP2(F,[X Y]) returns F(X,Y) given the function F by
+%   using bilinear interpolation. F is assumed period-1 in both
+%   directions, and to be in 'meshgrid' style, where the rows are Y
+%   and the columns X.
+%
+%   See also INTERPP, INTERPK2.
+
+% $Id: interpp2.m,v 1.5 2006/07/02 09:19:14 jeanluc Exp $
+
+Nx = size(f,2);
+Ny = size(f,1);
+
+if Nx == 1 || Ny == 1
+  error('One-dimensional array in interpp2.')
+end
+
+% Find interval in each direction.
+X = Nx*mod(XX(1),1);
+Y = Ny*mod(XX(2),1);
+ix = floor(X)+1;
+iy = floor(Y)+1;
+
+if ix == Nx
+  % Take periodicity into account.
+  ixp = 1;
+elseif ix == Nx+1
+  % Special case: if X(1) is very small and negative, then
+  % Nx*mod(X(1),1) gives Nx, rather than Nx*(1+X(1)), so the floor
+  % function fails to round down to Nx-1.
+  ix = Nx;
+  ixp = 1;
+else
+  ixp = ix+1;
+end
+
+if iy == Ny
+  % Take periodicity into account.
+  iyp = 1;
+elseif iy == Ny+1
+  % See ix==Nx+1 comment above.
+  iy = Ny;
+  iyp = 1;
+else
+  iyp = iy+1;
+end
+
+% The function at the four corners.
+% Note how x and y are reversed, since f is assumed to be in
+% meshgrid format (rows are y, columns are x).
+f11 = f(iy ,ix );
+f21 = f(iy ,ixp);
+f12 = f(iyp,ix );
+f22 = f(iyp,ixp);
+
+X1 = X-(ix-1);
+Y1 = Y-(iy-1);
+X2 = 1-X1;
+Y2 = 1-Y1;
+
+fi = f11*X2*Y2 + f21*X1*Y2 + f12*X2*Y1 + f22*X1*Y1;
+@
+
+
+1.5
+log
+@Error message if a one-D array is used.
+@
+text
+@d8 1
+a8 1
+%   See also INTERPK2.
+d10 1
+a10 1
+% $Id: interpp2.m,v 1.4 2006/03/13 08:52:53 jeanluc Exp $
+@
+
+
+1.4
+log
+@Adapt to nonsquare f.
+@
+text
+@d10 1
+a10 1
+% $Id: interpp2.m,v 1.3 2006/03/12 22:53:26 jeanluc Exp $
+d15 4
+@
+
+
+1.3
+log
+@Small bug where an index became out of range for small negative X or Y.
+@
+text
+@d10 1
+a10 1
+% $Id: interpp2.m,v 1.2 2006/02/25 15:34:06 jeanluc Exp $
+d12 2
+a13 1
+N = size(f,1);
+d16 2
+a17 2
+X = N*mod(XX(1),1);
+Y = N*mod(XX(2),1);
+d21 1
+a21 1
+if ix == N
+d24 1
+a24 1
+elseif ix == N+1
+d26 3
+a28 3
+  % N*mod(X(1),1) gives N, rather than N*(1+X(1)), so the floor
+  % function fails to round down to N-1.
+  ix = N;
+d34 1
+a34 1
+if iy == N
+d37 3
+a39 3
+elseif iy == N+1
+  % See ix==N+1 comment above.
+  iy = N;
+@
+
+
+1.2
+log
+@Change convention to 'meshgrid' style, so rows are Y and cols X.
+@
+text
+@d10 1
+a10 1
+% $Id: interpp2.m,v 1.1 2006/02/25 14:41:08 jeanluc Exp $
+a12 1
+L = 1;
+d15 2
+a16 3
+X = N*mod(XX(1)/L,1);
+Y = N*mod(XX(2)/L,1);
+x = [0:N-1];
+a19 1
+% Take periodicity into account.
+d21 7
+d34 5
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 2
+a6 1
+%   directions.
+d10 1
+a10 1
+% $Id$
+@

@@ -1,0 +1,34 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+
+
+1.1
+date	2007.03.18.12.31.11;	author jeanluc;	state Exp;
+branches;
+next	;
+
+
+desc
+@True if a matrix is the zero matrix.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@function a = iszero(M)
+%ISZERO   True if a matrix is the zero matrix.
+%   A = ISZERO(M) returns true if a matrix is the zero matrix,
+%   false otherwise.
+%
+%   See also ISEMPTY.
+
+% $Id$
+
+a = isempty(find(M ~= 0));
+@

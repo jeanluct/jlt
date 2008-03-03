@@ -1,0 +1,96 @@
+head	1.3;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+
+
+1.3
+date	2001.08.02.14.08.08;	author jeanluc;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.08.02.07.07.28;	author jeanluc;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.08.02.05.57.22;	author jeanluc;	state Exp;
+branches;
+next	;
+
+
+desc
+@Plot Y vs (X mod MX).
+@
+
+
+1.3
+log
+@Changed 'See also' field.
+@
+text
+@function plotmodx(x,y,mdx,attrib,off)
+%PLOTMODX Plot with periodic x axis.
+%   PLOTMODX(X,Y,MODX) plots Y vs X, first taking the mod
+%   by MODX of the coordinate X.  PLOTMODX(X,Y,MODX,ATTRIB)
+%   uses ATTRIB as plot attributes (see PLOT).
+%   PLOTMODX(X,Y,MODX,ATTRIB,OFF) adds an offset OFF to X.
+%
+%   See also MOD, PLOT, PLOTMODY, PLOTMODXY, MODSPLITINTERP.
+
+%   $Id: plotmodx.m,v 1.2 2001/08/02 07:07:28 jeanluc Exp $
+
+if nargin < 4
+    attrib = '';
+end
+
+if nargin < 5
+    off = 0;
+end
+
+[xm ym] = modsplitinterp(x,y,mdx,off);
+
+savehold = ishold;
+if savehold == 0
+    newplot
+    hold on
+end
+
+for i = 1:length(xm)
+    plot(xm{i},ym{i},attrib);
+end
+
+if savehold == 0
+    hold off
+end
+@
+
+
+1.2
+log
+@Use modsplitinterp to interpolate endpoints of segments.
+@
+text
+@d8 1
+a8 1
+%   See also MOD, PLOT, PLOTMODY, PLOTMODXY, MODSPLIT.
+d10 1
+a10 1
+%   $Id: plotmodx.m,v 1.1 2001/08/02 05:57:22 jeanluc Exp $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 1
+a10 1
+%   $Id$
+d20 1
+a20 1
+[xm ym] = modsplit(x,y,mdx,off);
+@
