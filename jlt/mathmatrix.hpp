@@ -5,6 +5,7 @@
 // mathmatrix.hpp
 //
 
+#include <cassert>
 #include <jlt/mathvector.hpp>
 #include <jlt/matrix.hpp>
 #include <jlt/matrixutil.hpp>

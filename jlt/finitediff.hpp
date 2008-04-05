@@ -2,6 +2,7 @@
 #define JLT_FINITEDIFF_HPP
 
 #include <vector>
+#include <cassert>
 
 //
 // Finite-differentiation of discrete data.
