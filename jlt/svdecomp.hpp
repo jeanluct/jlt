@@ -10,6 +10,11 @@
 #  include <cassert>
 #endif
 
+// No data() method in std::vector prior to GCC 4.1.
+#if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 1))
+#  define JLT_NO_VECTOR_DATA_METHOD
+#endif
+
 namespace jlt {
 
 //
@@ -48,8 +53,14 @@ int singular_value_decomp(matrix<T>& A,
                  + max(max(M,N),4*min(M,N)*min(M,N) + 4*min(M,N));
   std::vector<T> work(worksize);
 
+# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesdd(&jobz, &N, &M, A.data(), &N, w.data(), Vt.data(), &N,
 		U.data(), &M, work.data(), &worksize, iwork.data(), &info);
+# else
+  lapack::gesdd(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+		&(*Vt.begin()), &N, &(*U.begin()), &M,
+		&(*work.begin()), &worksize, &(*iwork.begin()), &info);
+# endif
 
   return info;
 }
@@ -72,8 +83,14 @@ int singular_value_decomp(matrix<T>& A, std::vector<T>& w)
   int worksize = 3*min(M,N) +  max(max(M,N),6*min(M,N));
   std::vector<T> work(worksize);
 
+# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesdd(&jobz, &N, &M, A.data(), &N, w.data(), 0, &N, 0, &M,
 		work.data(), &worksize, iwork.data(), &info);
+# else
+  lapack::gesdd(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+		0, &N, 0, &M,
+		&(*work.begin()), &worksize, &(*iwork.begin()), &info);
+# endif
 
   return info;
 }
