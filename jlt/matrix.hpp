@@ -266,7 +266,7 @@ public:
 	    {
 	      for (size_type j = i+1; j < columns(); ++j)
 		{
-		  double temp = (*this)(j,i);
+		  T temp = (*this)(j,i);
 		  (*this)(j,i) = (*this)(i,j);
 		  (*this)(i,j) = temp;
 		}
