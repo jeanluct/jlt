@@ -5,8 +5,6 @@ function L = ifftop(Lk)
 %
 %   See also FFTOP, FFT2OP, IFFT2OP.
 
-% $Id: ifftop.m,v 1.1 2005/08/19 08:44:09 jeanluc Exp $
-
 % Note that F = F.' , inv(F) = inv(F).', so the transform can be taken
 % to the left or right.
 

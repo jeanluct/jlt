@@ -17,8 +17,6 @@ function fx = interpk(fk,x,L)
 %
 %   See also FFT, FFT2.
 
-% $Id: interpk.m,v 1.3 2006/02/25 15:34:06 jeanluc Exp $
-
 % TODO: use real symmetry to cut down execution time.
 
 N = size(fk,1);

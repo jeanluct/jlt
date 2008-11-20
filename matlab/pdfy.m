@@ -10,8 +10,6 @@ function [yb,Py] = pdfy(x,y,dydx,ny,intmethod,tol)
 %
 %   See also INTERPY, INTERP1, PDFFIT.
 
-%   $Id: pdfy.m,v 1.9 2008/03/02 20:12:27 jeanluc Exp $
-
 if nargin < 4
     % Number of y points to the PDF.
     ny = 50;

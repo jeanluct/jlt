@@ -11,7 +11,9 @@
 // Eigenvalues and eigenvectors routines
 //
 
-// Symmetric real matrix (single precision)
+// SSYEV - compute all eigenvalues and, optionally, eigenvectors of a real
+//    symmetric matrix A.
+// (single precision)
 void ssyev_(char* jobz,
 	    char* uplo,
 	    int* N,
@@ -22,7 +24,9 @@ void ssyev_(char* jobz,
 	    int* lwork,
 	    int* info);
 
-// Symmetric real matrix (double precision)
+// DSYEV - compute all eigenvalues and, optionally, eigenvectors of a real
+//    symmetric matrix A.
+// (double precision)
 void dsyev_(char* jobz,
 	    char* uplo,
 	    int* N,
@@ -33,7 +37,9 @@ void dsyev_(char* jobz,
 	    int* lwork,
 	    int* info);
 
-// Nonsymmetric real matrix (single precision)
+// SGEEV - compute for an N-by-N real nonsymmetric matrix A, the eigenvalues
+//    and, optionally, the left and/or right eigenvectors.
+// (single precision)
 void sgeev_(char* jobVL,
 	    char* jobVR,
 	    int* N,
@@ -49,7 +55,9 @@ void sgeev_(char* jobVL,
 	    int* lwork,
 	    int* info);
 
-// Nonsymmetric real matrix (double precision)
+// DGEEV - compute for an N-by-N real nonsymmetric matrix A, the eigenvalues
+//    and, optionally, the left and/or right eigenvectors.
+// (double precision)
 void dgeev_(char* jobVL,
 	    char* jobVR,
 	    int* N,
@@ -65,7 +73,9 @@ void dgeev_(char* jobVL,
 	    int* lwork,
 	    int* info);
 
-// Nonsymmetric complex matrix (single precision)
+// CGEEV - compute for an N-by-N complex nonsymmetric matrix A, the
+//    eigenvalues and, optionally, the left and/or right eigenvectors.
+// (single precision)
 void cgeev_(char* jobVL,
 	    char* jobVR,
 	    int* N,
@@ -81,7 +91,9 @@ void cgeev_(char* jobVL,
 	    float* rwork,
 	    int* info);
 
-// Nonsymmetric complex matrix (double precision)
+// ZGEEV - compute for an N-by-N complex nonsymmetric matrix A, the
+//    eigenvalues and, optionally, the left and/or right eigenvectors.
+// (double precision)
 void zgeev_(char* jobVL,
 	    char* jobVR,
 	    int* N,
@@ -101,7 +113,45 @@ void zgeev_(char* jobVL,
 // Singular value decomposition routines
 //
 
-// M by N real matrix (single precision)
+// SGESVD - compute the singular value decomposition (SVD) of a real M-by-N
+//    matrix A, optionally computing the left and/or right singular vectors.
+// (single precision)
+void sgesvd_(char* jobu,
+	     char* jobvt,
+	     int* M,
+	     int* N,
+	     float* A,
+	     int* ldA,
+	     float* S,
+	     float* U,
+	     int* ldU,
+	     float* VT,
+	     int* ldVT,
+	     float* work,
+	     int* lwork,
+	     int* info);
+
+// DGESVD - compute the singular value decomposition (SVD) of a real M-by-N
+//    matrix A, optionally computing the left and/or right singular vectors.
+// (double precision)
+void dgesvd_(char* jobu,
+	     char* jobvt,
+	     int* M,
+	     int* N,
+	     double* A,
+	     int* ldA,
+	     double* S,
+	     double* U,
+	     int* ldU,
+	     double* VT,
+	     int* ldVT,
+	     double* work,
+	     int* lwork,
+	     int* info);
+
+// SGESDD - compute the singular value decomposition (SVD) of a real M-by-N
+//    matrix A, optionally computing the left and right singular vectors.
+// (single precision)
 void sgesdd_(char* jobz,
 	     int* M,
 	     int* N,
@@ -117,7 +167,9 @@ void sgesdd_(char* jobz,
 	     int* iwork,
 	     int* info);
 
-// M by N real matrix (double precision)
+// DGESDD - compute the singular value decomposition (SVD) of a real M-by-N
+//    matrix A, optionally computing the left and right singular vectors.
+// (double precision)
 void dgesdd_(char* jobz,
 	     int* M,
 	     int* N,

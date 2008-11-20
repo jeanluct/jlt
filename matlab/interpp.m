@@ -5,8 +5,6 @@ function fi = interpp(f,X)
 %
 %   See also INTERPP2, INTERPK2.
 
-% $Id: interpp.m,v 1.4 2008/03/03 15:14:43 jeanluc Exp $
-
 N = length(f);
 
 % Find which f interval X lies in.

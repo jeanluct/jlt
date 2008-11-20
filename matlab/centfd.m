@@ -7,8 +7,6 @@ function D = centfd(deriv,N,ord,flag)
 %
 %   See also DIFF, UFDWT.
 
-% $Id: centfd.m,v 1.1 2006/02/25 14:40:32 jeanluc Exp $
-
 if nargin < 4
   flag = 'zero';
 end

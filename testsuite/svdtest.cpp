@@ -11,9 +11,11 @@ int main()
   using std::cout;
   using std::endl;
 
+  typedef double Real;
+
   int m = 3, n = 4;
-  mathmatrix<double> A(m,n), U(m,m), Vt(n,n);
-  mathvector<double> w(std::min(m,n));
+  mathmatrix<Real> A(m,n), U(m,m), Vt(n,n);
+  mathvector<Real> w(std::min(m,n));
 
   A(0,0) = 1;
   A(0,1) = -4;
@@ -30,6 +32,8 @@ int main()
   A(2,2) = 1;
   A(2,3) = 0;
 
+  mathmatrix<Real> A2(A); // Make a copy, since A is destroyed.
+
   cout.precision(6);
   cout.setf(std::ios::fixed);
 
@@ -41,6 +45,9 @@ int main()
   cout << "\nA = U.diag(w).Vt, where\n";
   cout << "\nU =\n"; U.printMatrixForm(cout);
   cout << "\nVt =\n"; Vt.printMatrixForm(cout);
+  cout << "\nw = " << w;
+  // Compute only the singular values.
+  singular_value_decomp(A2,w);
   cout << "\nw = " << w << endl;
 
   cout << "\nU.diag(w).Vt =\n";

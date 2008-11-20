@@ -6,8 +6,6 @@ function [xn,yn] = baker(x,y,al)
 %   Both X and Y are in the interval [0,1].
 %
 
-%   $Id$
-
 if nargin < 3
   % Default if the uniform baker's map.
   al = 0.5;

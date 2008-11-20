@@ -37,29 +37,27 @@ int singular_value_decomp(matrix<T>& A,
   using std::min;
   using std::max;
 
-  char jobz = 'A';			// 'A' - all M columns of U
-					// and all N rows of V^T are
-					// returned in the matrices U
-					// and Vt.
+  char jobu = 'A';			// 'A' - all M columns of U
+					// are returned in the matrix U.
+  char jobvt = 'A';			// 'A' - all M columns of V
+					// are returned in the matrix Vt.
 
   int M = A.rows(), N = A.columns();	// Dimensions of matrix.
   int info;
 
-  std::vector<int> iwork(8*min(M,N));
-
   // For some reason, calling the routine with worksize=-1 first to
   // get the ideal worksize no longer works.  Removed as of r22.
-  int worksize = 3*min(M,N)*min(M,N)
-                 + max(max(M,N),4*min(M,N)*min(M,N) + 4*min(M,N));
+  /* Try this again with new gesvd. */
+  int worksize = max(3*min(M,N)+max(M,N),5*min(M,N));
   std::vector<T> work(worksize);
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
-  lapack::gesdd(&jobz, &N, &M, A.data(), &N, w.data(), Vt.data(), &N,
-		U.data(), &M, work.data(), &worksize, iwork.data(), &info);
+  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), Vt.data(), &N,
+		U.data(), &M, work.data(), &worksize, &info);
 # else
-  lapack::gesdd(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
 		&(*Vt.begin()), &N, &(*U.begin()), &M,
-		&(*work.begin()), &worksize, &(*iwork.begin()), &info);
+		&(*work.begin()), &worksize, &info);
 # endif
 
   return info;
@@ -72,24 +70,21 @@ int singular_value_decomp(matrix<T>& A, std::vector<T>& w)
   using std::min;
   using std::max;
 
-  char jobz = 'N';			// 'N' - only singular values
+  char jobu = 'N', jobvt = 'N';		// 'N' - only singular values
 					// are computed.
 
   int M = A.rows(), N = A.columns();	// Dimensions of matrix.
   int info;
 
-  std::vector<int> iwork(8*min(M,N));
-
-  int worksize = 3*min(M,N) +  max(max(M,N),6*min(M,N));
+  int worksize = max(3*min(M,N)+max(M,N),5*min(M,N));
   std::vector<T> work(worksize);
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
-  lapack::gesdd(&jobz, &N, &M, A.data(), &N, w.data(), 0, &N, 0, &M,
-		work.data(), &worksize, iwork.data(), &info);
+  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), 0, &N, 0, &M,
+		work.data(), &worksize, &info);
 # else
-  lapack::gesdd(&jobz, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		0, &N, 0, &M,
-		&(*work.begin()), &worksize, &(*iwork.begin()), &info);
+  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+		0, &N, 0, &M, &(*work.begin()), &worksize, &info);
 # endif
 
   return info;

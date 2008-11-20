@@ -183,6 +183,63 @@ namespace lapack {
 
   // M by N real matrix
   template<class T>
+  void gesvd(char* jobu,
+	     char* jobvt,
+	     int* M,
+	     int* N,
+	     T* A,
+	     int* ldA,
+	     T* S,
+	     T* U,
+	     int* ldU,
+	     T* VT,
+	     int* ldVT,
+	     T* work,
+	     int* lwork,
+	     int* info);
+
+  inline
+  void gesvd(char* jobu,
+	     char* jobvt,
+	     int* M,
+	     int* N,
+	     float* A,
+	     int* ldA,
+	     float* S,
+	     float* U,
+	     int* ldU,
+	     float* VT,
+	     int* ldVT,
+	     float* work,
+	     int* lwork,
+	     int* info)
+  {
+    sgesvd_(jobu,jobvt,M,N,A,ldA,S,U,ldU,VT,ldVT,work,lwork,info);
+  }
+
+  inline
+  void gesvd(char* jobu,
+	     char* jobvt,
+	     int* M,
+	     int* N,
+	     double* A,
+	     int* ldA,
+	     double* S,
+	     double* U,
+	     int* ldU,
+	     double* VT,
+	     int* ldVT,
+	     double* work,
+	     int* lwork,
+	     int* info)
+  {
+    dgesvd_(jobu,jobvt,M,N,A,ldA,S,U,ldU,VT,ldVT,work,lwork,info);
+  }
+
+  // M by N real matrix (divide and conquer)
+  /* Warning: When used with Flop, gesdd has been known to return some
+     negative singular values. */
+  template<class T>
   void gesdd(char* jobz,
 	     int* M,
 	     int* N,

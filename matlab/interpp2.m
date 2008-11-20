@@ -7,8 +7,6 @@ function fi = interpp2(f,XX)
 %
 %   See also INTERPP, INTERPK2.
 
-% $Id: interpp2.m,v 1.6 2008/03/03 15:13:37 jeanluc Exp $
-
 Nx = size(f,2);
 Ny = size(f,1);
 

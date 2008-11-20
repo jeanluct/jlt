@@ -9,8 +9,6 @@ function [xm,ym] = modsplitinterp(x,y,md,off)
 %
 %   See also MOD, MODSPLIT, PLOTMODX, PLOTMODY, PLOTMODXY.
 
-%   $Id: modsplitinterp.m,v 1.3 2001/08/02 07:11:35 jeanluc Exp $
-
 if nargin < 4
     % Offset.
     off = 0;

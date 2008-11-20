@@ -7,8 +7,6 @@ function y = interpy(x,xd,yd,y0,intmethod)
 %
 %   See also PDFY, INTERP1.
 
-%   $Id: interpy.m,v 1.1 2001/07/23 18:09:48 jeanluc Exp $
-
 if nargin < 4
     % Subtracted constant defaults to 0.
     y0 = 0;

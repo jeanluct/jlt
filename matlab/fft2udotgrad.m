@@ -11,8 +11,6 @@ function Ak = fft2udotgrad(ux,uy,L,zcutoff)
 %   specifies the cutoff for elements to be considered zero in the
 %   sparsification of the FFT of U.
 
-% $Id: fft2udotgrad.m,v 1.4 2005/11/14 01:05:36 jeanluc Exp $
-
 if nargin < 4
   % If the cutoff is too small, spurious nonzero elements occur.
   % 1e-8 seems like a sweet spot good for N=1000.

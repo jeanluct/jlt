@@ -4,8 +4,6 @@
 
 /* Helper function for fft2udotgrad */
 
-/* $Id: fft2udotgrad_helper.c,v 1.5 2005/11/14 00:09:38 jeanluc Exp $ */
-
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   /* Dimension of grid. */

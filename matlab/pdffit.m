@@ -8,9 +8,6 @@ function [a,b,nfit] = pdffit(xb,n,ndrop)
 %
 %   See also PDFY, POLYFIT.
 
-%   $Id: pdffit.m,v 1.1 2001/07/23 18:09:14 jeanluc Exp $
-
-
 if nargin < 3
     % Drop bins with less than 3 points.
     ndrop = 3;

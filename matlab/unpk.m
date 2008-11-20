@@ -9,8 +9,6 @@ function A = unpk(V,sz)
 %
 %   See also PK.
 
-% $Id: unpk.m,v 1.2 2007/05/19 09:25:19 jeanluc Exp $
-
 if nargin < 2
   % Assume square matrix.
   M = sqrt(length(V));

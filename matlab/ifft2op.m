@@ -7,8 +7,6 @@ function L = ifft2op(Lk)
 %
 %   See also FFT2OP, PK, UNPK, FFTOP, IFFTOP.
 
-% $Id: ifft2op.m,v 1.2 2007/05/19 09:26:46 jeanluc Exp $
-
 % Note that F2 = F2.' , inv(F2) = inv(F2).', so the transform can be
 % taken to the left or right.
 

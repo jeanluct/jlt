@@ -10,8 +10,6 @@ function [Dx,Dy,Dxx,Dyy] = Diffmat2(N,Lx,Ly)
 %
 %   See also FOURDIF, PACK, UNPACK.
 
-% $Id: Diffmat2.m,v 1.9 2005/12/10 15:08:02 jeanluc Exp $
-
 if nargin < 2
   Lx = 2*pi;
 end

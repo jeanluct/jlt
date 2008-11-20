@@ -6,8 +6,6 @@ function fs = smoothk(f,cutoff,pfilt)
 %
 %   See also SMOOTH3.
 
-% $Id: smoothk.m,v 1.2 2008/03/02 19:52:30 jeanluc Exp $
-
 if nargin < 3
   % Power (flatness) of filter
   pfilt = 2;

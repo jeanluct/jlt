@@ -7,8 +7,6 @@ function fx = interpk2_matlab(fk,x)
 %
 %   See also FFT2, IFFT2.
 
-% $Id$
-
 % TODO: use real symmetry to cut down execution time.
 
 N = size(fk,1);

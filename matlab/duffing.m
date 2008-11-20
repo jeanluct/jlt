@@ -2,8 +2,6 @@ function yt = duffing(t,y)
 %DUFFING   Duffing oscillator.
 %
 
-%   $Id$
-
 delta = 0;
 gamma = 0.75;
 omega = 1;

@@ -1,7 +1,5 @@
 % Test Fourier differentiation matrices in 2D.
 
-% $Id: test_Diffmat2.m,v 1.4 2008/03/02 19:51:00 jeanluc Exp $
-
 % Number of gridpoints
 N = 60;
 % Physical size of domain

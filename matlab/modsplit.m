@@ -8,8 +8,6 @@ function [xm,ym] = modsplit(x,y,md,off)
 %
 %   See also MOD, MODSPLITINTERP, PLOTMODX, PLOTMODY, PLOTMODXY.
 
-%   $Id: modsplit.m,v 1.2 2001/08/02 07:07:28 jeanluc Exp $
-
 if nargin < 4
     % Offset.
     off = 0;

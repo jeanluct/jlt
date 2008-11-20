@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include "mex.h"
 
-/* $Id: interpk2.c,v 1.3 2006/02/25 15:34:06 jeanluc Exp $ */
-
 /*
 
 Build with

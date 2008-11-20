@@ -7,8 +7,6 @@ function plotmodx(x,y,mdx,attrib,off)
 %
 %   See also MOD, PLOT, PLOTMODY, PLOTMODXY, MODSPLITINTERP.
 
-%   $Id: plotmodx.m,v 1.3 2001/08/02 14:08:08 jeanluc Exp $
-
 if nargin < 4
     attrib = '';
 end

@@ -5,8 +5,6 @@ function k = curvfd(s,l)
 %   finite-differencing.
 %
 
-%   $Id$
-
 nl = size(l,1);
 n = size(l,2);
 

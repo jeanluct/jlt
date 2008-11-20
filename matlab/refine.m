@@ -5,8 +5,6 @@ function fp = refine(f,N)
 %
 %   See also REFINE2.
 
-% $Id: refine.m,v 1.3 2008/03/02 19:54:22 jeanluc Exp $
-
 N0 = length(f);
 
 if N < N0
@@ -24,6 +22,7 @@ k0 = [kmin0:kmax0];
 fk0 = fftshift(fft(f));
 fk = zeros(N,1);
 
+% Will this work with even N0?  Then we need to duplicate the Nyquist mode.
 fk(c + k0) = fk0(c0 + k0);
 
 fp = (N/N0)*ifft(ifftshift(fk),'symmetric');

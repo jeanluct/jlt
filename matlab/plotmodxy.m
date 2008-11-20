@@ -13,8 +13,6 @@ function plotmodxy(x,y,mdx,mdy,attrib,offx,offy)
 %
 %   See also MOD, PLOT, PLOTMODX, PLOTMODY, MODSPLITINTERP.
 
-%   $Id: plotmodxy.m,v 1.3 2001/08/02 14:08:08 jeanluc Exp $
-
 if nargin < 4
     mdy = mdx;
 end

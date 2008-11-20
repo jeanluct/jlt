@@ -7,6 +7,4 @@ function fx = interpk2(fk,x)
 %
 %   See also FFT2, IFFT2.
 
-% $Id: interpk2.m,v 1.2 2006/02/25 15:34:06 jeanluc Exp $
-
 % Implemented in C in interpk2.c.

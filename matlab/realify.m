@@ -3,9 +3,7 @@ function Fr = realify(F)
 %   FR = REALIFY(F) takes the complex array F and applies the
 %   symmetries needed to enfore the reality condition on F.
 
-% $Id: realify.m,v 1.4 2008/03/02 19:55:25 jeanluc Exp $
-
-% Inspired by looking at the code for fftshift.m.
+% Inspired from the code for fftshift.m.
 
 numDims = ndims(F);
 
