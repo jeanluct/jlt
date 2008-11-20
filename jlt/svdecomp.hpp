@@ -45,11 +45,34 @@ int singular_value_decomp(matrix<T>& A,
   int M = A.rows(), N = A.columns();	// Dimensions of matrix.
   int info;
 
-  // For some reason, calling the routine with worksize=-1 first to
-  // get the ideal worksize no longer works.  Removed as of r22.
-  /* Try this again with new gesvd. */
+#ifdef JLT_MIN_WORKSIZE
+  // Use the smallest possible workspace.
   int worksize = max(3*min(M,N)+max(M,N),5*min(M,N));
   std::vector<T> work(worksize);
+#else
+  // Call the routine with worksize = -1, to get the ideal size of workspace.
+  int worksize = -1;
+  T tmpwork[1];
+
+# if !defined(JLT_NO_VECTOR_DATA_METHOD)
+  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(),
+		Vt.data(), &N, U.data(), &M, tmpwork, &worksize, &info);
+# else
+  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+		&(*Vt.begin()), &N, &(*U.begin()), &M,
+		tmpwork, &worksize, &info);
+#endif
+
+  worksize = (int)tmpwork[0];
+
+#ifdef JLT_DEBUG
+  std::cerr << "jlt::svdecomp:     worksize = " << worksize << std::endl;
+  std::cerr << "jlt::svdecomp: min worksize = ";
+  std::cerr << max(3*min(M,N)+max(M,N),5*min(M,N)) << std::endl;
+#endif
+
+  std::vector<T> work(worksize);
+#endif
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), Vt.data(), &N,
@@ -76,8 +99,33 @@ int singular_value_decomp(matrix<T>& A, std::vector<T>& w)
   int M = A.rows(), N = A.columns();	// Dimensions of matrix.
   int info;
 
+#ifdef JLT_MIN_WORKSIZE
+  // Use the smallest possible workspace.
   int worksize = max(3*min(M,N)+max(M,N),5*min(M,N));
   std::vector<T> work(worksize);
+#else
+  // Call the routine with worksize = -1, to get the ideal size of workspace.
+  int worksize = -1;
+  T tmpwork[1];
+
+# if !defined(JLT_NO_VECTOR_DATA_METHOD)
+  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(),
+		0, &N, 0, &M, tmpwork, &worksize, &info);
+# else
+  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+		0, &N, 0, &M, tmpwork, &worksize, &info);
+#endif
+
+  worksize = (int)tmpwork[0];
+
+#ifdef JLT_DEBUG
+  std::cerr << "jlt::svdecomp:     worksize = " << worksize << std::endl;
+  std::cerr << "jlt::svdecomp: min worksize = ";
+  std::cerr << max(3*min(M,N)+max(M,N),5*min(M,N)) << std::endl;
+#endif
+
+  std::vector<T> work(worksize);
+#endif
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), 0, &N, 0, &M,
