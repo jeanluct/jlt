@@ -407,7 +407,7 @@ public:
   }
 
   // Return the derivative of the polynomial.
-  polynomial<T,S,P>  derive() const
+  polynomial<T,S,P>  derivative() const
   {
     polynomial<T,S,P> q(*this);
 

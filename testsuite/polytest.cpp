@@ -105,7 +105,7 @@ int main()
   q -= 3;
   q.printFancy(cout) << endl;
 
-  cout << "Derivative of " << p << endl << " is " << p.derive() << endl;
+  cout << "Derivative of " << p << endl << " is " << p.derivative() << endl;
 
   return 0;
 }

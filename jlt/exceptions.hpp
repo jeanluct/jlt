@@ -40,6 +40,18 @@ public:
   T how_small() const { return stepsize; }
 };
 
+
+
+template<class T>
+class failed_to_converge : public std::runtime_error {
+  T res;
+public:
+  failed_to_converge(const std::string& _descr, T _res = 0)
+    : std::runtime_error(_descr), res(_res) {}
+
+  T residual() const { return res; }
+};
+
 } // namespace jlt
 
 #else // __EXCEPTIONS
