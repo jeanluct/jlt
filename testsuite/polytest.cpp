@@ -1,5 +1,6 @@
 #include <iostream>
 #include <jlt/polynomial.hpp>
+#include <jlt/mathmatrix.hpp>
 
 using namespace jlt;
 
@@ -85,7 +86,7 @@ int main()
 
   c = 3;
   c.printFancy(cout) << endl;
-  if (c != q) cout << "Inequal\n";
+  if (c != q) cout << "Unequal\n";
 
   cout << endl;
 
@@ -105,7 +106,20 @@ int main()
   q -= 3;
   q.printFancy(cout) << endl;
 
-  cout << "Derivative of " << p << endl << " is " << p.derivative() << endl;
+  cout << "\nDerivative of " << p << endl << " is " << p.derivative() << endl;
+
+  mathmatrix<int> M(4,4);
+
+  M(0,1) = 1;
+  M(1,2) = 1;
+  M(1,3) = 1;
+  M(2,1) = 1;
+  M(2,2) = 1;
+  M(3,0) = 1;
+
+  cout << "\nMatrix\n";
+  M.printMatrixForm(cout);
+  cout << "has characteristic polynomial\n" << M.charpoly() << endl;
 
   return 0;
 }

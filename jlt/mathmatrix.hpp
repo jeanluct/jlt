@@ -9,6 +9,7 @@
 #include <jlt/mathvector.hpp>
 #include <jlt/matrix.hpp>
 #include <jlt/matrixutil.hpp>
+#include <jlt/polynomial.hpp>
 
 namespace jlt {
 
@@ -485,6 +486,55 @@ public:
 	}
 
       return tr;
+    }
+
+  polynomial<T> charpoly() const
+    {
+      MATRIX_ASSERT(isSquare());
+      size_type n = rows();
+      T t0;
+      mathmatrix<T,S> B(n,n), C(n,n);
+      polynomial<T> p;
+
+      p[0] = (n % 2 == 0 ? 1 : -1);
+
+      for (size_type l = 0; l < n; ++l)
+	{
+	  if (l == 0)
+	    {
+	      for (size_type i = 0; i < n; ++i)
+		for (size_type j = 0; j < n; ++j)
+		  C(i,j) = this->operator()(i,j);
+	    }
+	  else
+	    {
+	      for (size_type i = 0; i < n; ++i)
+		{
+		  for (size_type j = 0; j < n; ++j)
+		    {
+		      C(i,j) = 0;
+		      for (size_type k = 0; k < n; ++k)
+			C(i,j) += B(i,k)*this->operator()(k,j);
+		    }
+		}
+	    }
+	  t0 = C.trace()/(l+1);
+	  p[l+1] = -t0*p[0];
+	  if (l < n) 
+	    {
+	      for (size_type i = 0; i < n; ++i)
+		{
+		  for (size_type j = 0; j < n; ++j)
+		    {
+		      if (j == i)
+			B(i,j) = C(i,j)-t0;
+		      else
+			B(i,j) = C(i,j);
+		    }
+		}
+	    }
+	}
+      return p;
     }
 
   //

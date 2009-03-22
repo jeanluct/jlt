@@ -45,7 +45,7 @@ T operator*(const T&, const T&);
 // class polynomial
 //
 
-template<class T, class S = T, class P = int>
+template<class T, class P = long int>
 class polynomial
 {
 private:
@@ -56,7 +56,7 @@ private:
   vector<T> coeff;
 
 public:
-  typedef unsigned int	size_type;
+  typedef size_t	size_type;
   typedef P		power_type;
   typedef const P	const_power_type;
 
@@ -64,11 +64,6 @@ public:
   typedef const T	const_coeff_type;
   typedef T&		coeff_reference;
   typedef const T&	const_coeff_reference;
-
-  typedef S		arg_type;
-  typedef const S	const_arg_type;
-  typedef S&		arg_reference;
-  typedef const S&	const_arg_reference;
 
   //
   // Constructors
@@ -83,7 +78,7 @@ public:
   }
 
   // Copy constructor.
-  polynomial(const polynomial<T,S,P>& p) :
+  polynomial(const polynomial<T,P>& p) :
     pmin(p.pmin), pmax(p.pmax), coeff(p.coeff) {}
 
   //
@@ -91,7 +86,7 @@ public:
   //
 
   // Equate polynomial to another.
-  polynomial<T,S,P>& operator=(const polynomial<T,S,P>& p)
+  polynomial<T,P>& operator=(const polynomial<T,P>& p)
   {
     pmin = p.pmin;
     pmax = p.pmax;
@@ -102,7 +97,7 @@ public:
   }
 
   // Equate polynomial to a scalar.
-  polynomial<T,S,P>& operator=(const T& a)
+  polynomial<T,P>& operator=(const T& a)
   {
     for (P i = 0; i <= pmax-pmin; ++i) coeff[i] = 0;
 
@@ -114,54 +109,50 @@ public:
   }
 
   // Add a polynomial.
-  polynomial<T,S,P>& operator+=(const polynomial<T,S,P>& p)
+  polynomial<T,P>& operator+=(const polynomial<T,P>& p)
   {
     return add_polynomial(p);
   }
 
   // Add a constant.
-  polynomial<T,S,P>& operator+=(const T& a)
+  polynomial<T,P>& operator+=(const T& a)
   {
     return add_to_coeff(0,a);
   }
 
   // Subtract polynomial.
-  polynomial<T,S,P>& operator-=(const polynomial<T,S,P>& p)
+  polynomial<T,P>& operator-=(const polynomial<T,P>& p)
   {
     return add_polynomial_X_monomial(p,0,-1);
   }
 
   // Subtract a constant.
-  polynomial<T,S,P>& operator-=(const T& a)
+  polynomial<T,P>& operator-=(const T& a)
   {
     return add_to_coeff(0,-a);
   }
 
   // Multiply by a polynomial.
-  polynomial<T,S,P>& operator*=(const polynomial<T,S,P>& p)
+  polynomial<T,P>& operator*=(const polynomial<T,P>& p)
   {
     return multiply_by_polynomial(p);
   }
 
   // Multiply by a constant.
-  polynomial<T,S,P>& operator*=(const T& a)
+  polynomial<T,P>& operator*=(const T& a)
   {
     return multiply_by_monomial(0,a);
   }
 
   // Divide by a constant.
-  polynomial<T,S,P>& operator/=(const T& a)
+  polynomial<T,P>& operator/=(const T& a)
   {
     return multiply_by_monomial(0,(T)1/a);
   }
 
   // Test for equality of two polynomials.
-  bool operator==(polynomial<T,S,P>& p)
+  bool operator==(const polynomial<T,P>& p) const
   {
-    // Strip leading and trailing zeroes, to make comparison easier.
-    compact();
-    p.compact();
-
     if (pmin != p.pmin || pmax != pmax) return false;
 
     for (P i = 0; i <= pmax-pmin; ++i) {
@@ -172,7 +163,7 @@ public:
   }
 
   // Test for inequality of two polynomials.
-  bool operator!=(polynomial<T,S,P>& p)
+  bool operator!=(const polynomial<T,P>& p) const
   {
     return !(*this == p);
   }
@@ -182,7 +173,7 @@ public:
   // Elementary Polynomial Operations
   //
   
-  polynomial<T,S,P>&
+  polynomial<T,P>&
   add_to_coeff(const_power_type n, const_coeff_reference c)
   {
     if (n >= pmin && n <= pmax) {
@@ -192,7 +183,7 @@ public:
     }
   }
 
-  polynomial<T,S,P>&
+  polynomial<T,P>&
   set_coeff(const_power_type n, const_coeff_reference c)
   {
     try {
@@ -233,7 +224,7 @@ public:
     return *this;
   }
 
-  polynomial<T,S,P>&
+  polynomial<T,P>&
   multiply_by_monomial(const_power_type n, const_coeff_reference c)
   {
     if (c == 0) {
@@ -248,10 +239,10 @@ public:
     return *this;
   }
 
-  polynomial<T,S,P>&
-  multiply_by_polynomial(const polynomial<T,S,P>& p)
+  polynomial<T,P>&
+  multiply_by_polynomial(const polynomial<T,P>& p)
   {
-    polynomial<T,S,P>(q);
+    polynomial<T,P>(q);
 
     for (P i = 0; i <= p.pmax-p.pmin; ++i) {
       q.add_polynomial_X_monomial(*this, p.pmin+i, p.coeff[i]);
@@ -263,8 +254,8 @@ public:
   }
 
   // Add a polynomial.
-  polynomial<T,S,P>&
-  add_polynomial(const polynomial<T,S,P>& p)
+  polynomial<T,P>&
+  add_polynomial(const polynomial<T,P>& p)
   {
     for (P i = 0; i <= p.pmax-p.pmin; ++i)
       add_to_coeff(p.pmin+i,p.coeff[i]);
@@ -278,8 +269,8 @@ public:
   }
 
   // Add a polynomial * monomial.
-  polynomial<T,S,P>&
-  add_polynomial_X_monomial(const polynomial<T,S,P>& p, 
+  polynomial<T,P>&
+  add_polynomial_X_monomial(const polynomial<T,P>& p, 
 			    const_power_type n,
 			    const_coeff_reference c)
   {
@@ -375,6 +366,7 @@ public:
   }
 
   // Evaluate polynomial at a given value of x.
+  template<class S>
   S operator()(const S& x) const
   {
     S c = 0;
@@ -393,7 +385,7 @@ public:
   //
 
   // Differentiate the polynomial in place.
-  polynomial<T,S,P>&  differentiate()
+  polynomial<T,P>&  differentiate()
   {
     for (P i = 0; i <= pmax-pmin; ++i) {
       coeff[i] *= pmin+i;
@@ -407,9 +399,9 @@ public:
   }
 
   // Return the derivative of the polynomial.
-  polynomial<T,S,P>  derivative() const
+  polynomial<T,P>  derivative() const
   {
-    polynomial<T,S,P> q(*this);
+    polynomial<T,P> q(*this);
 
     return q.differentiate();
   }
@@ -419,7 +411,7 @@ public:
   //
 
   // Remove leading/trailing zeroes.
-  polynomial<T,S,P>&  compact()
+  polynomial<T,P>&  compact()
   {
     // Look for leading zero elements.  Shorten the polynomial
     // accordingly.
@@ -449,27 +441,27 @@ public:
   // Friends
   //
 
-  friend polynomial<T,S,P> operator+<>(const polynomial<T,S,P>& p);
+  friend polynomial<T,P> operator+<>(const polynomial<T,P>& p);
 
-  friend polynomial<T,S,P> operator-<>(const polynomial<T,S,P>& q);
+  friend polynomial<T,P> operator-<>(const polynomial<T,P>& q);
 
-  friend polynomial<T,S,P> operator+<>(const polynomial<T,S,P>& p,
-				       const polynomial<T,S,P>& q);
+  friend polynomial<T,P> operator+<>(const polynomial<T,P>& p,
+				       const polynomial<T,P>& q);
 
-  friend polynomial<T,S,P> operator-<>(const polynomial<T,S,P>& p,
-				       const polynomial<T,S,P>& q);
+  friend polynomial<T,P> operator-<>(const polynomial<T,P>& p,
+				       const polynomial<T,P>& q);
 
-  friend polynomial<T,S,P> operator*<>(const_coeff_reference a,
-				       const polynomial<T,S,P>& p);
+  friend polynomial<T,P> operator*<>(const_coeff_reference a,
+				       const polynomial<T,P>& p);
 
-  friend polynomial<T,S,P> operator*<>(const polynomial<T,S,P>& p,
+  friend polynomial<T,P> operator*<>(const polynomial<T,P>& p,
 				       const_coeff_reference a);
 
-  friend polynomial<T,S,P> operator/<>(const polynomial<T,S,P>& p,
+  friend polynomial<T,P> operator/<>(const polynomial<T,P>& p,
 				       const_coeff_reference a);
 
-  friend polynomial<T,S,P> operator*<>(const polynomial<T,S,P>& p,
-				       const polynomial<T,S,P>& q);
+  friend polynomial<T,P> operator*<>(const polynomial<T,P>& p,
+				       const polynomial<T,P>& q);
 
 }; // class polynomial
 
@@ -478,38 +470,38 @@ public:
 // Function definitions
 //
 
-template<class T, class S, class P>
-inline polynomial<T,S,P> operator+(const polynomial<T,S,P>& p)
+template<class T, class P>
+inline polynomial<T,P> operator+(const polynomial<T,P>& p)
 {
   return p;
 }
 
-template<class T, class S, class P>
-inline polynomial<T,S,P> operator-(const polynomial<T,S,P>& p)
+template<class T, class P>
+inline polynomial<T,P> operator-(const polynomial<T,P>& p)
 {
-  polynomial<T,S,P> r(p);
+  polynomial<T,P> r(p);
 
   r.multiply_by_monomial(0,-1);
 
   return r;
 }
 
-template<class T, class S, class P>
-inline polynomial<T,S,P> operator+(const polynomial<T,S,P>& p,
-				   const polynomial<T,S,P>& q)
+template<class T, class P>
+inline polynomial<T,P> operator+(const polynomial<T,P>& p,
+				   const polynomial<T,P>& q)
 {
-  polynomial<T,S,P> r(p);
+  polynomial<T,P> r(p);
 
   r.add_polynomial(q);
 
   return r;
 }
 
-template<class T, class S, class P>
-inline polynomial<T,S,P> operator-(const polynomial<T,S,P>& p,
-				   const polynomial<T,S,P>& q)
+template<class T, class P>
+inline polynomial<T,P> operator-(const polynomial<T,P>& p,
+				   const polynomial<T,P>& q)
 {
-  polynomial<T,S,P> r(p);
+  polynomial<T,P> r(p);
 
   r.add_polynomial_X_monomial(q,0,-1);
 
@@ -517,41 +509,41 @@ inline polynomial<T,S,P> operator-(const polynomial<T,S,P>& p,
 }
 
 
-template<class T, class S, class P>
-inline polynomial<T,S,P> operator*(const T& a, const polynomial<T,S,P>& p)
+template<class T, class P>
+inline polynomial<T,P> operator*(const T& a, const polynomial<T,P>& p)
 {
-  polynomial<T,S,P> r(p);
+  polynomial<T,P> r(p);
 
   r.multiply_by_monomial(0,a);
 
   return r;
 }
 
-template<class T, class S, class P>
-inline polynomial<T,S,P> operator*(const polynomial<T,S,P>& p, const T& a)
+template<class T, class P>
+inline polynomial<T,P> operator*(const polynomial<T,P>& p, const T& a)
 {
   return a*p;
 }
 
-template<class T, class S, class P>
-inline polynomial<T,S,P> operator/(const polynomial<T,S,P>& p, const T& a)
+template<class T, class P>
+inline polynomial<T,P> operator/(const polynomial<T,P>& p, const T& a)
 {
   return ((T)1/a)*p;
 }
 
-template<class T, class S, class P>
-inline polynomial<T,S,P> operator*(const polynomial<T,S,P>& p,
-				   const polynomial<T,S,P>& q)
+template<class T, class P>
+inline polynomial<T,P> operator*(const polynomial<T,P>& p,
+				   const polynomial<T,P>& q)
 {
-  polynomial<T,S,P> r(p);
+  polynomial<T,P> r(p);
 
   r.multiply_by_polynomial(q);
 
   return r;
 }
 
-template<class T, class S, class P>
-std::ostream& operator<<(std::ostream& strm, const polynomial<T,P,S>& p)
+template<class T, class P>
+std::ostream& operator<<(std::ostream& strm, const polynomial<T,P>& p)
 {
   return (p.printFancy(strm));
 }

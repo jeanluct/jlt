@@ -218,6 +218,18 @@ inline long double Pow(const long double a, const S b)
 # endif
 }
 
+template<class S>
+inline S Pow(const int a, S b)
+{
+  return ::powl((S)a,b);
+}
+
+template<class S>
+inline S Pow(const long int a, S b)
+{
+  return ::powl((S)a,b);
+}
+
 template<class T>
 inline T Pow(const std::complex<T> a, int b)
 {

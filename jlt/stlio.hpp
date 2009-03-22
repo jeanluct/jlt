@@ -47,6 +47,22 @@ struct format_traits {
 };
 
 template<>
+struct format_traits<int> {
+
+  // String to separate vector entries.
+# if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
+#   define field_sep "  "
+# else
+    static const char field_sep[] = "  ";
+# endif
+
+  static const int extra_width_scientific = 0;
+
+  // For short ints, assuming 5 digits plus sign.
+  static const int field_width = 6;
+};
+
+template<>
 struct format_traits<float> {
 
   // String to separate vector entries.
