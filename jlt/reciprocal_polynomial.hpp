@@ -73,7 +73,7 @@ public:
   }
 
   // Construct from regular jlt::polynomial object.
-  reciprocal_polynomial(polynomial<T,S,P>& _p)
+  reciprocal_polynomial(polynomial<T,P>& _p)
   {
     // Require the polynomial _p to have matching degree.
     if (_p.degree() != 2*g)
@@ -98,9 +98,9 @@ public:
   }
 
   // Convert to regular jlt::polynomial object.
-  polynomial<T,S,P> to_polynomial() const
+  polynomial<T,P> to_polynomial() const
   {
-    polynomial<T,S,P> q(1);
+    polynomial<T,P> q(1);
     q[2*g] = 1;
 
     for (P i = 1; i <= g; ++i) q[i] = a[i-1];
@@ -154,9 +154,9 @@ public:
   }
 
   // Return the derivative of the polynomial as a jlt::polynomial object.
-  polynomial<T,S,P>  derivative() const
+  polynomial<T,P>  derivative() const
   {
-    polynomial<T,S,P> q;
+    polynomial<T,P> q;
 
     // Terms x^0 to x^g-1
     for (P i = 0; i < g; ++i) q[i] = (i+1)*a[i];
