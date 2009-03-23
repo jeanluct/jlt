@@ -46,7 +46,7 @@ int main()
   qq.printFancy(cout) << endl;
   cout << pp*qq;
 
-  cout << pp(2) << endl;
+  cout << pp(2.) << endl;
   cout << pp[10] << endl;
 
   cout << pp << endl;

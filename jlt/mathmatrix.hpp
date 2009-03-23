@@ -518,7 +518,7 @@ public:
 		    }
 		}
 	    }
-	  t0 = C.trace()/(l+1);
+	  t0 = C.trace()/T(l+1);
 	  p[l+1] = -t0*p[0];
 	  if (l < n) 
 	    {

@@ -17,29 +17,31 @@ namespace jlt {
 // Declare class and function templates
 //
 
-template<typename T>
-T operator+(const T&);
+template<class T, class P> class polynomial;
 
-template<typename T>
-T operator-(const T&);
+template<class T, class P>
+polynomial<T,P> operator+(const polynomial<T,P>&);
 
-template<typename T>
-T operator+(const T&, const T&);
+template<class T, class P>
+polynomial<T,P> operator-(const polynomial<T,P>&);
 
-template<typename T>
-T operator-(const T&, const T&);
+template<class T, class P>
+polynomial<T,P> operator+(const polynomial<T,P>&, const polynomial<T,P>&);
 
-template<typename T, typename S>
-T operator*(const S&, const T&);
+template<class T, class P>
+polynomial<T,P> operator-(const polynomial<T,P>&, const polynomial<T,P>&);
 
-template<typename T, typename S>
-T operator*(const T&, const S&);
+template<class T, class P>
+polynomial<T,P> operator*(const polynomial<T,P>&, const polynomial<T,P>&);
 
-template<typename T, typename S>
-T operator/(const T&, const S&);
+template<class T, class P, class S>
+polynomial<T,P> operator*(const S&, const polynomial<T,P>&);
 
-template<typename T>
-T operator*(const T&, const T&);
+template<class T, class P, class S>
+polynomial<T,P> operator*(const polynomial<T,P>&, const S&);
+
+template<class T, class P, class S>
+polynomial<T,P> operator/(const polynomial<T,P>&, const S&);
 
 //
 // class polynomial
@@ -366,11 +368,13 @@ public:
   }
 
   // Evaluate polynomial at a given value of x.
+  // Here S must be a type that can be converted to from T*S.
+  // Example: if T=double, then cannot have S=int.
   template<class S>
   S operator()(const S& x) const
   {
     S c = 0;
-    S xp = Pow(x,(T)pmin);
+    S xp = (S)Pow((T)x,(T)pmin);
 
     for (P i = 0; i <= pmax-pmin; ++i) {
       if (coeff[i] != 0) c += coeff[i] * xp;
