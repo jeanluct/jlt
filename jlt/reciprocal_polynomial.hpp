@@ -27,7 +27,7 @@
 
 namespace jlt {
 
-template<class T, int g, class S = T, class P = int>
+template<class T, int g, class P = long int>
 class reciprocal_polynomial
 {
 private:
@@ -45,6 +45,7 @@ private:
   vector<T> a;
 
 public:
+  typedef size_t	size_type;
   typedef P		power_type;
   typedef const P	const_power_type;
 
@@ -52,11 +53,6 @@ public:
   typedef const T	const_coeff_type;
   typedef T&		coeff_reference;
   typedef const T&	const_coeff_reference;
-
-  typedef S		arg_type;
-  typedef const S	const_arg_type;
-  typedef S&		arg_reference;
-  typedef const S&	const_arg_reference;
 
   reciprocal_polynomial() : a(g) {}
 
@@ -112,6 +108,7 @@ public:
   P degree() const { return 2*g; }
 
   // Evaluate polynomial at a given value of x.
+  template<class S>
   S operator()(const S& x) const
   {
     // Term x^0
@@ -141,6 +138,8 @@ public:
     if (i > 0 && i <= g) return a[i-1];
     if (i > g && i < 2*g) return a[2*g-1-i];
 
+    std::cerr << "Out of range coefficient " << i << " in ";
+    std::cerr << "reciprocal_polynomial::operator[] const.\n";
     exit(1);
   }
 
@@ -150,11 +149,17 @@ public:
     if (i > 0 && i <= g) return a[i-1];
     if (i > g && i <= 2*g) return a[2*g-1-i];
 
+    if (i == 0 || i == 2*g)
+      std::cerr << "Unassignable";
+    else
+      std::cerr << "Out of range";
+    std::cerr << " coefficient " << i << " in ";
+    std::cerr << "reciprocal_polynomial::operator[].\n";
     exit(1);
   }
 
   // Return the derivative of the polynomial as a jlt::polynomial object.
-  polynomial<T,P>  derivative() const
+  polynomial<T,P> derivative() const
   {
     polynomial<T,P> q;
 
@@ -170,6 +175,7 @@ public:
 
   // Return the derivative of the polynomial at a point.
   // Generalise with higher order as option?
+  template<class S>
   S derivative_at(const S& x) const
   {
     S p = 0, xp = 1;
