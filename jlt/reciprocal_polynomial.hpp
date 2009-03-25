@@ -16,7 +16,6 @@
 //
 // TODO
 //
-// - Odd degree.
 // - Addition, etc.
 // - Print via polynomial.hpp.
 //
@@ -27,21 +26,31 @@
 
 namespace jlt {
 
-template<class T, int g, class P = long int>
+template<class T, class P = long int>
 class reciprocal_polynomial
 {
 private:
   //
   // Polynomial is of the form
   //
-  // 1 + a[0]x + a[1]x^2 + ...
-  //              + a[g-1] x^g + a[g-2] x^(g-1) + ... + a[0] x^(n-1) + x^n
+  //   1 + a[0] x + a[1] x^2 + a[g-1] x^g + a[g-2] x^(g+1) + ...
+  //              ... + a[0] x^(n-1) + x^n
   //
-  // Currently only for n=2g even.
+  // for n even and g=n/2, and
   //
-  // The degree is hard-coded since such polynomials cannot in general
-  // be multiplied by x^m without breaking reciprocity.
+  //   1 + a[0] x + a[1] x^2 + ...
+  //              ... + a[g-1] x^g + a[g-1] x^(g+1) + a[g-2] x^(g+2) + ...
+  //              ... + a[0] x^(n-1) + x^n
   //
+  // for n odd and g=(n-1)/2.
+  //
+  // The degree is a const since such polynomials cannot in general be
+  // multiplied by x^m without breaking reciprocity.
+  //
+  const int n; // The degree of the polynomial.  The length of a by
+               // itself is not enough to give the degree, since a
+               // reciprocal polynomial of degree 2g or 2g+1 has g
+               // independent coefficients.
   vector<T> a;
 
 public:
@@ -54,11 +63,12 @@ public:
   typedef T&		coeff_reference;
   typedef const T&	const_coeff_reference;
 
-  reciprocal_polynomial() : a(g) {}
+  reciprocal_polynomial(const int _n) : n(_n), a(_n/2) {}
 
   // Construct from a vector.
-  reciprocal_polynomial(vector<T>& _a) : a(_a)
+  reciprocal_polynomial(const vector<T>& _a) : n(_a.size()), a(_a)
   {
+    /*
     // Require vector _a to have length g.
     if (_a.size() != g)
       {
@@ -66,13 +76,16 @@ public:
 	std::cerr << "jlt::reciprocal_polynomial(vector<>).\n";
 	exit(1);
       }
+    */
   }
 
   // Construct from regular jlt::polynomial object.
   reciprocal_polynomial(polynomial<T,P>& _p)
   {
+    const int g = n/2;
+
     // Require the polynomial _p to have matching degree.
-    if (_p.degree() != 2*g)
+    if (_p.degree() != n)
       {
 	std::cerr << "Wrong degree in ";
 	std::cerr << "jlt::reciprocal_polynomial(polynomial<>).\n";
@@ -96,36 +109,36 @@ public:
   // Convert to regular jlt::polynomial object.
   polynomial<T,P> to_polynomial() const
   {
-    polynomial<T,P> q(1);
-    q[2*g] = 1;
+    const int g = n/2;
 
+    // Term x^0
+    polynomial<T,P> q(1);
+    // Terms x^1 to x^g
     for (P i = 1; i <= g; ++i) q[i] = a[i-1];
-    for (P i = g+1; i < 2*g; ++i) q[i] = a[2*g-1-i];
+    // Terms x^(g+1) to x^(n-1)
+    for (P i = g+1; i < n; ++i) q[i] = a[n-1-i];
+    // Term x^n
+    q[n] = 1;
 
     return q;
   }
 
-  P degree() const { return 2*g; }
+  P degree() const { return n; }
 
   // Evaluate polynomial at a given value of x.
   template<class S>
   S operator()(const S& x) const
   {
-    // Term x^0
-    S p = 1;
+    const int g = n/2;
     S xp = x;
 
+    // Term x^0
+    S p = 1;
     // Terms x^1 to x^g
-    for (P i = 0; i < g; ++i) {
-      p += a[i] * xp;
-      xp *= x;
-    }
-    // Terms x^(g+1) to x^(2g-1)
-    for (P i = 0; i <= g-2; ++i) {
-      p += a[g-2-i] * xp;
-      xp *= x;
-    }
-    // Term x^(2g)
+    for (P i = 1; i <= g; ++i) { p += a[i-1]*xp; xp *= x; }
+    // Terms x^(g+1) to x^(n-1)
+    for (P i = g+1; i < n; ++i) { p += a[n-1-i]*xp; xp *= x; }
+    // Term x^n
     p += xp;
 
     return p;
@@ -134,9 +147,11 @@ public:
   // Return a coefficient of the polynomial.
   const T operator[](const P i) const
   {
-    if (i == 0 || i == 2*g) return 1;
+    const int g = n/2;
+
+    if (i == 0 || i == n) return 1;
     if (i > 0 && i <= g) return a[i-1];
-    if (i > g && i < 2*g) return a[2*g-1-i];
+    if (i > g && i < n) return a[n-1-i];
 
     std::cerr << "Out of range coefficient " << i << " in ";
     std::cerr << "reciprocal_polynomial::operator[] const.\n";
@@ -146,10 +161,12 @@ public:
   // Return a coefficient of the polynomial, allow assignment.
   T& operator[](const P i)
   {
-    if (i > 0 && i <= g) return a[i-1];
-    if (i > g && i <= 2*g) return a[2*g-1-i];
+    const int g = n/2;
 
-    if (i == 0 || i == 2*g)
+    if (i > 0 && i <= g) return a[i-1];
+    if (i > g && i < n) return a[n-1-i];
+
+    if (i == 0 || i == n)
       std::cerr << "Unassignable";
     else
       std::cerr << "Out of range";
@@ -161,14 +178,15 @@ public:
   // Return the derivative of the polynomial as a jlt::polynomial object.
   polynomial<T,P> derivative() const
   {
+    const int g = n/2;
     polynomial<T,P> q;
 
-    // Terms x^0 to x^g-1
-    for (P i = 0; i < g; ++i) q[i] = (i+1)*a[i];
-    // Terms x^g to x^(2g-2)
-    for (P i = g; i <= 2*g-2; ++i) q[i] = (i+1)*a[2*g-2-i];
-    // Term x^(2g-1)
-    q[2*g-1] = 2*g;
+    // Terms x^0 to x^(g-1)
+    for (P i = 1; i <= g; ++i) q[i-1] = i*a[i-1];
+    // Terms x^g to x^(n-2)
+    for (P i = g+1; i < n; ++i) q[i-1] = i*a[n-1-i];
+    // Term x^(n-1)
+    q[n-1] = n;
 
     return q;
   }
@@ -178,14 +196,15 @@ public:
   template<class S>
   S derivative_at(const S& x) const
   {
+    const int g = n/2;
     S p = 0, xp = 1;
 
-    // Terms x^0 to x^g-1
-    for (P i = 0; i < g; ++i) { p += (i+1)*a[i] * xp; xp *= x; }
-    // Terms x^g to x^(2g-2)
-    for (P i = g; i <= 2*g-2; ++i) { p += (i+1)*a[2*g-2-i] * xp; xp *= x; }
-    // Term x^(2g-1)
-    p += (2*g) * xp;
+    // Terms x^0 to x^(g-1)
+    for (P i = 1; i <= g; ++i) { p += i*a[i-1]*xp; xp *= x; }
+    // Terms x^g to x^(n-2)
+    for (P i = g+1; i < n; ++i) { p += i*a[n-1-i]*xp; xp *= x; }
+    // Term x^(n-1)
+    p += n*xp;
 
     return p;
   }
