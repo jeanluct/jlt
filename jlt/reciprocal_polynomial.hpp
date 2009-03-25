@@ -44,13 +44,10 @@ private:
   //
   // for n odd and g=(n-1)/2.
   //
-  // The degree is a const since such polynomials cannot in general be
-  // multiplied by x^m without breaking reciprocity.
-  //
-  const int n; // The degree of the polynomial.  The length of a by
-               // itself is not enough to give the degree, since a
-               // reciprocal polynomial of degree 2g or 2g+1 has g
-               // independent coefficients.
+  int n; 	// The degree of the polynomial.  The length of a by
+                // itself is not enough to give the degree, since a
+                // reciprocal polynomial of degree 2g or 2g+1 has g
+                // independent coefficients.
   vector<T> a;
 
 public:
@@ -63,47 +60,50 @@ public:
   typedef T&		coeff_reference;
   typedef const T&	const_coeff_reference;
 
-  reciprocal_polynomial(const int _n) : n(_n), a(_n/2) {}
+  reciprocal_polynomial(const int _n = 0) : n(_n), a(_n/2) {}
 
   // Construct from a vector.
-  reciprocal_polynomial(const vector<T>& _a) : n(_a.size()), a(_a)
-  {
-    /*
-    // Require vector _a to have length g.
-    if (_a.size() != g)
-      {
-	std::cerr << "Wrong vector length in ";
-	std::cerr << "jlt::reciprocal_polynomial(vector<>).\n";
-	exit(1);
-      }
-    */
-  }
+  reciprocal_polynomial(const vector<T>& _a) : n(_a.size()), a(_a) {}
 
   // Construct from regular jlt::polynomial object.
-  reciprocal_polynomial(polynomial<T,P>& _p)
+  reciprocal_polynomial(const polynomial<T,P>& _p) : n(_p.degree()), a(n)
   {
     const int g = n/2;
-
-    // Require the polynomial _p to have matching degree.
-    if (_p.degree() != n)
-      {
-	std::cerr << "Wrong degree in ";
-	std::cerr << "jlt::reciprocal_polynomial(polynomial<>).\n";
-	exit(1);
-      }
 
     // Require the polynomial _p to be reciprocal.
     for (P i = 0; i < g; ++i)
       {
-	if (_p[i] != _p[2*g-i])
+	if (_p[i] != _p[n-i])
 	  {
 	    std::cerr << "Not reciprocal in ";
 	    std::cerr << "jlt::reciprocal_polynomial(polynomial<>).\n";
 	    exit(1);
 	  }
+	a[i] = _p[i+1];
       }
+  }
 
-    for (P i = 0; i < g; ++i) a[i] = _p[i+1];
+  P degree() const { return n; }
+
+  // Equate reciprocal polynomial to another.
+  reciprocal_polynomial<T,P>& operator=(const reciprocal_polynomial<T,P>& p)
+  {
+    n = p.degree();
+    a = p.a;
+
+    return *this;
+  }
+
+  // Test for equality of two reciprocal polynomials.
+  bool operator==(const reciprocal_polynomial<T,P>& p) const
+  {
+    return (a == p.a);
+  }
+
+  // Test for inequality of two reciprocal polynomials.
+  bool operator!=(const reciprocal_polynomial<T,P>& p) const
+  {
+    return !(*this == p);
   }
 
   // Convert to regular jlt::polynomial object.
@@ -122,8 +122,6 @@ public:
 
     return q;
   }
-
-  P degree() const { return n; }
 
   // Evaluate polynomial at a given value of x.
   template<class S>
