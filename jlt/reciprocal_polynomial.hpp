@@ -75,7 +75,7 @@ public:
       {
 	if (_p[i] != _p[n-i])
 	  {
-	    std::cerr << "Not reciprocal in ";
+	    std::cerr << _p << " not reciprocal in ";
 	    std::cerr << "jlt::reciprocal_polynomial(polynomial<>).\n";
 	    exit(1);
 	  }
