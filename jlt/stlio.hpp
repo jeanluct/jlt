@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <iterator>
 #include <vector>
 #include <valarray>
 #include <list>

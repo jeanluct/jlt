@@ -12,13 +12,14 @@
 #ifdef __PGI
 #define PGCC_NO_LONG_DOUBLE \
     { cerr << "pgCC does not implement long double type.\n"; \
-      std::exit(1); \
+      exit(1); \
       return 0; }
 #else
 #include <cmath>
 #endif
 #include <iostream>
 #include <complex>
+#include <cstdlib>
 
 namespace jlt {
 
@@ -58,7 +59,7 @@ template<class T>
 inline T Log(const T a)
 {
   std::cerr << "Log: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Log(const float a)
@@ -85,7 +86,7 @@ template<class T>
 inline T Log1p(const T a)
 {
   std::cerr << "Log1p: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Log1p(const float a)
@@ -112,7 +113,7 @@ template<class T>
 inline T Log10(const T a)
 {
   std::cerr << "Log10: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Log10(const float a)
@@ -139,7 +140,7 @@ template<class T>
 inline T Exp(const T a)
 {
   std::cerr << "Exp: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Exp(const float a)
@@ -166,7 +167,7 @@ template<class T>
 inline T Expm1(const T a)
 {
   std::cerr << "Expm1: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Expm1(const float a)
@@ -193,7 +194,7 @@ template<class T, class S>
 inline T Pow(const T a, const S b)
 {
   std::cerr << "Pow: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 template<class S>
@@ -258,7 +259,7 @@ template<class T, class S>
 inline T Mod(const T a, const S b)
 {
   std::cerr << "Mod: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 template<class S>
@@ -296,7 +297,7 @@ template<class T>
 inline T Sqrt(const T a)
 {
   std::cerr << "Sqrt: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 
   return 0;
 }
@@ -325,7 +326,7 @@ template<class T>
 inline T Sin(const T a)
 {
   std::cerr << "Sin: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Sin(const float a)
@@ -352,7 +353,7 @@ template<class T>
 inline T Cos(const T a)
 {
   std::cerr << "Cos: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Cos(const float a)
@@ -379,7 +380,7 @@ template<class T>
 inline T Tan(const T a)
 {
   std::cerr << "Tan: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Tan(const float a)
@@ -406,7 +407,7 @@ template<class T>
 inline T Sinh(const T a)
 {
   std::cerr << "Sinh: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Sinh(const float a)
@@ -433,7 +434,7 @@ template<class T>
 inline T Cosh(const T a)
 {
   std::cerr << "Cosh: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Cosh(const float a)
@@ -460,7 +461,7 @@ template<class T>
 inline T Tanh(const T a)
 {
   std::cerr << "Tanh: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Tanh(const float a)
@@ -487,7 +488,7 @@ template<class T>
 inline T Asin(const T a)
 {
   std::cerr << "Asin: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Asin(const float a)
@@ -514,7 +515,7 @@ template<class T>
 inline T Acos(const T a)
 {
   std::cerr << "Acos: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Acos(const float a)
@@ -541,7 +542,7 @@ template<class T>
 inline T Atan(const T a)
 {
   std::cerr << "Atan: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Atan(const float a)
@@ -568,7 +569,7 @@ template<class T>
 inline T Atan2(const T y, const T x)
 {
   std::cerr << "Atan: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Atan2(const float y, const float x)
@@ -595,7 +596,7 @@ template<class T>
 inline T Asinh(const T a)
 {
   std::cerr << "Asinh: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Asinh(const float a)
@@ -622,7 +623,7 @@ template<class T>
 inline T Acosh(const T a)
 {
   std::cerr << "Acosh: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Acosh(const float a)
@@ -649,7 +650,7 @@ template<class T>
 inline T Atanh(const T a)
 {
   std::cerr << "Atanh: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Atanh(const float a)
@@ -676,7 +677,7 @@ template<class T>
 inline T Floor(const T a)
 {
   std::cerr << "Floor: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Floor(const float a)
@@ -703,7 +704,7 @@ template<class T>
 inline T Ceil(const T a)
 {
   std::cerr << "Ceil: You cannot perform this math operation.\n";
-  std::exit(1);
+  exit(1);
 }
 
 inline float Ceil(const float a)
