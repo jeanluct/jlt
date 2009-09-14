@@ -51,8 +51,10 @@ inline S operator*(const mathvector<T,S>& v, const mathvector<T,S>& w);
 template<class T, class S>
 inline S dot(const mathvector<T,S>& v, const mathvector<T,S>& w);
 
+// Was called mag, but potentially confusing since it returns the
+// squared magnitude.
 template<class T, class S>
-inline S mag(const mathvector<T,S>& v);
+inline S mag2(const mathvector<T,S>& v);
 
 template<class T, class S>
 inline S abs(const mathvector<T,S>& v);
@@ -229,7 +231,7 @@ public:
 
   friend scalar_type dot(const mathvector<T,S>& v, const mathvector<T,S>& w);
 
-  friend scalar_type mag(const mathvector<T,S>& v);
+  friend scalar_type mag2(const mathvector<T,S>& v);
 
   friend scalar_type abs(const mathvector<T,S>& v);
 #else
@@ -263,7 +265,7 @@ public:
   friend scalar_type jlt::dot<>(const mathvector<T,S>& v,
 				const mathvector<T,S>& w);
 
-  friend scalar_type jlt::mag<>(const mathvector<T,S>& v);
+  friend scalar_type jlt::mag2<>(const mathvector<T,S>& v);
 
   friend scalar_type jlt::abs<>(const mathvector<T,S>& v);
 #endif
@@ -471,7 +473,7 @@ inline S operator*(const mathvector<T,S>& v, const mathvector<T,S>& w)
 }
 
 template<class T, class S>
-inline S mag(const mathvector<T,S>& v)
+inline S mag2(const mathvector<T,S>& v)
 {
   S magn = S();
 
@@ -487,7 +489,7 @@ inline S mag(const mathvector<T,S>& v)
 template<class T, class S>
 inline S abs(const mathvector<T,S>& v)
 {
-  return Sqrt(mag((v)));
+  return Sqrt(mag2((v)));
 }
 
 // For compatibility with math.hpp

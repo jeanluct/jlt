@@ -40,7 +40,7 @@ int main()
   a-=b;
   cout << a << endl;
   a*=3.;
-  cout << a << endl << mag(a) << endl << endl;
+  cout << a << endl << mag2(a) << endl << endl;
   a/=3.;
   cout << a << endl << abs(a) << endl << endl;
 
@@ -57,7 +57,7 @@ int main()
 
   cout << aa << endl;
 
-  cout << mag(aa) << endl;
+  cout << mag2(aa) << endl;
 
   cout << dot(aa,aa) << endl;
 
