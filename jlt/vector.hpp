@@ -107,6 +107,27 @@ public:
 
       return strm;
     }
+
+  std::ostream& printMatlabForm(std::ostream& strm,
+				const char name[] = 0) const
+    {
+      // Only print = if filename is specified.
+      if (name) strm << name << " = ";
+
+      // If the vector is empty, just print "[];"
+      if (this->empty()) { strm << "[];\n"; return strm; }
+
+      strm << "[\n";
+
+      for (typename std::vector<T>::const_iterator i = this->begin();
+	   i != this->end(); ++i)
+	{
+	  strm << " " << *i << std::endl;
+	}
+      strm << "];\n";
+
+      return strm;
+    }
 };
 
 } // namespace jlt
