@@ -109,8 +109,12 @@ public:
     }
 
   std::ostream& printMatlabForm(std::ostream& strm,
-				const char name[] = 0) const
+				const char name[] = 0,
+				const char comment[] = 0) const
     {
+      // Print comment if specified.
+      if (comment) strm << "% " << comment << std::endl;
+
       // Only print = if filename is specified.
       if (name) strm << name << " = ";
 
