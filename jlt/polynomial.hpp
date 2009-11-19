@@ -374,10 +374,12 @@ public:
   S operator()(const S& x) const
   {
     S c = 0;
+    /* I don't have this conversion quite right.  Need to think about this. */
+    /* S xp = (S)Pow((S)x,(S)pmin); */
     S xp = (S)Pow((T)x,(T)pmin);
 
     for (P i = 0; i <= pmax-pmin; ++i) {
-      if (coeff[i] != 0) c += coeff[i] * xp;
+      c += coeff[i] * xp;
       xp *= x;
     }
 
@@ -409,6 +411,25 @@ public:
 
     return q.differentiate();
   }
+
+#if 0 /* Do we need this? */
+  // Return the derivative of the polynomial at a point.
+  // Generalise with higher order as option?
+  template<class S>
+  S derivative_at(const S& x) const
+  {
+    S c = 0;
+    /* I don't have this conversion quite right.  Need to think about this. */
+    S xp = (S)Pow((S)x,(S)pmin-1);
+
+    for (P i = 0; i <= pmax-pmin; ++i) {
+      c += (pmin+i)*coeff[i]*xp;
+      xp *= x;
+    }
+
+    return c;
+  }
+#endif
 
   //
   // Maintenance Functions
