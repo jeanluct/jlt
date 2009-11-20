@@ -1,6 +1,10 @@
 #ifndef JLT_PROMPT_HPP
 #define JLT_PROMPT_HPP
 
+#include <iostream>
+#include <sstream>
+#include <string>
+
 namespace jlt {
 
 template<class T>

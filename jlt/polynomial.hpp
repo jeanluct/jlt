@@ -412,7 +412,6 @@ public:
     return q.differentiate();
   }
 
-#if 0 /* Do we need this? */
   // Return the derivative of the polynomial at a point.
   // Generalise with higher order as option?
   template<class S>
@@ -429,7 +428,6 @@ public:
 
     return c;
   }
-#endif
 
   //
   // Maintenance Functions
