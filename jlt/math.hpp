@@ -646,6 +646,8 @@ inline long double Acosh(const long double a)
 }
 
 
+// atanh not defined when cross-compiling with mingw32.
+#if defined(__WIN32__) || defined(__MSVCRT__) || defined(__MINGW32__)
 template<class T>
 inline T Atanh(const T a)
 {
@@ -671,6 +673,7 @@ inline long double Atanh(const long double a)
     return ::atanhl(a);
 # endif
 }
+#endif // __MINGW32__
 
 
 template<class T>
