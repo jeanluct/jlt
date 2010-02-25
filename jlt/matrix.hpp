@@ -335,6 +335,32 @@ public:
 
       return strm;
     }
+
+  std::ostream& printMatlabForm(std::ostream& strm,
+				const char name[] = 0,
+				const char comment[] = 0) const
+    {
+      // Print comment if specified.
+      if (comment) strm << "% " << comment << std::endl;
+
+      // Only print = if filename is specified.
+      if (name) strm << name << " = ";
+
+      // If the vector is empty, just print "[];"
+      if (start == 0) { strm << "[];\n"; return strm; }
+
+      strm << "[\n";
+      for (const_iterator i = start; i != finish; i += n) {
+	for (const_iterator j = i; j != i+n-1; ++j)
+	  {
+	    strm << *j << " ";
+	  }
+	strm << *(i+n-1) << "\n";
+      }
+      strm << "];\n";
+
+      return strm;
+    }
 };
 
 template<class T>
