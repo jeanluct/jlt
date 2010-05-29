@@ -1,5 +1,5 @@
 function fp = refine(f,N,dim)
-%REFINE   Increase resolution of an array using FFT.
+%REFINE   Increase or decrease resolution of a real array using FFT.
 %   REFINE(F,N) returns F inflated to length N by taking the FFT of the
 %   data, padding with zeros, then inverting using the IFFT.  For matrices,
 %   the refine operation is applied to each column. For N-D arrays, refine
@@ -9,8 +9,6 @@ function fp = refine(f,N,dim)
 %
 %   See also REFINE2.
 
-% TODO: Downsampling.
-
 if nargin < 3
   % First non-singleton dimension
   dim = min(find(size(f) ~= 1));
@@ -19,36 +17,41 @@ end
 
 sz = size(f);
 N0 = sz(dim);
-if sz(dim) > N
-  error('No downsampling in refine');
-elseif sz(dim) == N
-  fp = f; return
-end
+if sz(dim) == N, fp = f; return; end
 sz(dim) = N;
 fk = zeros(sz);
 
-kmin0 = floor(-(N0-1)/2); kmax0 = floor( (N0-1)/2);
-kmin = floor(-(N-1)/2); k0 = [kmin0:kmax0];
+kmin0 = floor(-(N0-1)/2); kmax0 = floor((N0-1)/2);
+kmin = floor(-(N-1)/2); kmax = floor((N-1)/2);
 
 % Create vector of indices along each dimension and store in cell.
 numDims = ndims(f);
+f = fftshift(fft(f,[],dim),dim);
 ic = cell(1,numDims);
-for k = 1:numDims
-  nd = size(fk,k);
-  if k ~= dim
-    ic{k} = 1:nd;
-  else
-    ic{k} = k0-kmin+1;   % The dimension we operate on.
+for k = 1:numDims, if k ~= dim, ic{k} = 1:size(f,k); end; end
+if N0 < N
+  %
+  % Upsampling
+  %
+  ic{dim} = [kmin0:kmax0]-kmin+1;
+  fk(ic{:}) = f;
+  % When N0 is even, symmetrize the Nyquist mode.
+  if ~mod(N0,2)
+    ic{dim} = 1-kmin - kmin0;
+    ic2 = ic; ic2{dim} = 1-kmin + kmin0;
+    fk(ic{:}) = conj(fk(ic2{:}));
   end
-end
-
-fk(ic{:}) = fftshift(fft(f,[],dim),dim);
-
-% When N0 is even, need to copy the Nyquist mode.
-if ~mod(N0,2)
-   ic{dim} = 1-kmin - kmin0;
-   ic2 = ic; ic2{dim} = 1-kmin + kmin0;
-   fk(ic{:}) = conj(fk(ic2{:}));
+else
+  %
+  % Downsampling
+  %
+  ic{dim} = [kmin:kmax]-kmin0+1;
+  fk = f(ic{:});
+  % When N is even, make the Nyquist mode real.
+  if ~mod(N,2)
+    ic{dim} = 1;
+    fk(ic{:}) = real(fk(ic{:}));
+  end
 end
 
 fp = (N/N0)*ifft(ifftshift(fk,dim),[],dim,'symmetric');
