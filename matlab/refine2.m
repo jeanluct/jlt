@@ -1,4 +1,4 @@
-function fp = refine2(f,M,N)
+function fr = refine2(f,M,N)
 %REFINE2   Increase or decrease resolution of a 2D real array using FFT.
 %   REFINE2(F,M,N) returns an M by N version of the 2D array F, inflated by
 %   taking the FFT of the data, padding with zeros, then inverting using the
@@ -6,9 +6,9 @@ function fp = refine2(f,M,N)
 %
 %   REFINE2(F,N) returns an N by N array.
 %
-%   See also REFINE.
+%   See also REFINE, REFINEK, REFINEK2.
 
 if nargin < 3, N = M; end
 
 % Apply refine to each dimension.  (See doc fft.)
-fp = refine(refine(f,M,1),N,2);
+fr = refine(refine(f,M,1),N,2);
