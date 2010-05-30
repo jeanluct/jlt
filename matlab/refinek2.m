@@ -13,4 +13,4 @@ function fk = refinek2(f,M,N)
 if nargin < 3, N = M; end
 
 % Apply refine to each dimension.  (See doc fft.)
-fr = refinek(refinek(f,M,1),N,2);
+fk = refinek(refinek(f,M,1),N,2);
