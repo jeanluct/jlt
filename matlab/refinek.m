@@ -40,11 +40,12 @@ if N0 < N
   %
   ic{dim} = [kmin0:kmax0]-kmin+1;
   fk(ic{:}) = f;
-  % When N0 is even, symmetrize the Nyquist mode.
+  % When N0 is even, zero the old Nyquist mode.  This is better than
+  % symmetrizing, since we want to guarantee that we've padded with N-N0
+  % zeros.
   if ~mod(N0,2)
-    ic{dim} = 1-kmin - kmin0;
-    ic2 = ic; ic2{dim} = 1-kmin + kmin0;
-    fk(ic{:}) = conj(fk(ic2{:}));
+    ic{dim} = 1-kmin + kmin0;
+    fk(ic{:}) = 0;
   end
 else
   %

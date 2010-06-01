@@ -10,7 +10,7 @@ function L = ifft2op(Lk)
 % Note that F2 = F2.' , inv(F2) = inv(F2).', so the transform can be
 % taken to the left or right.
 
-[M2,N2] = size(L);
+[M2,N2] = size(Lk);
 
 FiLk = zeros(M2,N2);
 L = zeros(M2,N2);
