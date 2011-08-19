@@ -2,6 +2,7 @@
 #define JLT_CSPARSE_HPP
 
 #include <iostream>
+#include <cstdio>
 #include <memory>
 #include <jlt/mathmatrix.hpp>
 
