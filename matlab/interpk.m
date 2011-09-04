@@ -23,7 +23,12 @@ N = size(fk,1);
 kmin = floor(-(N-1)/2);
 kmax = floor( (N-1)/2);
 k = [0:kmax kmin:-1];
+
 nd = ndims(fk);
+if nd == 2 & (size(fk,1) == 1 | size(fk,2) == 1)
+  % NDIMS returns at least two, unfortunately, so adjust nd.
+  nd = 1;
+end
 
 if nargin < 3
   if nd == 1
@@ -41,10 +46,8 @@ elseif nargin == 3
   end
 end
 
-if nd == 2 & (size(fk,1) == 1 | size(fk,2) == 1)
-  % NDIMS returns at least two, unfortunately, so adjust nd.
-  nd = 1;
-  ex = exp(2*pi*i/L * k' * x(1));
+if nd == 1
+  ex = exp(2*pi*i/L * k' * x);
 elseif ndims(fk) == 2
   % Note that the array fk is assumed to be in 'meshgrid' style,
   % where the rows are Y and the columns X.

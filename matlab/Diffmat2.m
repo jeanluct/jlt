@@ -21,7 +21,7 @@ end
 k1x = 2*pi/Lx;
 k1y = 2*pi/Ly;
 
-% Derivatives of phi using Fourier differentiation matrices
+% Fourier differentiation matrices
 [x0,D]  = fourdif(N,1);
 [x0,D2] = fourdif(N,2);
 
