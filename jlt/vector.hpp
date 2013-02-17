@@ -159,17 +159,25 @@ public:
       }
     else
       {
-	if (!orientation) orientation = "column";
-	if (!strcmp(orientation,"column"))
-	  A = mxCreateDoubleMatrix(size(),1,mxREAL);
-	else if (!strcmp(orientation,"row"))
-	  A = mxCreateDoubleMatrix(1,size(),mxREAL);
+	if (!orientation)
+	  {
+	    // Default is a column vector.
+	    A = mxCreateDoubleMatrix(size(),1,mxREAL);
+	  }
 	else
 	  {
-	    // The orientation string is assumed to be a comment,
-	    // which are ignored currently.
-	    // The default is then a column vector.
-	    A = mxCreateDoubleMatrix(size(),1,mxREAL);
+	    if (!strcmp(orientation,"column"))
+	      A = mxCreateDoubleMatrix(size(),1,mxREAL);
+	    else if (!strcmp(orientation,"row"))
+	      A = mxCreateDoubleMatrix(1,size(),mxREAL);
+	    else
+	      {
+		// The orientation string is neither "column" nor
+		// "row", and is thus assumed to be a comment, which
+		// are ignored currently.  The default is then a
+		// column vector.
+		A = mxCreateDoubleMatrix(size(),1,mxREAL);
+	      }
 	  }
 	double *Ap = mxGetPr(A);
 	for (int i = 0; i < (int)size(); ++i) Ap[i] = (*this)[i];
