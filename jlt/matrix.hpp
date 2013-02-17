@@ -19,11 +19,9 @@
 
   Implement:
 
-  (Some of these are by analogy with std::vector.  See my
-  implementation, Vec)
+  (Some of these are by analogy with std::vector.  See also vector.hpp)
 
   grow()
-  empty()
   back()
   reserve()
   capacity()
@@ -219,6 +217,8 @@ public:
   //
   // Queries
   //
+
+  bool empty() const { return (!start); }
 
   bool isSquare() const { return (m == n); }
 
