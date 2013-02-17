@@ -15,6 +15,11 @@ void printMatlabForm(MATFile *pmat, const char name[], const double var)
   mxDestroyArray(A);
 }
 
+void printMatlabForm(MATFile *pmat, const char name[], const char var[])
+{
+  matPutVariable(pmat,"name",mxCreateString(var));
+}
+
 } // namespace jlt
 
 #endif // JLT_MATLAB_SUPPORT
