@@ -23,7 +23,7 @@
 #include <jlt/stlio.hpp>
 #include <jlt/exceptions.hpp>
 
-#ifdef JLT_MATLAB_SUPPORT
+#ifdef JLT_MATLAB_LIB_SUPPORT
 #  include <jlt/matlab.hpp>
 #  include <cstring> // for strcmp
 #endif
@@ -139,10 +139,19 @@ public:
       return strm;
     }
 
-#ifdef JLT_MATLAB_SUPPORT
+#ifdef JLT_MATLAB_LIB_SUPPORT
   void printMatlabForm(MATFile *pmat, const char name[],
-		       const char orientation[] = 0)
+		       const char orientation[] = 0) const
   {
+    // orientation is either "row" or "column" (default).
+    //
+    // If orientation is neither then eventually it will be used as a
+    // description string.  Also introduce at final description[]
+    // argument.
+    //
+    // The optional description string is currently ignored.  It is
+    // included for compatibility with printMatlabForm(std::ostream).
+    // In the future, could write to MAT file a name_descr string.
     mxArray *A;
     if (this->empty())
       {
@@ -157,9 +166,10 @@ public:
 	  A = mxCreateDoubleMatrix(1,size(),mxREAL);
 	else
 	  {
-	    std::cerr << "Bad orientation argument in ";
-	    std::cerr << "vector<>::printMatlabForm.\n";
-	    exit(-1);
+	    // The orientation string is assumed to be a comment,
+	    // which are ignored currently.
+	    // The default is then a column vector.
+	    A = mxCreateDoubleMatrix(size(),1,mxREAL);
 	  }
 	double *Ap = mxGetPr(A);
 	for (int i = 0; i < (int)size(); ++i) Ap[i] = (*this)[i];
@@ -168,7 +178,7 @@ public:
 
     mxDestroyArray(A);
 }
-#endif // JLT_MATLAB_SUPPORT
+#endif // JLT_MATLAB_LIB_SUPPORT
 
 };
 

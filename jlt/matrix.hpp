@@ -54,7 +54,7 @@
 #  define MATRIX_ASSERT(x)
 #endif
 
-#ifdef JLT_MATLAB_SUPPORT
+#ifdef JLT_MATLAB_LIB_SUPPORT
 #  include <jlt/matlab.hpp>
 #endif
 
@@ -366,9 +366,13 @@ public:
       return strm;
     }
 
-#ifdef JLT_MATLAB_SUPPORT
-  void printMatlabForm(MATFile *pmat, const char name[])
+#ifdef JLT_MATLAB_LIB_SUPPORT
+  void printMatlabForm(MATFile *pmat, const char name[],
+		       const char description[] = 0) const
   {
+    // The optional description string is currently ignored.  It is
+    // included for compatibility with printMatlabForm(std::ostream).
+    // In the future, could write to MAT file a name_descr string.
     mxArray *A;
     if (this->empty())
       {
@@ -390,7 +394,7 @@ public:
 
     mxDestroyArray(A);
   }
-#endif // JLT_MATLAB_SUPPORT
+#endif // JLT_MATLAB_LIB_SUPPORT
 
 };
 

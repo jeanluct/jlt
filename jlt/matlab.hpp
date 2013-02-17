@@ -1,10 +1,16 @@
 #ifndef JLT_MATLAB_HPP
 #define JLT_MATLAB_HPP
 
-#ifdef JLT_MATLAB_SUPPORT
-#include "mat.h"
+#ifdef JLT_MATLAB_LIB_SUPPORT
+#  include "mat.h"
+#endif
 
 namespace jlt {
+
+// TODO: add the iostream versions (no need to have
+// JLT_MATLAB_LIB_SUPPORT defined).
+
+#ifdef JLT_MATLAB_LIB_SUPPORT
 
 void printMatlabForm(MATFile *pmat, const char name[], const double var)
 {
@@ -15,13 +21,13 @@ void printMatlabForm(MATFile *pmat, const char name[], const double var)
   mxDestroyArray(A);
 }
 
-void printMatlabForm(MATFile *pmat, const char name[], const char var[])
+void printMatlabForm(MATFile *pmat, const char name[], const char str[])
 {
-  matPutVariable(pmat,"name",mxCreateString(var));
+  matPutVariable(pmat,"name",mxCreateString(str));
 }
 
 } // namespace jlt
 
-#endif // JLT_MATLAB_SUPPORT
+#endif // JLT_MATLAB_LIB_SUPPORT
 
 #endif // JLT_MATLAB_HPP
