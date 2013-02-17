@@ -14,6 +14,8 @@
 // - More control over formatting
 //
 
+namespace jlt {
+
 class time_mark
 {
 private:
@@ -56,5 +58,7 @@ public:
     dangling = false;
   }
 };
+
+} // namespace jlt
 
 #endif // JLT_TIME_MARK_HPP

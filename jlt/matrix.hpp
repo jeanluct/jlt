@@ -54,6 +54,10 @@
 #  define MATRIX_ASSERT(x)
 #endif
 
+#ifdef JLT_MATLAB_SUPPORT
+#  include <jlt/matlab.hpp>
+#endif
+
 
 namespace jlt {
 
@@ -361,6 +365,33 @@ public:
 
       return strm;
     }
+
+#ifdef JLT_MATLAB_SUPPORT
+  void printMatlabForm(MATFile *pmat, const char name[])
+  {
+    mxArray *A;
+    if (this->empty())
+      {
+	A = mxCreateDoubleMatrix(0,0,mxREAL);
+      }
+    else
+      {
+	A = mxCreateDoubleMatrix(rows(),columns(),mxREAL);
+	double *Ap = mxGetPr(A);
+	for (int i = 0; i < (int)rows(); ++i)
+	  {
+	    for (int j = 0; j < (int)columns(); ++j)
+	      {
+		Ap[i + rows()*j] = (*this)(i,j);
+	      }
+	  }
+      }
+    matPutVariable(pmat, name, A);
+
+    mxDestroyArray(A);
+  }
+#endif // JLT_MATLAB_SUPPORT
+
 };
 
 template<class T>

@@ -23,6 +23,12 @@
 #include <jlt/stlio.hpp>
 #include <jlt/exceptions.hpp>
 
+#ifdef JLT_MATLAB_SUPPORT
+#  include <jlt/matlab.hpp>
+#  include <cstring> // for strcmp
+#endif
+
+
 namespace jlt {
 
 template<class T>
@@ -132,6 +138,38 @@ public:
 
       return strm;
     }
+
+#ifdef JLT_MATLAB_SUPPORT
+  void printMatlabForm(MATFile *pmat, const char name[],
+		       const char orientation[] = 0)
+  {
+    mxArray *A;
+    if (this->empty())
+      {
+	A = mxCreateDoubleMatrix(0,0,mxREAL);
+      }
+    else
+      {
+	if (!orientation) orientation = "column";
+	if (!strcmp(orientation,"column"))
+	  A = mxCreateDoubleMatrix(size(),1,mxREAL);
+	else if (!strcmp(orientation,"row"))
+	  A = mxCreateDoubleMatrix(1,size(),mxREAL);
+	else
+	  {
+	    std::cerr << "Bad orientation argument in ";
+	    std::cerr << "vector<>::printMatlabForm.\n";
+	    exit(-1);
+	  }
+	double *Ap = mxGetPr(A);
+	for (int i = 0; i < (int)size(); ++i) Ap[i] = (*this)[i];
+      }
+    matPutVariable(pmat, name, A);
+
+    mxDestroyArray(A);
+}
+#endif // JLT_MATLAB_SUPPORT
+
 };
 
 } // namespace jlt
