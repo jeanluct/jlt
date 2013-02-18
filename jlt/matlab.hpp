@@ -23,7 +23,9 @@ void printMatlabForm(MATFile *pmat, const char name[], const double var)
 
 void printMatlabForm(MATFile *pmat, const char name[], const char str[])
 {
-  matPutVariable(pmat,"name",mxCreateString(str));
+  mxArray *A = mxCreateString(str);
+  matPutVariable(pmat,"name",A);
+  mxDestroyArray(A);
 }
 
 } // namespace jlt
