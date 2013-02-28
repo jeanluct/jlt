@@ -7,17 +7,18 @@
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   /* Dimension of grid. */
-  int N;
+  mwSize N;
   /* Counters */
-  int k, m, iqx, iqy;
+  mwIndex iqx, iqy, k;
+  mwSignedIndex m;
   /* Matlab sparse array. */
   mxArray *A;
   /* Pointers to internals of sparse matrix. */
-  int *Air, *Ajc;
+  mwIndex *Air, *Ajc;
   double *Apr, *Api;
   /* ik is an array that translates from unsigned to signed vector
      components. */
-  int *ik;
+  mwSignedIndex *ik;
   /* Nonzero components of Fourier-transformed velocity field. */
   double *uxr, *uxi, *uyr, *uyi;
   /* Row and columns of nonzero elements. */
@@ -25,21 +26,21 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   /* Imaginary part of ux and uy, if needed, otherwise leave at 0. */
   double uxim = 0, uyim = 0;
   /* Number of nonzero elements in ux, uy */
-  int nnz;
+  mwSize nnz;
   /* min/max mode numbers. */
-  int kmin, kmax;
+  mwSignedIndex kmin, kmax;
 
   if (nrhs < 6)
     {
       mexErrMsgTxt("6 input arguments required.");
     }
 
-  N = (int)(mxGetScalar(prhs[0]));
+  N = (mwSize)(mxGetScalar(prhs[0]));
   double L = mxGetScalar(prhs[5]);
 
-  kmin = floor(-(N-1)/2);
-  kmax = floor( (N-1)/2);
-  ik = (int *)malloc(N*sizeof(int));
+  kmin = floor(-((mwSignedIndex)N-1)/2);
+  kmax = floor( ((mwSignedIndex)N-1)/2);
+  ik = (mwSignedIndex *)malloc(N*sizeof(mwSignedIndex));
   for (m = 0; m <= kmax; ++m) ik[m] = m;
   for (m = -1; m >= kmin; --m) ik[N+m] = m;
 
@@ -70,11 +71,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
      cancellations. Do this by looping over the nonzero elements and
      computing how many values would be out of range.  This allows a
      fairly tight allocation of A. */
-  int Acap = 0;
+  mwSize Acap = 0;
   for (m = 0; m < nnz; ++m)
     {
       /* Translate nonzero rows/columns to signed indices. */
-      int mx = ik[(int)nzx[m]-1], my = ik[(int)nzy[m]-1];
+      mwSignedIndex mx = ik[(mwIndex)nzx[m]-1], my = ik[(mwIndex)nzy[m]-1];
       /* The number of nonzero values is determined by how many
 	 elements would be out of range, which depends on the
 	 magnitude of the index. */
@@ -88,7 +89,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   Apr = mxGetPr(A);		/* real part of sparse data */
   Api = mxGetPi(A);		/* imaginary part of sparse data */
 
-  /* Prefactor in rach term. */
+  /* Prefactor in each term. */
   double fac = (2*M_PI/L)/(N*N);
 
   /* k counts the cumulative number of nonzero elements in row n-1.  It
@@ -100,28 +101,28 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     {
       for (iqx = 0; iqx < N; ++iqx)
 	{
-	  int Q = iqx + iqy*N;
+	  mwIndex Q = iqx + iqy*N;
 	  /* Record the cumulative number of elements for the previous
 	     column.  Don't ask me, that's just how it works, folks. */
 	  Ajc[Q] = k;
 	  /* Translate to signed indices. */
-	  int qx = ik[iqx], qy = ik[iqy];
+	  mwSignedIndex qx = ik[iqx], qy = ik[iqy];
 	  for (m = 0; m < nnz; ++m)
 	    {
 	      /* Translate nonzero rows/columns to signed indices and
 		 add (qx,qy) to get the row of nonzero elements in
 		 u.grad. In other words, the nonzero elements A_PQ are
 		 those for which u_{P-Q} is a nonzero. */
-	      int px = ik[(int)nzx[m]-1]+qx;
-	      int py = ik[(int)nzy[m]-1]+qy;
+	      mwSignedIndex px = ik[(mwIndex)nzx[m]-1]+qx;
+	      mwSignedIndex py = ik[(mwIndex)nzy[m]-1]+qy;
 	      /* If this doesn't result in an out-of-range index, then
 		 compute the matrix element. */
 	      if (px >= kmin && px <= kmax && py >= kmin && py <= kmax)
 		{
 		  /* Translate ipx and ipy to unsigned indices. */
-		  int ipx = (px >= 0 ? px : N+px);
-		  int ipy = (py >= 0 ? py : N+py);
-		  int K = ipx + ipy*N;
+		  mwSignedIndex ipx = (px >= 0 ? px : N+px);
+		  mwSignedIndex ipy = (py >= 0 ? py : N+py);
+		  mwIndex K = ipx + ipy*N;
 		  /* Check if either ux or uy has an imaginary part. */
 		  if (mxIsComplex(prhs[1])) uxim = uxi[m];
 		  if (mxIsComplex(prhs[2])) uyim = uyi[m];
