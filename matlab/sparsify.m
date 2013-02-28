@@ -12,4 +12,4 @@ end
 [i,j,v] = find(A);
 % Find the elements with magnitude above cutoff.
 ii = find(abs(v) > zcutoff);
-As = sparse(i(ii),j(ii),v(ii));
+As = sparse(i(ii),j(ii),v(ii),size(A,1),size(A,2));
