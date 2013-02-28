@@ -6,7 +6,7 @@
 
 Build with
 
-mex -f /home/jeanluc/matlab/gccopts.sh interpk2.c
+mex -largeArrayDims interpk2.c
 
 */
 
@@ -17,15 +17,15 @@ mex -f /home/jeanluc/matlab/gccopts.sh interpk2.c
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   /* Dimensions of grid */
-  int N1, N2;
+  mwSize N1, N2;
   /* Counters */
-  int n1, k1, k2;
+  mwSignedIndex n1, k1, k2;
   /* Fourier transform data */
   double *fkr, *fki;
   /* The point to interpolate */
   double *X, X1, X2;
   /* min/max mode numbers */
-  int k1min, k1max, k2max;
+  mwSignedIndex k1min, k1max, k2max;
 
   if (nrhs < 2)
     {
@@ -47,16 +47,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   X1 = 2*M_PI*X[1];
   X2 = 2*M_PI*X[0];
 
-  k1min = (int)floor(-(N1-1)/2.);
-  k1max = (int)floor( (N1-1)/2.);
-  k2max = (int)floor( (N2-1)/2.);
+  k1min = (mwSignedIndex)floor(-((mwSignedIndex)N1-1)/2.);
+  k1max = (mwSignedIndex)floor( ((mwSignedIndex)N1-1)/2.);
+  k2max = (mwSignedIndex)floor( ((mwSignedIndex)N2-1)/2.);
 
   /* ik1 is an array that translates from unsigned to signed vector
      components, used for quick indexing. */
-  int *ik1;
-  ik1 = (int *)malloc(N1*sizeof(int));
+  mwSignedIndex *ik1;
+  ik1 = (mwIndex *)malloc(N1*sizeof(mwIndex));
   for (n1 = 0; n1 <= k1max; ++n1) ik1[n1] = n1;
-  for (n1 = -1; n1 >= k1min; --n1) ik1[N1+n1] = n1;
+  for (n1 = -1; n1 >= k1min; --n1) ik1[(mwIndex)(N1+n1)] = n1;
 
   /* For even N1, N2, the kmin mode is not included at all. */
   /* The Fourier spectrum is assumed symmetric. */
@@ -77,7 +77,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	      k1 = ik1[n1];
 	      double Xk = X1*k1 + X2*k2;
 	      double exr = 2*cos(Xk), exi = 2*sin(Xk);
-	      int N = n1 + k2*N2;
+	      mwIndex N = n1 + k2*N2;
 	      fx += fkr[N]*exr - fki[N]*exi;
 	    }
 	}
@@ -97,7 +97,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	      k1 = ik1[n1];
 	      double Xk = X1*k1 + X2*k2;
 	      double exr = 2*cos(Xk);
-	      int N = n1 + k2*N2;
+	      mwIndex N = n1 + k2*N2;
 	      fx += fkr[N]*exr;
 	    }
 	}
