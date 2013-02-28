@@ -27,9 +27,6 @@ if size(ux,2) ~= N | size(uy,1) ~= N | size(uy,2) ~= N
   error('Matrices must be square and of the same dimension.')
 end
 
-kmin = floor(-(N-1)/2);
-kmax = floor( (N-1)/2);
-
 % FFT the velocity field, sparsifying with cutoff.
 % Note that we use the transpose of the velocity field: the meshgrid
 % format uses the -rows- as y, and the -columns- as x, but
@@ -45,5 +42,32 @@ uyknz = full(uyk(inz));
 [nzx,nzy] = find(abs(uxk) | abs(uyk));
 
 % The function that does the real work is written in C, since it is
-% difficult to vectorise.
+% difficult to vectorize.
 Ak = fft2udotgrad_helper(N,uxknz,uyknz,nzx,nzy,L);
+
+if false
+  % Doublecheck (only feasible for smallish N, say N=21).
+  Ak2 = sparse(N*N,N*N,nnz(Ak));
+  fac = (2*pi/L)/(N*N);
+  kmin = floor(-(N-1)/2); kmax = floor( (N-1)/2); k = [0:kmax kmin:-1];
+  for ikx = 1:N
+    for iky = 1:N
+      for ilx = 1:N
+	for ily = 1:N
+	  K = ikx+N*(iky-1);
+	  L = ilx+N*(ily-1);
+	  kx = k(ikx); ky = k(iky); lx = k(ilx); ly = k(ily);
+	  lkx = lx-kx; lky = ly-ky;
+	  ilkx = find(k == lkx); ilky = find(k == lky);
+	  if ilkx >= 1 & ilkx <= N & ilky >= 1 & ilky <= N
+	    Ak2(K,L) = -fac*1i*(kx*uxk(ilkx,ilky) + ky*uyk(ilkx,ilky));
+	  end
+	end
+      end
+    end
+  end
+  % Check if sparse matrices are equal.  This is shockingly tricky.  For
+  % instance, (Ak-Ak2)*w doesn't work.  Something's not right.
+  w = rand(N*N,1);
+  fprintf('Check difference = %g\n',max(max(abs(Ak*w - Ak2*w))))
+end

@@ -104,7 +104,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	{
 	  mwIndex Q = iqx + iqy*N;
 	  /* Record the cumulative number of elements for the previous
-	     column.  Don't ask me, that's just how it works, folks. */
+	     columns.  Don't ask me, that's just how it works, folks. */
 	  Ajc[Q] = k;
 	  /* Translate to signed indices. */
 	  mwSignedIndex qx = ik[iqx], qy = ik[iqy];
