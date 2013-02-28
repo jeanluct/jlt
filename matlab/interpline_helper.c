@@ -9,7 +9,7 @@ double fmodp(double x, double y);
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  int i, j, d;
+  mwIndex i, j, d;
 
   if (nrhs < 2)
     {
@@ -19,16 +19,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   const mxArray *XA = prhs[0];
   double dmax = mxGetScalar(prhs[1]);     /* Maximum gap allowed. */
-  int Nr = 1;
+  mwSize Nr = 1;
 
-  int N = mxGetM(XA);  /* Number of points in original list. */
-  int n = mxGetN(XA);  /* Dimension of vectors. */
+  mwSize N = mxGetM(XA);  /* Number of points in original list. */
+  mwSize n = mxGetN(XA);  /* Dimension of vectors. */
 
   /* Pointer to the X data. */
   double *X = mxGetPr(XA);
 
   double *dX = (double*)malloc(n*(N-1)*sizeof(double));
-  int *nr = (int*)malloc((N-1)*sizeof(int));
+  mwSize *nr = (mwSize*)malloc((N-1)*sizeof(mwSize));
 
   /* Go once through, counting how many interpolation points we'll need. */
   for (i = 0; i < N-1; ++i)
@@ -36,7 +36,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       double dist2 = 0;
       for (d = 0; d < n; ++d)
 	{
-	  int idx = i + d*(N-1);
+	  mwIndex idx = i + d*(N-1);
 	  dX[idx] = X[i+1 + d*N] - X[i + d*N];
 	  dist2 += dX[idx]*dX[idx];
 	}
@@ -49,7 +49,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   plhs[0] = mxCreateDoubleMatrix(Nr, n, mxREAL);
   double *Xr = mxGetPr(plhs[0]);
 
-  int k = 0;
+  mwIndex k = 0;
   for (i = 0; i < N-1; ++i)
     {
       /* Interpolate nr[i]-1 points between X[i] and X[i+1]. */
