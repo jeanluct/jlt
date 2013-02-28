@@ -81,6 +81,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	 magnitude of the index. */
       Acap += (N-abs(mx))*(N-abs(my));
     }
+  if (Acap > pow(N,4)) Acap = pow(N,4);
   A = mxCreateSparse(N*N,N*N,Acap,mxCOMPLEX);
   /* plhs[0] is a pointer to the first returned quantity. */
   plhs[0] = A;
@@ -133,18 +134,18 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		     sparse matrix. */
 		  if (Akr || Aki)
 		    {
+		      if (k >= Acap)
+			{
+			  /* Oops! Capacity exceeded... this should
+			     not happen. Reallocate or compute better. */
+			  mexErrMsgTxt("Capacity exceeded.");
+			}
 		      /* The row and real/imaginary parts of the element. */
 		      Air[k] = K;
 		      Apr[k] = Akr;
 		      Api[k] = Aki;
 		      /* Increase the nonzero element counter. */
 		      ++k;
-		      if (k > Acap)
-			{
-			  /* Oops! Capacity exceeded... this should
-			     not happen. Reallocate or compute better. */
-			  mexErrMsgTxt("Capacity exceeded.");
-			}
 		    }
 		}
 	    }
