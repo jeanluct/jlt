@@ -5,14 +5,11 @@ function As = sparsify(A,zcutoff)
 %   value.  If omitted, ZCUTOFF defaults to 1e-8 * max(max(abs(A))).
 
 if nargin < 2
-  zcutoff = 1e-8 * max(max(abs(A)));
+  zcutoff = 1e-8 * full(max(max(abs(A))));
 end
 
-% Find the nonzero elements.
-idx = find(abs(A) > zcutoff);
-
-% Allocate storage for sparse matrix.
-sz = size(A);
-As = spalloc(sz(1),sz(2),length(idx));
-
-As(idx) = sparse(A(idx));
+% Get the nonzero elements.
+[i,j,v] = find(A);
+% Find the elements with magnitude above cutoff.
+ii = find(abs(v) > zcutoff);
+As = sparse(i(ii),j(ii),v(ii));
