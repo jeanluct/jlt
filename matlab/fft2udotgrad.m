@@ -45,11 +45,18 @@ uyknz = full(uyk(inz));
 % difficult to vectorize.
 Ak = fft2udotgrad_helper(N,uxknz,uyknz,nzx,nzy,L);
 
-if false
+% The C file doesn't internally sort the rows properly in the sparse
+% matrix.  Fix this by recopying to a new matrix.
+tic
+[i,j,v] = find(Ak);
+Ak = sparse(i,j,v,size(Ak,1),size(Ak,2));
+toc
+
+if true & N < 31
   % Doublecheck (only feasible for smallish N, say N=21).
   Ak2 = sparse(N*N,N*N,nnz(Ak));
   fac = (2*pi/L)/(N*N);
-  kmin = floor(-(N-1)/2); kmax = floor( (N-1)/2); k = [0:kmax kmin:-1];
+  kmin = floor(-(N-1)/2); kmax = floor((N-1)/2); k = [0:kmax kmin:-1];
   for ikx = 1:N
     for iky = 1:N
       for ilx = 1:N
@@ -60,14 +67,14 @@ if false
 	  lkx = lx-kx; lky = ly-ky;
 	  ilkx = find(k == lkx); ilky = find(k == lky);
 	  if ilkx >= 1 & ilkx <= N & ilky >= 1 & ilky <= N
-	    Ak2(K,L) = -fac*1i*(kx*uxk(ilkx,ilky) + ky*uyk(ilkx,ilky));
+	    % I'm not so sure why this is L,K rather than K,L, but that's
+            % what the mex file does.  I don't think it matters.
+	    Ak2(L,K) = fac*1i*(kx*uxk(ilkx,ilky) + ky*uyk(ilkx,ilky));
 	  end
 	end
       end
     end
   end
-  % Check if sparse matrices are equal.  This is shockingly tricky.  For
-  % instance, (Ak-Ak2)*w doesn't work.  Something's not right.
-  w = rand(N*N,1);
-  fprintf('Check difference = %g\n',max(max(abs(Ak*w - Ak2*w))))
+  % Check if sparse matrices are equal.
+  fprintf('Check difference: %g\n',full(max(max(abs(Ak-Ak2)))));
 end
