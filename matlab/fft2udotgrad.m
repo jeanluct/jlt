@@ -47,12 +47,10 @@ Ak = fft2udotgrad_helper(N,uxknz,uyknz,nzx,nzy,L);
 
 % The C file doesn't internally sort the rows properly in the sparse
 % matrix.  Fix this by recopying to a new matrix.
-tic
 [i,j,v] = find(Ak);
 Ak = sparse(i,j,v,size(Ak,1),size(Ak,2));
-toc
 
-if true & N < 31
+if false & N < 31
   % Doublecheck (only feasible for smallish N, say N=21).
   Ak2 = sparse(N*N,N*N,nnz(Ak));
   fac = (2*pi/L)/(N*N);

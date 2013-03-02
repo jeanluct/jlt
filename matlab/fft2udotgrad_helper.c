@@ -38,8 +38,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   N = (mwSize)(mxGetScalar(prhs[0]));
   double L = mxGetScalar(prhs[5]);
 
-  kmin = floor(-((mwSignedIndex)N-1)/2);
-  kmax = floor( ((mwSignedIndex)N-1)/2);
+  if (N % 2)
+    {
+      kmin = -((mwSignedIndex)N-1)/2; kmax = ((mwSignedIndex)N-1)/2;
+    }
+  else
+    {
+      kmin = -(mwSignedIndex)N/2; kmax = (mwSignedIndex)N/2-1;
+    }
   ik = (mwSignedIndex *)malloc(N*sizeof(mwSignedIndex));
   for (m = 0; m <= kmax; ++m) ik[m] = m;
   for (m = -1; m >= kmin; --m) ik[N+m] = m;
