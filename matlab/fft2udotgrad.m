@@ -10,6 +10,11 @@ function Ak = fft2udotgrad(ux,uy,L,zcutoff)
 %   defaults to 2pi).  AK = FFT2UDOTGRAD(UX,UY,L,ZCUTOFF) also
 %   specifies the cutoff for elements to be considered zero in the
 %   sparsification of the FFT of U.
+%
+%   Note that AK is stored in MESHGRID format: the rows are the Y
+%   coordinates, and columns are X coordinates.
+%
+%   See also MESHGRID.
 
 if nargin < 4
   % If the cutoff is too small, spurious nonzero elements occur.
@@ -87,6 +92,8 @@ for ikx = 1:N
 	lkx = lx-kx; lky = ly-ky;
 	ilkx = find(k == lkx); ilky = find(k == lky);
 	if ilkx >= 1 & ilkx <= N & ilky >= 1 & ilky <= N
+	  % Ak is stored in MESHGRID format: the rows are the Y
+	  % coordinates, and columns are X coordinates.
 	  Ak(L,K) = fac*1i*(kx*uxk(ilkx,ilky) + ky*uyk(ilkx,ilky));
 	end
       end
