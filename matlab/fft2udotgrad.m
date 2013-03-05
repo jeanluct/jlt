@@ -43,7 +43,21 @@ uyknz = full(uyk(inz));
 
 % The function that does the real work is written in C, since it is
 % difficult to vectorize.
-Ak = fft2udotgrad_helper(N,uxknz,uyknz,nzx,nzy,L);
+if exist('fft2udotgrad_helper') == 3
+  Ak = fft2udotgrad_helper(N,uxknz,uyknz,nzx,nzy,L);
+else
+  % Couldn't find compiled MEX file.  Fall back on slow matlab version.
+  msg1 = 'Couldn''t find compiled MEX file... ';
+  msg3 = 'You should try running ''mex fft2udotgrad_helper.c''.';
+  if N <= 31
+    msg2 = 'falling back on matlab version.';
+    warning(sprintf('%s%s\n%s',msg1,msg2,msg3));
+    Ak = fft2udotgrad_helper_matlab(N,uxk,uyk,L);
+  else
+    msg2 = 'N is too large to use matlab version.';
+    error(sprintf('%s%s\n%s',msg1,msg2,msg3));
+  end
+end
 
 % The C file doesn't internally sort the rows properly in the sparse
 % matrix.  Fix this by recopying to a new matrix.
@@ -52,27 +66,30 @@ Ak = sparse(i,j,v,size(Ak,1),size(Ak,2));
 
 if false & N < 31
   % Doublecheck (only feasible for smallish N, say N=21).
-  Ak2 = sparse(N*N,N*N,nnz(Ak));
-  fac = (2*pi/L)/(N*N);
-  kmin = floor(-(N-1)/2); kmax = floor((N-1)/2); k = [0:kmax kmin:-1];
-  for ikx = 1:N
-    for iky = 1:N
-      for ilx = 1:N
-	for ily = 1:N
-	  K = ikx+N*(iky-1);
-	  L = ilx+N*(ily-1);
-	  kx = k(ikx); ky = k(iky); lx = k(ilx); ly = k(ily);
-	  lkx = lx-kx; lky = ly-ky;
-	  ilkx = find(k == lkx); ilky = find(k == lky);
-	  if ilkx >= 1 & ilkx <= N & ilky >= 1 & ilky <= N
-	    % I'm not so sure why this is L,K rather than K,L, but that's
-            % what the mex file does.  I don't think it matters.
-	    Ak2(L,K) = fac*1i*(kx*uxk(ilkx,ilky) + ky*uyk(ilkx,ilky));
-	  end
+  % Check if sparse matrices are equal.
+  Ak2 = fft2udotgrad_helper_matlab(N,uxk,uyk,L);
+  fprintf('Check difference: %g\n',full(max(max(abs(Ak-Ak2)))));
+end
+
+%============================================================
+function Ak = fft2udotgrad_helper_matlab(N,uxk,uyk,L)
+
+Ak = sparse(N*N,N*N);
+fac = (2*pi/L)/(N*N);
+kmin = floor(-(N-1)/2); kmax = floor((N-1)/2); k = [0:kmax kmin:-1];
+for ikx = 1:N
+  for iky = 1:N
+    for ilx = 1:N
+      for ily = 1:N
+	K = ikx+N*(iky-1);
+	L = ilx+N*(ily-1);
+	kx = k(ikx); ky = k(iky); lx = k(ilx); ly = k(ily);
+	lkx = lx-kx; lky = ly-ky;
+	ilkx = find(k == lkx); ilky = find(k == lky);
+	if ilkx >= 1 & ilkx <= N & ilky >= 1 & ilky <= N
+	  Ak(L,K) = fac*1i*(kx*uxk(ilkx,ilky) + ky*uyk(ilkx,ilky));
 	end
       end
     end
   end
-  % Check if sparse matrices are equal.
-  fprintf('Check difference: %g\n',full(max(max(abs(Ak-Ak2)))));
 end
