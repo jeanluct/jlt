@@ -104,11 +104,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   k = 0;
   /* Loop over the columns Q = (qx,qy). Arrange such that the value of
      Q steps over each column, by looping over qx first. */
-  for (iqy = 0; iqy < N; ++iqy)
+  for (iqx = 0; iqx < N; ++iqx)
     {
-      for (iqx = 0; iqx < N; ++iqx)
+      for (iqy = 0; iqy < N; ++iqy)
 	{
-	  mwIndex Q = iqx + iqy*N;
+	  mwIndex Q = iqy + iqx*N;
 	  /* Record the cumulative number of elements for the previous
 	     columns.  Don't ask me, that's just how it works, folks. */
 	  Ajc[Q] = k;
@@ -129,7 +129,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		  /* Translate ipx and ipy to unsigned indices. */
 		  mwSignedIndex ipx = (px >= 0 ? px : N+px);
 		  mwSignedIndex ipy = (py >= 0 ? py : N+py);
-		  mwIndex K = ipx + ipy*N;
+		  mwIndex K = ipy + ipx*N;
 		  /* Check if either ux or uy has an imaginary part. */
 		  if (mxIsComplex(prhs[1])) uxim = uxi[m];
 		  if (mxIsComplex(prhs[2])) uyim = uyi[m];
