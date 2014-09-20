@@ -10,6 +10,12 @@ function Lk = fft2op(L)
 % Note that F2 = F2.' , inv(F2) = inv(F2).', so the transform can be
 % taken to the left or right.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 [M2,N2] = size(L);
 
 FL = zeros(M2,N2);

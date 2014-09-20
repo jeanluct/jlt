@@ -8,6 +8,12 @@ function L = ifftop(Lk)
 % Note that F = F.' , inv(F) = inv(F).', so the transform can be taken
 % to the left or right.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 [M,N] = size(Lk);
 
 FiLk = zeros(M,N);

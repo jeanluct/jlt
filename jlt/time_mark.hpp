@@ -1,3 +1,9 @@
+//
+// Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+//
+// See the file LICENSE for copying permission.
+//
+
 #ifndef JLT_TIME_MARK_HPP
 #define JLT_TIME_MARK_HPP
 

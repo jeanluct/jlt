@@ -14,6 +14,12 @@ function fk = refinek(f,N,dim)
 %
 %   See also REFINEK2, REFINE, REFINE2.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 if nargin < 3
   % First non-singleton dimension
   dim = min(find(size(f) ~= 1));

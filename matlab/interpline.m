@@ -4,4 +4,10 @@ function Xi = interpline(X,dX)
 %   representing points on a continuous line, returns an interpolated
 %   vector XI, where the maximum distance between interpolated points is DX.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 Xi = interpline_helper(X,dX);

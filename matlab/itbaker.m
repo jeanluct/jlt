@@ -1,3 +1,9 @@
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 % Number of iterations - 1 (first slot reserved for initial condition).
 nit = 50;
 % Number of initial conditions.

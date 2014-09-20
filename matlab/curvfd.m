@@ -5,6 +5,12 @@ function k = curvfd(s,l)
 %   finite-differencing.
 %
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 nl = size(l,1);
 n = size(l,2);
 

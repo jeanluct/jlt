@@ -4,6 +4,12 @@
 
 /* Interpolate (refine) a material line */
 
+/*
+  Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+
+  See the file LICENSE for copying permission.
+*/
+
 double shortestdir(double x1, double x2, double L);
 double fmodp(double x, double y);
 

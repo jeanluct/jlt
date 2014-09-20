@@ -7,6 +7,12 @@ function plotmody(x,y,mdy,attrib,off)
 %
 %   See also MOD, PLOT, PLOTMODX, PLOTMODXY, MODSPLITINTERP.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 if nargin < 4
     attrib = '';
 end

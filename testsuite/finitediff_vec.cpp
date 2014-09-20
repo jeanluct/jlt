@@ -1,3 +1,9 @@
+//
+// Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+//
+// See the file LICENSE for copying permission.
+//
+
 #include <jlt/math.hpp>
 #include <jlt/mathvector.hpp>
 #include <jlt/fixvector.hpp>

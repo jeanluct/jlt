@@ -10,6 +10,12 @@ function fk = refinek2(f,M,N)
 %
 %   See also REFINE, REFINEK, REFINE2.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 if nargin < 3, N = M; end
 
 % Apply refine to each dimension.  (See doc fft.)

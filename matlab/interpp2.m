@@ -7,6 +7,12 @@ function fi = interpp2(f,XX)
 %
 %   See also INTERPP, INTERPK2.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 Nx = size(f,2);
 Ny = size(f,1);
 

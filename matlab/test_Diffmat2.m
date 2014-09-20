@@ -1,3 +1,9 @@
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 % Test Fourier differentiation matrices in 2D.
 
 % Number of gridpoints

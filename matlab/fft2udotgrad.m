@@ -16,6 +16,12 @@ function Ak = fft2udotgrad(ux,uy,L,zcutoff)
 %
 %   See also MESHGRID.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 if nargin < 4
   % If the cutoff is too small, spurious nonzero elements occur.
   % 1e-8 seems like a sweet spot good for N=1000.

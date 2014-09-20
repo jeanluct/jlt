@@ -4,6 +4,13 @@
 
 /* Helper function for fft2udotgrad */
 
+/*
+  Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+
+  See the file LICENSE for copying permission.
+*/
+
+
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   /* Dimension of grid. */

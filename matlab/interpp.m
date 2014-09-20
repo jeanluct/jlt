@@ -5,6 +5,12 @@ function fi = interpp(f,X)
 %
 %   See also INTERPP2, INTERPK2.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 N = length(f);
 
 % Find which f interval X lies in.

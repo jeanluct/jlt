@@ -10,6 +10,12 @@ function [Dx,Dy,Dxx,Dyy] = Diffmat2(N,Lx,Ly)
 %
 %   See also FOURDIF, PACK, UNPACK.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 if nargin < 2
   Lx = 2*pi;
 end

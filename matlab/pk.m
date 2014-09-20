@@ -5,5 +5,11 @@ function V = pk(A)
 %
 %   See also UNPK.
 
+%
+% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+%
+% See the file LICENSE for copying permission.
+%
+
 % Just use Matlab's default linear numbering of arrays.
 V = A(:);
