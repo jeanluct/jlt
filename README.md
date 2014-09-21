@@ -1,6 +1,10 @@
 # jlt lib
 
-*jlt lib* is a C++ and Matlab library of various utility functions that I found useful over the years, and which are used in many of my other projects.  It was written by me, [Jean-Luc Thiffeault][1].
+*jlt lib* is a C++ and Matlab library of various utility functions that I found useful over the years, and which are used in many of my other projects.
+
+### contributors
+
+*jlt lib* was written and is maintained by [Jean-Luc Thiffeault][1].
 
 ### license
 
