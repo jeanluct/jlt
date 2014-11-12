@@ -16,13 +16,13 @@
 #include <stdexcept>			// Include standard library exceptions.
 #include <string>
 
-#define _TRY try
-#define _CATCH_ALL catch(...)
-#define _THROW(x) throw x
-#define _RETHROW throw
-#define _NOTHROW throw()
-#define _UNWIND(action) catch(...) { action; throw; }
-#define _CATCH_ALL_RETHROW catch(...) { throw; }
+#define JLT_TRY try
+#define JLT_CATCH_ALL catch(...)
+#define JLT_THROW(x) throw x
+#define JLT_RETHROW throw
+#define JLT_NOTHROW throw()
+#define JLT_UNWIND(action) catch(...) { action; throw; }
+#define JLT_CATCH_ALL_RETHROW catch(...) { throw; }
 
 namespace jlt {
 
@@ -61,13 +61,13 @@ public:
 } // namespace jlt
 
 #else // __EXCEPTIONS
-#define _TRY
-#define _CATCH_ALL if (false)
-#define _THROW(x)
-#define _RETHROW
-#define _NOTHROW
-#define _UNWIND(action)
-#define _CATCH_ALL_RETHROW
+#define JLT_TRY
+#define JLT_CATCH_ALL if (false)
+#define JLT_THROW(x)
+#define JLT_RETHROW
+#define JLT_NOTHROW
+#define JLT_UNWIND(action)
+#define JLT_CATCH_ALL_RETHROW
 
 #endif // __EXCEPTIONS
 

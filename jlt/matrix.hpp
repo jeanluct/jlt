@@ -144,7 +144,7 @@ public:
   reference at(size_type i, size_type j)
     {
       if (i >= m || j >= n)
-	_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
 
       return *(start + n*i + j);
     }
@@ -152,7 +152,7 @@ public:
   const_reference at(size_type i, size_type j) const
     {
       if (i >= m || j >= n)
-	_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
 
       return *(start + n*i + j);
     }
@@ -172,7 +172,7 @@ public:
 	only_once = false;
       }
       if (i >= m)
-	_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
 #endif
       return (start + n*i);
     }
@@ -187,7 +187,7 @@ public:
 	only_once = false;
       }
       if (i >= m)
-	_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
 #endif
       return (start + n*i);
     }
@@ -208,7 +208,7 @@ public:
     {
 #ifdef MATRIX_CHECK_BOUNDS
       if (i >= m)
-	_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
 #endif
       return std::vector<T>(start + n*i,start + n*i + m);
     }

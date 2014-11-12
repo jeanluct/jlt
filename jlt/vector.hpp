@@ -87,7 +87,7 @@ public:
   reference at(size_type i) 
     {
       if (i >= size())
-	_THROW(std::out_of_range("Out of range exception in vector.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in vector.\n"));
 
       return std::vector<T>::operator[](i);
     }
@@ -95,7 +95,7 @@ public:
   const_reference at(size_type i) const
     {
       if (i >= size())
-	_THROW(std::out_of_range("Out of range exception in vector.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in vector.\n"));
 
       return std::vector<T>::operator[](i);
     }
