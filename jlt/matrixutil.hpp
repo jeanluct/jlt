@@ -37,8 +37,7 @@ void LUdecomp(T_Matrix& A, int* row_index, int* perm)
 	if (Abs(temp = Abs(A(i,j))) > Abs(big)) big = temp;
       if (big == 0.0)
 	{
-	  std::cerr << "Singular Matrix in LUdecomp\n";
-	  exit(1);
+	  JLT_THROW(std::runtime_error("Singular Matrix in LUdecomp."));
 	}
       vv[i]=1.0/big;
     }

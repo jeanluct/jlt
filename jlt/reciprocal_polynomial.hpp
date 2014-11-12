@@ -27,6 +27,7 @@
 //
 
 #include <iostream>
+#include <sstream>
 #include <jlt/vector.hpp>
 #include <jlt/polynomial.hpp>
 
@@ -81,9 +82,10 @@ public:
       {
 	if (_p[i] != _p[n-i])
 	  {
-	    std::cerr << _p << " not reciprocal in ";
-	    std::cerr << "jlt::reciprocal_polynomial(polynomial<>).\n";
-	    exit(1);
+	    std::ostringstream err;
+	    err << _p << " not reciprocal in ";
+	    err << "jlt::reciprocal_polynomial(polynomial<>).";
+	    JLT_THROW(std::runtime_error(err.str()));
 	  }
 	a[i] = _p[i+1];
       }
@@ -157,9 +159,10 @@ public:
     if (i > 0 && i <= g) return a[i-1];
     if (i > g && i < n) return a[n-1-i];
 
-    std::cerr << "Out of range coefficient " << i << " in ";
-    std::cerr << "reciprocal_polynomial::operator[] const.\n";
-    exit(1);
+    std::ostringstream err;
+    err << "Out of range coefficient " << i << " in ";
+    err << "reciprocal_polynomial::operator[] const.";
+    JLT_THROW(std::out_of_range(err.str()));
   }
 
   // Return a coefficient of the polynomial, allow assignment.
@@ -170,13 +173,14 @@ public:
     if (i > 0 && i <= g) return a[i-1];
     if (i > g && i < n) return a[n-1-i];
 
+    std::ostringstream err;
     if (i == 0 || i == n)
-      std::cerr << "Unassignable";
+      err << "Unassignable";
     else
-      std::cerr << "Out of range";
-    std::cerr << " coefficient " << i << " in ";
-    std::cerr << "reciprocal_polynomial::operator[].\n";
-    exit(1);
+      err << "Out of range";
+    err << " coefficient " << i << " in ";
+    err << "reciprocal_polynomial::operator[].";
+    JLT_THROW(std::out_of_range(err.str()));
   }
 
   // Return the derivative of the polynomial as a jlt::polynomial object.

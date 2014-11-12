@@ -34,8 +34,7 @@ T read_number(const std::string& prompt,
 
   if (nmin > nmax)
     {
-      std::cerr << "Error in read_number: nmin > nmax.\n";
-      exit(-1);
+      JLT_THROW(std::runtime_error("Error in jlt::read_number: nmin > nmax."));
     }
 
   bool def = true;

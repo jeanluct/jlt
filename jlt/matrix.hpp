@@ -144,7 +144,7 @@ public:
   reference at(size_type i, size_type j)
     {
       if (i >= m || j >= n)
-	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 
       return *(start + n*i + j);
     }
@@ -152,7 +152,7 @@ public:
   const_reference at(size_type i, size_type j) const
     {
       if (i >= m || j >= n)
-	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 
       return *(start + n*i + j);
     }
@@ -168,11 +168,11 @@ public:
       static bool only_once = true;
       if (only_once) {
 	std::cerr << "Warning: no bounds checking done on second";
-	std::cerr << " argument of [][] in matrix.\n";
+	std::cerr << " argument of [][] in jlt::matrix.\n";
 	only_once = false;
       }
       if (i >= m)
-	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
       return (start + n*i);
     }
@@ -183,11 +183,11 @@ public:
       static bool only_once = true;
       if (only_once) {
 	std::cerr << "Warning: no bounds checking done on second";
-	std::cerr << " argument of [][] in matrix.\n";
+	std::cerr << " argument of [][] in jlt::matrix.\n";
 	only_once = false;
       }
       if (i >= m)
-	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
       return (start + n*i);
     }
@@ -208,7 +208,7 @@ public:
     {
 #ifdef MATRIX_CHECK_BOUNDS
       if (i >= m)
-	JLT_THROW(std::out_of_range("Out of range exception in matrix.\n"));
+	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
       return std::vector<T>(start + n*i,start + n*i + m);
     }
