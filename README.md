@@ -11,4 +11,4 @@
 *jlt lib* is released under the [MIT License][2].
 
 [1]: http://www.math.wisc.edu/~jeanluc/
-[2]: http://bitbucket.org/jeanluc/jlt/raw/tip/LICENSE
+[2]: http://githb.com/jeanluct/jlt/raw/master/LICENSE
