@@ -26,144 +26,6 @@
 
 namespace jlt {
 
-template<class T, class S>
-void finitediff1(const std::vector<T>& x, const std::vector<S>& y,
-		 std::vector<S>& dydx)
-{
-  int n = x.size();
-  std::vector<T> dx(n);
-
-  for (int i = 1; i < n; ++i) {
-    dx[i] = x[i] - x[i-1];
-    assert(dx[i] > 0);
-  }
-
-  for (int i = 0; i < n-1; ++i)
-    dydx[i] = ForwardDiff1Stencil(dx,y,i);
-
-  dydx[n-1] = BackwardDiff1Stencil(dx,y,n-1);
-}
-
-template<class T, class S>
-void finitediff2(const std::vector<T>& x, const std::vector<S>& y,
-		 std::vector<S>& dydx)
-{
-  int n = x.size();
-  std::vector<T> dx(n);
-
-  for (int i = 1; i < n; ++i) {
-    dx[i] = x[i] - x[i-1];
-    assert(dx[i] > 0);
-  }
-
-  dydx[0] = ForwardDiff2Stencil(dx,y,0);
-
-  for (int i = 1; i < n-1; ++i)
-    dydx[i] = CentralDiff2Stencil(dx,y,i);
-
-  dydx[n-1] = BackwardDiff2Stencil(dx,y,n-1);
-}
-
-template<class T, class S>
-void finitediff2(const std::vector<T>& x, const std::vector<S>& y,
-		 std::vector<S>& dydx, std::vector<S>& err)
-{
-  int n = x.size();
-  S dydx2;
-  std::vector<T> dx(n);
-
-  for (int i = 1; i < n; ++i) {
-    dx[i] = x[i] - x[i-1];
-    assert(dx[i] > 0);
-  }
-
-  // At the endpoints only get an error on the first-order result.
-  dydx[0] = ForwardDiff2Stencil(dx,y,0);
-  dydx2 = ForwardDiff1Stencil(dx,y,0);
-  err[0] = dydx[0] - dydx2;
-
-  for (int i = 1; i < n-2; ++i) {
-    dydx[i] = CentralDiff2Stencil(dx,y,i);
-    dydx2 = ForwardDiff2Stencil(dx,y,i);
-    err[i] = dydx[i] - dydx2;
-  }
-
-  // Start using backward differences near the last point.
-  dydx[n-2] = CentralDiff2Stencil(dx,y,n-2);
-  dydx2 = BackwardDiff2Stencil(dx,y,n-2);
-  err[n-2] = dydx[n-2] - dydx2;
-
-  // At the endpoints only get an error on the first-order result.
-  dydx[n-1] = BackwardDiff2Stencil(dx,y,n-1);
-  dydx2 = BackwardDiff1Stencil(dx,y,n-1);
-  err[n-1] = dydx[n-1] - dydx2;
-}
-
-template<class T, class S>
-void finitediff4(const std::vector<T>& x, const std::vector<S>& y,
-		 std::vector<S>& dydx)
-{
-  int n = x.size();
-  std::vector<T> dx(n);
-
-  for (int i = 1; i < n; ++i) dx[i] = x[i] - x[i-1];
-
-  dydx[0] = ForwardDiff4Stencil(dx,y,0);
-  dydx[1] = ForwardDiff4Stencil(dx,y,1);
-
-  for (int i = 2; i < n-2; ++i) dydx[i] = CentralDiff4Stencil(dx,y,i);
-
-  dydx[n-2] = BackwardDiff4Stencil(dx,y,n-2);
-  dydx[n-1] = BackwardDiff4Stencil(dx,y,n-1);
-}
-
-template<class T, class S>
-void finitediff4(const std::vector<T>& x, const std::vector<S>& y,
-		 std::vector<S>& dydx, std::vector<S>& err)
-{
-  int n = x.size();
-  S dydx2;
-  std::vector<T> dx(n);
-
-  for (int i = 1; i < n; ++i) {
-    dx[i] = x[i] - x[i-1];
-    assert(dx[i] > 0);
-  }
-
-  // At the endpoints only get an error on the third-order result.
-  dydx[0] = ForwardDiff4Stencil(dx,y,0);
-  dydx2 = ForwardDiff3Stencil(dx,y,0);
-  err[0] = dydx[0] - dydx2;
-
-  dydx[1] = ForwardDiff4Stencil(dx,y,1);
-  dydx2 = ForwardDiff3Stencil(dx,y,1);
-  err[1] = dydx[1] - dydx2;
-
-  for (int i = 2; i < n-4; ++i) {
-    dydx[i] = CentralDiff4Stencil(dx,y,i);
-    dydx2 = ForwardDiff4Stencil(dx,y,i);
-    err[i] = dydx[i] - dydx2;
-  }
-
-  // Start using backward differences near the last point.
-  dydx[n-4] = CentralDiff4Stencil(dx,y,n-4);
-  dydx2 = BackwardDiff4Stencil(dx,y,n-4);
-  err[n-4] = dydx[n-4] - dydx2;
-
-  dydx[n-3] = CentralDiff4Stencil(dx,y,n-3);
-  dydx2 = BackwardDiff4Stencil(dx,y,n-3);
-  err[n-3] = dydx[n-3] - dydx2;
-
-  // At the endpoints only get an error on the third-order result.
-  dydx[n-2] = BackwardDiff4Stencil(dx,y,n-2);
-  dydx2 = BackwardDiff3Stencil(dx,y,n-2);
-  err[n-2] = dydx[n-2] - dydx2;
-
-  dydx[n-1] = BackwardDiff4Stencil(dx,y,n-1);
-  dydx2 = BackwardDiff3Stencil(dx,y,n-1);
-  err[n-1] = dydx[n-1] - dydx2;
-}
-
 //
 // Stencils
 //
@@ -317,6 +179,144 @@ S BackwardDiff4Stencil(const std::vector<T>& dx, const std::vector<S>& y, int i)
 			 + 2*dx[i-1]*(2*dx[i-2] + dx[i-3]))) /
     (dx[i]*(dx[i] + dx[i-1])*(dx[i] + dx[i-1] + dx[i-2])
      *(dx[i] + dx[i-1] + dx[i-2] + dx[i-3]));
+}
+
+template<class T, class S>
+void finitediff1(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx)
+{
+  int n = x.size();
+  std::vector<T> dx(n);
+
+  for (int i = 1; i < n; ++i) {
+    dx[i] = x[i] - x[i-1];
+    assert(dx[i] > 0);
+  }
+
+  for (int i = 0; i < n-1; ++i)
+    dydx[i] = ForwardDiff1Stencil(dx,y,i);
+
+  dydx[n-1] = BackwardDiff1Stencil(dx,y,n-1);
+}
+
+template<class T, class S>
+void finitediff2(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx)
+{
+  int n = x.size();
+  std::vector<T> dx(n);
+
+  for (int i = 1; i < n; ++i) {
+    dx[i] = x[i] - x[i-1];
+    assert(dx[i] > 0);
+  }
+
+  dydx[0] = ForwardDiff2Stencil(dx,y,0);
+
+  for (int i = 1; i < n-1; ++i)
+    dydx[i] = CentralDiff2Stencil(dx,y,i);
+
+  dydx[n-1] = BackwardDiff2Stencil(dx,y,n-1);
+}
+
+template<class T, class S>
+void finitediff2(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx, std::vector<S>& err)
+{
+  int n = x.size();
+  S dydx2;
+  std::vector<T> dx(n);
+
+  for (int i = 1; i < n; ++i) {
+    dx[i] = x[i] - x[i-1];
+    assert(dx[i] > 0);
+  }
+
+  // At the endpoints only get an error on the first-order result.
+  dydx[0] = ForwardDiff2Stencil(dx,y,0);
+  dydx2 = ForwardDiff1Stencil(dx,y,0);
+  err[0] = dydx[0] - dydx2;
+
+  for (int i = 1; i < n-2; ++i) {
+    dydx[i] = CentralDiff2Stencil(dx,y,i);
+    dydx2 = ForwardDiff2Stencil(dx,y,i);
+    err[i] = dydx[i] - dydx2;
+  }
+
+  // Start using backward differences near the last point.
+  dydx[n-2] = CentralDiff2Stencil(dx,y,n-2);
+  dydx2 = BackwardDiff2Stencil(dx,y,n-2);
+  err[n-2] = dydx[n-2] - dydx2;
+
+  // At the endpoints only get an error on the first-order result.
+  dydx[n-1] = BackwardDiff2Stencil(dx,y,n-1);
+  dydx2 = BackwardDiff1Stencil(dx,y,n-1);
+  err[n-1] = dydx[n-1] - dydx2;
+}
+
+template<class T, class S>
+void finitediff4(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx)
+{
+  int n = x.size();
+  std::vector<T> dx(n);
+
+  for (int i = 1; i < n; ++i) dx[i] = x[i] - x[i-1];
+
+  dydx[0] = ForwardDiff4Stencil(dx,y,0);
+  dydx[1] = ForwardDiff4Stencil(dx,y,1);
+
+  for (int i = 2; i < n-2; ++i) dydx[i] = CentralDiff4Stencil(dx,y,i);
+
+  dydx[n-2] = BackwardDiff4Stencil(dx,y,n-2);
+  dydx[n-1] = BackwardDiff4Stencil(dx,y,n-1);
+}
+
+template<class T, class S>
+void finitediff4(const std::vector<T>& x, const std::vector<S>& y,
+		 std::vector<S>& dydx, std::vector<S>& err)
+{
+  int n = x.size();
+  S dydx2;
+  std::vector<T> dx(n);
+
+  for (int i = 1; i < n; ++i) {
+    dx[i] = x[i] - x[i-1];
+    assert(dx[i] > 0);
+  }
+
+  // At the endpoints only get an error on the third-order result.
+  dydx[0] = ForwardDiff4Stencil(dx,y,0);
+  dydx2 = ForwardDiff3Stencil(dx,y,0);
+  err[0] = dydx[0] - dydx2;
+
+  dydx[1] = ForwardDiff4Stencil(dx,y,1);
+  dydx2 = ForwardDiff3Stencil(dx,y,1);
+  err[1] = dydx[1] - dydx2;
+
+  for (int i = 2; i < n-4; ++i) {
+    dydx[i] = CentralDiff4Stencil(dx,y,i);
+    dydx2 = ForwardDiff4Stencil(dx,y,i);
+    err[i] = dydx[i] - dydx2;
+  }
+
+  // Start using backward differences near the last point.
+  dydx[n-4] = CentralDiff4Stencil(dx,y,n-4);
+  dydx2 = BackwardDiff4Stencil(dx,y,n-4);
+  err[n-4] = dydx[n-4] - dydx2;
+
+  dydx[n-3] = CentralDiff4Stencil(dx,y,n-3);
+  dydx2 = BackwardDiff4Stencil(dx,y,n-3);
+  err[n-3] = dydx[n-3] - dydx2;
+
+  // At the endpoints only get an error on the third-order result.
+  dydx[n-2] = BackwardDiff4Stencil(dx,y,n-2);
+  dydx2 = BackwardDiff3Stencil(dx,y,n-2);
+  err[n-2] = dydx[n-2] - dydx2;
+
+  dydx[n-1] = BackwardDiff4Stencil(dx,y,n-1);
+  dydx2 = BackwardDiff3Stencil(dx,y,n-1);
+  err[n-1] = dydx[n-1] - dydx2;
 }
 
 } // namespace jlt
