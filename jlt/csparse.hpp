@@ -114,7 +114,7 @@ mathmatrix<T> cs_sparse_matrix_to_mathmatrix(const cs_auto_ptr& csM)
   if (!csM) return mathmatrix<T>();
 
   int m = csM->m, n = csM->n;
-  int *Ap = csM->p, *Ai = csM->i;
+  long int *Ap = csM->p, *Ai = csM->i;
   int nz = csM->nz;
   double *Ax = csM->x;
 
