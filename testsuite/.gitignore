@@ -3,6 +3,7 @@ eigensystem
 finitediff
 finitediff_err
 finitediff_vec
+git_banner
 mathvector
 polytest
 precisionmath
