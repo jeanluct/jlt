@@ -21,7 +21,7 @@ Here are is a list of some of the more useful C++ functions and classes, in the 
 * `jlt::mathvector` and `jlt::mathmatrix` implement vectors and matrices with mathematical operations.  Many operations can then be performed, such as eigenvalues and eigenvectors (in `eigensystem.hpp`), LU and QR decomposition (`matrixutil.hpp`), and SVD (`svdecomp.hpp`).  Many of these use LAPACK behind the scences, so must be linked with `-lblas -llapack`.
 * `csparse.hpp` provides wrappers for Timothy A. Davis's [CSparse][5] library, in particular conversion to and from `jlt::mathmatrix`` and wrapping in a namespace.  Link with `-lcsparse`.
 * `lapack.h` and `lapack.hpp` are wrappers for the Fortran [LAPACK][6] libraries.  Link with `-lblas -llapack`.
-* `matlab.hpp` provides `printMatlabForm` for exporting variables in Matlab m-file format.  Some of this functionality is provided in-class by `jlt::matrix` and `jlt::vector` as well, and is compiled in if `matlab.hpp` is included.
+* `matlab.hpp` provides `printMatlabForm` for exporting variables in Matlab mat-file format.  Some of this functionality is provided in-class by `jlt::matrix` and `jlt::vector` as well, and is compiled in if `matlab.hpp` is included.
 * `stlio.hpp` defines printing for some STL containers.
 * `jlt::polynomial` is a polynomial class.
 * `jlt::reciprocal_polynomial` is specialized for monic reciprocal polynomials.

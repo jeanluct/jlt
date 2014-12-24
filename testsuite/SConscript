@@ -1,0 +1,51 @@
+import os
+import subprocess
+from distutils.version import StrictVersion
+
+# Choose a particular compiler by specifying the version here.
+#GCC_version = StrictVersion('4.9.2');
+
+cc = 'gcc'
+cxx = 'g++'
+
+if 'GCC_version' not in locals():
+   # If we didn't define a GCC version number, find out what it is.
+   GCC_version = StrictVersion(
+      subprocess.check_output([cxx,'-dumpversion']))
+else:
+   # If we define a version number, call the appropriate compiler.
+   cc = cc + '-' + str(GCC_version)
+   cxx = cxx + '-' + str(GCC_version)
+
+# Basic compilation environment.
+env = Environment(CC = cc, CXX = cxx,
+                  CCFLAGS = ['-Wall','-O3','-ffast-math'],
+                  CPPPATH = ['..'])
+
+# Use modern C++ standard (works, but not needed).
+#env.PrependUnique(CXXFLAGS = ['-std=c++0x'])
+
+# Clone env, add some flags for compiling against Matlab libraries.
+matlabbasedir = '/usr/local/MATLAB/'
+getmatlabver = 'ls ' + matlabbasedir + '| tail -1 | tr -d \'\n\''
+matlabver = os.popen(getmatlabver).read()  # get latest Matlab version
+matlabdir = matlabbasedir + matlabver + '/'
+matlabincludedir = matlabdir + 'extern/include'
+matlablibdir = matlabdir + 'bin/glnxa64'
+matlabenv = env.Clone(LINKFLAGS = ['-Wl,-rpath,' + matlablibdir],
+                      LIBS = ['eng','mat','mex','ut','mx'],
+                      LIBPATH = matlablibdir)
+matlabenv.AppendUnique(CPPPATH = matlabincludedir)
+matlabenv.AppendUnique(CCFLAGS = '-DJLT_MATLAB_LIB_SUPPORT')
+
+# Clone env, add some flags for compiling against LAPACK library.
+lapackenv = env.Clone()
+lapackenv.AppendUnique(LIBS = ['blas','lapack'])
+
+# Clone env, add some flags for compiling against CSparse library.
+csparseenv = env.Clone()
+csparseenv.AppendUnique(CPPPATH = '../../CSparse/Include',
+                        LIBS = ['csparse'],
+                        LIBPATH = '../../CSparse/Lib')
+
+Export('env','matlabenv','lapackenv','csparseenv')

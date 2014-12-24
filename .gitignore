@@ -1,3 +1,5 @@
+.sconsign.dblite
+*.o
 matlab/fft2udotgrad_helper.mex*
 matlab/interpk2.mex*
 matlab/interpline_helper.mex*
