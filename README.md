@@ -28,10 +28,10 @@ Here are is a list of some of the more useful C++ functions and classes, in the 
 * `prompt.hpp` is helpful for quick-and-dirty terminal prompts.
 * `jlt::time_mark` works a bit like Matlab's `tic` and `toc` to time programs.  It uses `boost/timer.hpp`.
 * `exceptions.hpp` provides some exceptions tailored to numerical problems, such as `stepsize_too_small`, `failed_to_converge`, `too_many_steps`.  It also defines macros such as `JLT_THROW`, etc, which can be selectively redefined to compile out exception testing.  (In the old days exceptions were a much bigger performance hit than they are now, I suspect, so it made sense to test a code and then remove exceptions completely.)
-* `subversion.hpp` provides functions for extracting data from Subversion [keyword strings][7].  I don't use subversion anymore, so I won't be updating this.
+* `vcs.hpp` provides functions for extracting commit info from Version Control Systems, using Subversion [keyword strings][7] or dynamically in the case of Mercurial and Git.  See [git_banner.cpp][8] for an example.
 * Other `.hpp` files you might find in there are a bit dodgy and maybe haven't been tested in a while.
 
-The folder [matlab][8] contains Matlab functions.
+The folder [matlab][9] contains Matlab functions.
 
 [1]: http://www.math.wisc.edu/~jeanluc/
 [2]: https://github.com/jeanluct/jlt/raw/master/LICENSE
@@ -40,4 +40,5 @@ The folder [matlab][8] contains Matlab functions.
 [5]: http://www.suitesparse.com
 [6]: http://www.netlib.org/lapack/
 [7]: http://svnbook.red-bean.com/en/1.4/svn.advanced.props.special.keywords.html
-[8]: https://github.com/jeanluct/jlt/tree/master/matlab
+[8]: https://github.com/jeanluct/jlt/tree/master/testsuite/git_banner.cpp
+[9]: https://github.com/jeanluct/jlt/tree/master/matlab
