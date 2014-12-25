@@ -14,7 +14,6 @@
 #include <jlt/mathvector.hpp>
 #include <jlt/mathmatrix.hpp>
 
-using namespace jlt;
 
 int main()
 {
@@ -22,6 +21,8 @@ int main()
   using std::cout;
   using std::cerr;
   using std::endl;
+  using jlt::mathvector;
+  using jlt::mathmatrix;
 
   mathvector<double> a(3);
   mathvector<double> b(3);
@@ -95,7 +96,7 @@ int main()
   cout << a << endl;
 
   cout << "identity_matrix(5) =" << endl;
-  cout << identity_matrix<double>(5) << endl;
+  cout << jlt::identity_matrix<double>(5) << endl;
 
   mathmatrix<std::complex<double> > Ac(3,3,std::complex<double>(1,1));
   Ac(0,0) = 0.;

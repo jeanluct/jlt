@@ -9,7 +9,6 @@
 #include <jlt/math.hpp>
 #include <jlt/finitediff.hpp>
 
-using namespace jlt;
 
 typedef double Real;
 
@@ -17,6 +16,7 @@ int main()
 {
   using std::cout;
   using std::endl;
+  using jlt::mathvector;
 
   const int N = 10;
   Real dx = (Real)1./N;
@@ -27,8 +27,8 @@ int main()
 
   for (int i = 0; i < N; ++i) {
     x[i] = (i + fuzz*(rand()/RAND_MAX - 0.5))*dx;
-    y[i] = Sin(2*M_PI*x[i]);
-    ypexact[i] = 2*M_PI*Cos(2*M_PI*x[i]);
+    y[i] = jlt::Sin(2*M_PI*x[i]);
+    ypexact[i] = 2*M_PI*jlt::Cos(2*M_PI*x[i]);
   }
 
   finitediff1(x,y,yp1);
@@ -36,9 +36,9 @@ int main()
   finitediff4(x,y,yp4);
 
   for (int i = 0; i < N; ++i) {
-    yp1[i] = Log10(Abs(yp1[i] - ypexact[i]));
-    yp2[i] = Log10(Abs(yp2[i] - ypexact[i]));
-    yp4[i] = Log10(Abs(yp4[i] - ypexact[i]));
+    yp1[i] = jlt::Log10(jlt::Abs(yp1[i] - ypexact[i]));
+    yp2[i] = jlt::Log10(jlt::Abs(yp2[i] - ypexact[i]));
+    yp4[i] = jlt::Log10(jlt::Abs(yp4[i] - ypexact[i]));
     cout << x[i] << "\t" << yp1[i] << "\t";
     cout << yp2[i] << "\t" << yp4[i] << endl;
   }

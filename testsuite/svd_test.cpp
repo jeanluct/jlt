@@ -10,12 +10,14 @@
 #include <jlt/svdecomp.hpp>
 #include <jlt/stlio.hpp>
 
-using namespace jlt;
 
 int main()
 {
   using std::cout;
   using std::endl;
+  using jlt::matrix;
+  using jlt::mathmatrix;
+  using jlt::mathvector;
 
   typedef double Real;
 
@@ -46,7 +48,7 @@ int main()
   cout << "Original matrix A =\n";
   A.printMatrixForm(cout);
 
-  singular_value_decomp(A,U,Vt,w);
+  jlt::singular_value_decomp(A,U,Vt,w);
 
   cout << "\nA = U.diag(w).Vt, where\n";
   cout << "\nU =\n"; U.printMatrixForm(cout);

@@ -11,12 +11,13 @@
 #include <jlt/matrixutil.hpp>
 #include <jlt/stlio.hpp>
 
-using namespace jlt;
 
 int main()
 {
   using std::cout;
   using std::endl;
+  using jlt::matrix;
+  using jlt::mathmatrix;
 
   int n = 10;
   mathmatrix<double> M(n,n), Q(n,n), R(n,n);
@@ -34,11 +35,11 @@ int main()
 
 #ifndef GSTEST
   // QR decomposition of M.
-  QRdecomp<double,matrix<double>,std::vector<double> >(Md,Q,R);
+  jlt::QRdecomp<double,matrix<double>,std::vector<double> >(Md,Q,R);
 #else
   // Test Gram-Schmidt instead.
   Md.transpose();
-  GramSchmidtOrthonorm(Md,R);
+  jlt::GramSchmidtOrthonorm(Md,R);
   Q = Md;
 #endif
 
@@ -58,7 +59,7 @@ int main()
   mathmatrix<double> Merr = M - Md;
   double err = 0;
   for (matrix<double>::const_iterator i = Merr.begin(); i != Merr.end(); ++i) {
-    err += Abs(*i);
+    err += jlt::Abs(*i);
   }
   cout << "\nTypical error = " << err/(n*n) << endl;
 }

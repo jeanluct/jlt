@@ -8,12 +8,12 @@
 #include <iomanip>
 #include <jlt/math.hpp>
 
-using namespace jlt;
 
 int main()
 {
   using std::cout;
   using std::endl;
+  using namespace jlt;
 
   long double al = 1./9.L;
   long double bl = 1./3.L;

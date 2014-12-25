@@ -11,12 +11,13 @@
 #include <jlt/stlio.hpp>
 #include <jlt/eigensystem.hpp>
 
-using namespace jlt;
 
 int main()
 {
   using std::cout;
   using std::endl;
+  using jlt::mathmatrix;
+  using jlt::mathvector;
 
   int n = 3;
   mathmatrix<double> U(n,n);

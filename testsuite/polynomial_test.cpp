@@ -8,12 +8,13 @@
 #include <jlt/polynomial.hpp>
 #include <jlt/mathmatrix.hpp>
 
-using namespace jlt;
 
 int main()
 {
   using std::cout;
   using std::endl;
+  using jlt::polynomial;
+  using jlt::mathmatrix;
 
   polynomial<double> p(0,0), q(2);
 
