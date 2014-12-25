@@ -12,7 +12,9 @@ int main()
   using std::cout;
   using std::endl;
 
-  jlt::printGitBanner("jlt");
+  // Print a banner if command is run from inside the repo.
+  // Otherwise print nothing.
+  jlt::printVCSBanner(cout,"jlt");
 
   cout << endl;
   cout << "  Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>\n";
