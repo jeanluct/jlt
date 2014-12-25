@@ -1,8 +1,15 @@
+//
+// Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+//
+// See the file LICENSE for copying permission.
+//
+
 #include <string>
 #include <jlt/matlab.hpp>	// include first
 #include <jlt/mathmatrix.hpp>
 
-// Write a mathmatrix and a scalar to a .mat file.
+// Write a mathmatrix and a mathvector in Matlab and Mathematica form.
+// Write them and a scalar to a Matlab MAT file.
 
 int main()
 {
@@ -15,7 +22,7 @@ int main()
   jlt::mathvector<double> v(2);
   v[0] = 0; v[1] = -1;
 
-  // Write matrix using member function.
+  // Write matrix using member function (Matlab format).
   // "M" will be the Matlab workspace name.
   cout << "Text form readable by Matlab:\n";
   M.printMatlabForm(cout,"M","Optional description for M");
@@ -23,8 +30,7 @@ int main()
 
   cout << endl;
 
-  // Write matrix using member function.
-  // "M" will be the Matlab workspace name.
+  // Write matrix using member function (Mathematica format).
   cout << "Text form readable by Mathematica:\n";
   M.printMathematicaForm(cout,"M","Optional description for M")
     << endl;  // for Mathematica form, newline is not included
