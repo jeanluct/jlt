@@ -24,7 +24,7 @@ namespace jlt {
 std::string get_command_output(const std::string& commandstr)
 {
   // Run the command, redirecting stderr to /dev/null.
-  FILE* pipe(popen((commandstr + " 2> /dev/null").c_str(), "r"));
+  FILE* pipe(popen((commandstr + " 2>&1").c_str(), "r"));
 
   // Should be more graceful here.
   if (!pipe)
