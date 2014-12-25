@@ -7,7 +7,7 @@ math_test
 mathvector_test
 matlab_test
 polynomial_test
-qr_test
-svd_test
+qrdecomp_test
+svdecomp_test
 tictoc_test
 vcs_test

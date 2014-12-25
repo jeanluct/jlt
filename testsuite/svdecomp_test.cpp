@@ -48,14 +48,14 @@ int main()
   cout << "Original matrix A =\n";
   A.printMatrixForm(cout);
 
-  jlt::singular_value_decomp(A,U,Vt,w);
+  jlt::SVdecomp(A,U,Vt,w);
 
   cout << "\nA = U.diag(w).Vt, where\n";
   cout << "\nU =\n"; U.printMatrixForm(cout);
   cout << "\nVt =\n"; Vt.printMatrixForm(cout);
   cout << "\nw = " << w;
   // Compute only the singular values.
-  singular_value_decomp(A2,w);
+  jlt::SVdecomp(A2,w);
   cout << "\nw = " << w << endl;
 
   cout << "\nU.diag(w).Vt =\n";

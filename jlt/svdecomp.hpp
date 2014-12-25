@@ -35,10 +35,10 @@ namespace jlt {
 //
 
 template<class T>
-int singular_value_decomp(matrix<T>& A,
-			  matrix<T>& U,
-			  matrix<T>& Vt,
-			  std::vector<T>& w)
+int SVdecomp(matrix<T>& A,
+	     matrix<T>& U,
+	     matrix<T>& Vt,
+	     std::vector<T>& w)
 {
   using std::min;
   using std::max;
@@ -94,7 +94,7 @@ int singular_value_decomp(matrix<T>& A,
 
 
 template<class T>
-int singular_value_decomp(matrix<T>& A, std::vector<T>& w)
+int SVdecomp(matrix<T>& A, std::vector<T>& w)
 {
   using std::min;
   using std::max;

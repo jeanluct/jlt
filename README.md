@@ -16,7 +16,7 @@ Here is a list of some of the more useful C++ functions and classes, in the fold
 
 * `jlt::matrix` is a matrix class for 2D data.  It is fairly efficient and implements similar output functions described for `jlt::vector` above.
 
-* `jlt::mathvector` and `jlt::mathmatrix` implement vectors and matrices with mathematical operations.  Many operations can then be performed, such as eigenvalues and eigenvectors (in `jlt/eigensystem.hpp`), LU and QR decomposition (`jlt/matrixutil.hpp`), and SVD (`jlt/svdecomp.hpp`).  Many of these functions use LAPACK behind the scenes, so must be linked with `-lblas -llapack`.  See the testsuite programs `mathvector_test.cpp`, `eigensystem_test.cpp`, `qr_test.cpp`, and `svd_test.cpp`.
+* `jlt::mathvector` and `jlt::mathmatrix` implement vectors and matrices with mathematical operations.  Many operations can then be performed, such as eigenvalues and eigenvectors (in `jlt/eigensystem.hpp`), LU and QR decomposition (`jlt/matrixutil.hpp`), and SVD (`jlt/svdecomp.hpp`).  Many of these functions use LAPACK behind the scenes, so must be linked with `-lblas -llapack`.  See the testsuite programs `mathvector_test.cpp`, `eigensystem_test.cpp`, `qrdecomp_test.cpp`, and `svdecomp_test.cpp`.
 
 * `jlt/csparse.hpp` provides wrappers for Timothy A. Davis's [CSparse][5] library, in particular conversion to and from `jlt::mathmatrix`, wrapping CSparse functions in a namespace `csparse`, and a type `jlt::cs_auto_ptr` derived from `std::auto_ptr` that deallocates pointers automatically.  Link with `-lcsparse`.  See the testsuite program `csparse_test.cpp`.
 
