@@ -14,7 +14,7 @@
 
 There isn't any.  In fact this library should really not be used by anyone, and I've mostly uploaded it so I can easily include it in other projects.  If you feel brave, many functions have comments documenting their use, and there are examples in the [testsuite][3] folder.
 
-Here is a list of some of the more useful C++ functions and classes, in the folder [jlt][4].  They can be included as `#include "jlt/<filename>.hpp"`, so the folder containing `jlt` must be in the include files search path.  The programs in [testsuite][3] are readily compiled with the [SCONS][5] build tool.
+Here is a list of some of the more useful C++ functions and classes, in the folder [jlt][4].  They can be included as `#include "jlt/<filename>.hpp"`, so the folder containing `jlt` must be in the include files search path.  The programs in [testsuite][3] are readily compiled with the [SCONS][5] build tool, but unless linking to external libraries is required `g++ -O <prog>.cpp -o <prog> -I..` is usually sufficient.
 
 * `jlt::vector` is derived from `std::vector`.  Bounds-checking can be turned on or off at compile time, and the vectors have a `printMatlabForm` member function to output to Matlab format (text or MAT file), and a `printMathematicaForm` to output in Mathematica text format.  See also `matlab.hpp` below.
 * `jlt::matrix` is a matrix class for 2D data.
