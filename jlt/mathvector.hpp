@@ -74,7 +74,7 @@ inline mathvector<T,S> cross(const mathvector<T,S>& v,
 //
 
 template<class T, class S = T>
-class mathvector : public vector<T>
+class mathvector : public vector<T> // note that this is jlt::vector
 {
 public:
   typedef typename std::vector<T>::size_type		size_type;

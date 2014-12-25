@@ -105,9 +105,17 @@ public:
       return std::vector<T>::operator=(v);
     }
 
-  std::ostream& printMathematicaForm(std::ostream& strm) const
+  std::ostream& printMathematicaForm(std::ostream& strm,
+				     const char name[] = 0,
+				     const char comment[] = 0) const
     {
       if (this->empty()) return strm;
+
+      // Print comment if specified.
+      if (comment) strm << "(* " << comment << " *)" << std::endl;
+
+      // Only print = if variable name is specified.
+      if (name) strm << name << " = ";
 
       strm << "{";
       for (typename std::vector<T>::const_iterator i = this->begin();
@@ -115,6 +123,8 @@ public:
 	{
 	  strm << *i << ",";
 	}
+      // Don't append newline, since in Mathematica it is common to
+      // write on same line.
       strm << this->back() << "}";
 
       return strm;
@@ -124,10 +134,12 @@ public:
 				const char name[] = 0,
 				const char comment[] = 0) const
     {
+      if (this->empty()) return strm;
+
       // Print comment if specified.
       if (comment) strm << "% " << comment << std::endl;
 
-      // Only print = if filename is specified.
+      // Only print = if variable name is specified.
       if (name) strm << name << " = ";
 
       // If the vector is empty, just print "[];"
