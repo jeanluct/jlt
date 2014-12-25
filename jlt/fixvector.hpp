@@ -21,7 +21,7 @@
 // -Should not be able to resize a FixVec, or equate two FixVecs of
 // different sizes.
 //
-// -fixectors (and fixmatrices) are potentially much faster than
+// -fixvectors (and fixmatrices) are potentially much faster than
 // vectors, especially because I can use buffers to store temporaries.
 //
 // -Should fixvector really be derived from vector? There are a bunch
