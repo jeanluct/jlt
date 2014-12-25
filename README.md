@@ -16,7 +16,7 @@ There isn't any.  In fact this library should really not be used by anyone, and 
 
 Here is a list of some of the more useful C++ functions and classes, in the folder [jlt][4].  They can be included as `#include "jlt/<filename>.hpp"`, so the folder containing `jlt` must be in the include files search path.  The programs in [testsuite][3] are readily compiled with the [SCONS][5] build tool.
 
-* `jlt::vector` is a version of `std::vector` where bounds-checking can be turned on or off at compile time.
+* `jlt::vector` is derived from `std::vector`.  Bounds-checking can be turned on or off at compile time, and the vectors have a `printMatlabForm` member function to output to Matlab format (text or MAT file), and a `printMathematicaForm` to output in Mathematica text format.  See also `matlab.hpp` below.
 * `jlt::matrix` is a matrix class for 2D data.
 * `jlt::mathvector` and `jlt::mathmatrix` implement vectors and matrices with mathematical operations.  Many operations can then be performed, such as eigenvalues and eigenvectors (in `eigensystem.hpp`), LU and QR decomposition (`matrixutil.hpp`), and SVD (`svdecomp.hpp`).  Many of these use LAPACK behind the scences, so must be linked with `-lblas -llapack`.  See the testuite programs `mathvector.cpp`, `eigensystem.cpp`, `qrtest.cpp`, and `svdtest.cpp`.
 * `csparse.hpp` provides wrappers for Timothy A. Davis's [CSparse][6] library, in particular conversion to and from `jlt::mathmatrix`, wrapping CSparse functions in a namespace, and a type `jlt::cs_auto_ptr` derived from `std::auto_ptr` that deallocates pointers automatically.  Link with `-lcsparse`.  See the testsuite program ``csparsetest.cpp`.
