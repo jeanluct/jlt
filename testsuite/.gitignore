@@ -1,8 +1,6 @@
 csparse_test
 eigensystem_test
 finitediff_test
-finitediff_err_test
-finitediff_vec_test
 math_test
 mathvector_test
 matlab_test
