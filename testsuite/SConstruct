@@ -1,17 +1,18 @@
 SConscript('SConscript')
 Import(['env','matlabenv','lapackenv','csparseenv'])
 
-progs = ['finitediff','finitediff_err','finitediff_vec','vcs_banner',
-         'mathvector','precisionmath','qrtest','tictoc_test','polytest']
+progs = ['finitediff_err_test','finitediff_test','finitediff_vec_test',
+         'math_test','mathvector_test','qr_test','tictoc_test',
+         'polynomial_test','vcs_test']
 
 # These require linking against LAPACK.
-lapackprogs = ['eigensystem','svdtest']
+lapackprogs = ['eigensystem_test','svd_test']
 
 for p in progs:
     env.Program(p + '.cpp')
 for p in lapackprogs:
     lapackenv.Program(p + '.cpp')
 
-matlabenv.Program('matlabtest.cpp')
+matlabenv.Program('matlab_test.cpp')
 
-csparseenv.Program('csparsetest.cpp')
+csparseenv.Program('csparse_test.cpp')
