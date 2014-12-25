@@ -10,4 +10,4 @@ polytest
 precisionmath
 qrtest
 svdtest
-time_mark
+tictoc_test

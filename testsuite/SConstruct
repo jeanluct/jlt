@@ -2,7 +2,7 @@ SConscript('SConscript')
 Import(['env','matlabenv','lapackenv','csparseenv'])
 
 progs = ['finitediff','finitediff_err','finitediff_vec','vcs_banner',
-         'mathvector','precisionmath','qrtest','time_mark','polytest']
+         'mathvector','precisionmath','qrtest','tictoc_test','polytest']
 
 # These require linking against LAPACK.
 lapackprogs = ['eigensystem','svdtest']

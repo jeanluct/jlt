@@ -5,7 +5,7 @@
 //
 
 #include <iostream>
-#include <jlt/time_mark.hpp>
+#include <jlt/tictoc.hpp>
 
 int main()
 {
@@ -13,10 +13,10 @@ int main()
 
   // Timer: starts at 0 seconds upon creation.
   // Output times to stdout.
-  jlt::time_mark timer(std::cout);
+  jlt::tictoc timer(std::cout);
 
   // Mark the start of a timed block.
-  timer.mark_start("Summing harmonic series...");
+  timer.tic("Summing harmonic series...");
   // Do something long...
   double sum = 0;
   for (int i = 1; i < N; ++i)
@@ -24,11 +24,11 @@ int main()
       sum += 1/(double)i;
     }
   // Print elapsed time, cumulative time.
-  timer.mark_end();
+  timer.toc();
   std::cout << "sum = " << sum << std::endl;
 
   // Mark the start of another timed block.
-  timer.mark_start("Summing Basel problem series...");
+  timer.tic("Summing Basel problem series...");
   // Do something long again...
   sum = 0;
   for (int i = 1; i < N; ++i)
@@ -36,6 +36,6 @@ int main()
       sum += 1/((double)i*i);
     }
   // Print elapsed time, cumulative time.
-  timer.mark_end();
+  timer.toc();
   std::cout << "sum = " << sum << std::endl;
 }

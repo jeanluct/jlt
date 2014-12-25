@@ -4,8 +4,8 @@
 // See the file LICENSE for copying permission.
 //
 
-#ifndef JLT_TIME_MARK_HPP
-#define JLT_TIME_MARK_HPP
+#ifndef JLT_TICTOC_HPP
+#define JLT_TICTOC_HPP
 
 #include <iostream>
 #include <iomanip>
@@ -22,7 +22,7 @@
 
 namespace jlt {
 
-class time_mark
+class tictoc
 {
 private:
   boost::timer t;
@@ -31,7 +31,7 @@ private:
   std::ostream ostr;
 
 public:
-  time_mark(std::ostream& ostr_ = std::cerr) :
+  tictoc(std::ostream& ostr_ = std::cerr) :
     dangling(false), last_mark(0), ostr(ostr_.rdbuf())
   {
   }
@@ -42,7 +42,7 @@ public:
     last_mark = 0;
   }
 
-  void mark_start(const std::string& what)
+  void tic(const char what[])
   {
     last_mark = t.elapsed();
 
@@ -50,10 +50,14 @@ public:
     if (dangling) ostr << std::endl;
     dangling = true;
 
-    ostr << std::setiosflags(std::ios::left) << std::setw(60) << what << "\t";
+    if (what)
+      {
+	ostr << std::setiosflags(std::ios::left) << std::setw(60)
+	     << what << "\t";
+      }
   }
 
-  void mark_end()
+  void toc()
   {
     double tel = t.elapsed();
 
@@ -67,4 +71,4 @@ public:
 
 } // namespace jlt
 
-#endif // JLT_TIME_MARK_HPP
+#endif // JLT_TICTOC_HPP
