@@ -42,7 +42,7 @@ public:
     last_mark = 0;
   }
 
-  void tic(const char what[])
+  void tic(const char what[] = 0)
   {
     last_mark = t.elapsed();
 
