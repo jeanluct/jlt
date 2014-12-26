@@ -492,6 +492,22 @@ inline S mag2(const mathvector<T,S>& v)
   return magn;
 }
 
+// Specializations of mag2 for complex types
+template<class T, class S>
+inline S mag2(const mathvector<std::complex<T>,S>& v)
+{
+  S magn = S();
+
+  for (typename mathvector<std::complex<T>,T>::const_iterator i = v.begin();
+       i != v.end(); ++i)
+    {
+      // Note that std::complex::norm returns the squared magnitude.
+      magn += norm(*i);
+    }
+
+  return magn;
+}
+
 template<class T, class S>
 inline S abs(const mathvector<T,S>& v)
 {
