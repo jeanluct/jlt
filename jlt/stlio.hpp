@@ -18,13 +18,6 @@
 
 namespace jlt {
 
-  /* Problem: The "modern" gcc (>2.96) does not like the string
-     literal definition of field_sep.  Unless the macro
-     __STATIC_INIT_FIXED__ is defined, a #define directive is used
-     instead. */
-#undef __STATIC_INIT_FIXED__
-
-
 //
 // Formatting specifications.
 //
