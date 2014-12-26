@@ -8,7 +8,6 @@
 #include <jlt/mathvector.hpp>
 #include <jlt/math.hpp>
 #include <jlt/finitediff.hpp>
-#include <jlt/fixvector.hpp>
 
 
 typedef double Real;
@@ -48,31 +47,6 @@ int main()
       yp4[i] = Log10(Abs(yp4[i] - ypexact[i]));
       cout << x[i] << "\t" << yp1[i] << "\t";
       cout << yp2[i] << "\t" << yp4[i] << endl;
-    }
-  }
-
-  // finitediff_vec_test
-  {
-    const int N = 100;
-    Real dx = (Real)1./N;
-
-    std::vector<Real> x(N);
-    std::vector<jlt::fixmathvector<Real,2> > y(N), yp(N), ypexact(N);
-
-    for (int i = 0; i < N; ++i) {
-      x[i] = i*dx;
-      y[i][0] = Sin(2*M_PI*x[i]);
-      y[i][1] = Cos(2*M_PI*x[i]);
-      ypexact[i][0] = 2*M_PI*Cos(2*M_PI*x[i]);
-      ypexact[i][1] = -2*M_PI*Sin(2*M_PI*x[i]);
-    }
-
-    finitediff4(x,y,yp);
-
-    for (int i = 0; i < N; ++i) {
-      yp[i][0] = Log10(Abs(yp[i][0] - ypexact[i][0]));
-      yp[i][1] = Log10(Abs(yp[i][1] - ypexact[i][1]));
-      cout << x[i] << "\t" << yp[i] << endl;
     }
   }
 
