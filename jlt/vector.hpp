@@ -14,11 +14,7 @@
 // Bounds-checked version of std::vector.
 
 #if defined(VECTOR_CHECK_BOUNDS)
-#  if defined(__PGI)
-#    include <assert.h>
-#  else
-#    include <cassert>
-#  endif
+#  include <cassert>
 #  define VECTOR_ASSERT(x) assert(x)
 #else
 #  define VECTOR_ASSERT(x)

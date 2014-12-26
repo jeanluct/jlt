@@ -289,26 +289,6 @@ public:
   // Friends
   //
 
-#ifdef __PGI
-  friend mathmatrix<T,S> operator+(const mathmatrix<T,S>& A);
-
-  friend mathmatrix<T,S> operator-(const mathmatrix<T,S>& B);
-
-  friend mathmatrix<T,S> operator+(const mathmatrix<T,S>& A,
-				   const mathmatrix<T,S>& B);
-
-  friend mathmatrix<T,S> operator-(const mathmatrix<T,S>& A,
-				   const mathmatrix<T,S>& B);
-
-  friend mathmatrix<T,S> operator*(const_scalar_reference a,
-				   const mathmatrix<T,S>& A);
-
-  friend mathmatrix<T,S> operator*(const mathmatrix<T,S>& A,
-				   const_scalar_reference a);
-
-  friend mathmatrix<T,S> operator/(const mathmatrix<T,S>& A,
-				   const_scalar_reference a);
-#else
   friend mathmatrix<T,S> operator+<>(const mathmatrix<T,S>& A);
 
   friend mathmatrix<T,S> operator-<>(const mathmatrix<T,S>& B);
@@ -327,7 +307,6 @@ public:
 
   friend mathmatrix<T,S> operator/<>(const mathmatrix<T,S>& A,
 				     const_scalar_reference a);
-#endif
 
   // Component-wise division.
   // friend const mathmatrix<T,S>& operator/(const mathmatrix<T,S>&, const

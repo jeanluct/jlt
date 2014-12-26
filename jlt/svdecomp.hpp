@@ -9,12 +9,7 @@
 
 #include <jlt/matrix.hpp>
 #include <jlt/lapack.hpp>
-
-#if defined(__PGI)
-#  include <assert.h>
-#else
-#  include <cassert>
-#endif
+#include <cassert>
 
 // No data() method in std::vector prior to GCC 4.1.
 #if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 1))

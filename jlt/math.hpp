@@ -15,14 +15,7 @@
 // by appending f and l to the name, respectively.
 //
 
-#ifdef __PGI
-#define PGCC_NO_LONG_DOUBLE \
-    { cerr << "pgCC does not implement long double type.\n"; \
-      exit(1); \
-      return 0; }
-#else
 #include <cmath>
-#endif
 #include <iostream>
 #include <complex>
 #include <cstdlib>
@@ -47,11 +40,7 @@ inline double Abs(const double a)
 
 inline long double Abs(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::fabsl(a);
-# endif
+  return ::fabsl(a);
 }
 
 template<class T>
@@ -80,11 +69,7 @@ inline double Log(const double a)
 
 inline long double Log(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::logl(a);
-# endif
+  return ::logl(a);
 }
 
 
@@ -107,11 +92,7 @@ inline double Log1p(const double a)
 
 inline long double Log1p(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::log1pl(a);
-# endif
+  return ::log1pl(a);
 }
 
 
@@ -134,11 +115,7 @@ inline double Log10(const double a)
 
 inline long double Log10(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::log10l(a);
-# endif
+  return ::log10l(a);
 }
 
 
@@ -161,11 +138,7 @@ inline double Exp(const double a)
 
 inline long double Exp(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::expl(a);
-# endif
+  return ::expl(a);
 }
 
 
@@ -188,11 +161,7 @@ inline double Expm1(const double a)
 
 inline long double Expm1(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::expm1l(a);
-# endif
+  return ::expm1l(a);
 }
 
 
@@ -218,11 +187,7 @@ inline double Pow(const double a, const S b)
 template<class S>
 inline long double Pow(const long double a, const S b)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::powl(a,b);
-# endif
+  return ::powl(a,b);
 }
 
 template<class S>
@@ -283,11 +248,7 @@ inline double Mod(const double a, const S b)
 template<class S>
 inline long double Mod(const long double a, const S b)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::fmodl(::fmodl(a,b) + b,b);
-# endif
+  return ::fmodl(::fmodl(a,b) + b,b);
 }
 
 
@@ -320,11 +281,7 @@ inline double Sqrt(const double a)
 
 inline long double Sqrt(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::sqrtl(a);
-# endif
+  return ::sqrtl(a);
 }
 
 template<class T>
@@ -352,11 +309,7 @@ inline double Sin(const double a)
 
 inline long double Sin(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::sinl(a);
-# endif
+  return ::sinl(a);
 }
 
 
@@ -379,11 +332,7 @@ inline double Cos(const double a)
 
 inline long double Cos(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::cosl(a);
-# endif
+  return ::cosl(a);
 }
 
 
@@ -406,11 +355,7 @@ inline double Tan(const double a)
 
 inline long double Tan(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::tanl(a);
-# endif
+  return ::tanl(a);
 }
 
 
@@ -433,11 +378,7 @@ inline double Sinh(const double a)
 
 inline long double Sinh(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::sinhl(a);
-# endif
+  return ::sinhl(a);
 }
 
 
@@ -460,11 +401,7 @@ inline double Cosh(const double a)
 
 inline long double Cosh(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::coshl(a);
-# endif
+  return ::coshl(a);
 }
 
 
@@ -487,11 +424,7 @@ inline double Tanh(const double a)
 
 inline long double Tanh(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::tanhl(a);
-# endif
+  return ::tanhl(a);
 }
 
 
@@ -514,11 +447,7 @@ inline double Asin(const double a)
 
 inline long double Asin(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::asinl(a);
-# endif
+  return ::asinl(a);
 }
 
 
@@ -541,11 +470,7 @@ inline double Acos(const double a)
 
 inline long double Acos(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::acosl(a);
-# endif
+  return ::acosl(a);
 }
 
 
@@ -568,11 +493,7 @@ inline double Atan(const double a)
 
 inline long double Atan(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::atanl(a);
-# endif
+  return ::atanl(a);
 }
 
 
@@ -595,11 +516,7 @@ inline double Atan2(const double y, const double x)
 
 inline long double Atan2(const long double y, const long double x)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::atan2l(y,x);
-# endif
+  return ::atan2l(y,x);
 }
 
 
@@ -622,11 +539,7 @@ inline double Asinh(const double a)
 
 inline long double Asinh(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::asinhl(a);
-# endif
+  return ::asinhl(a);
 }
 
 
@@ -649,11 +562,7 @@ inline double Acosh(const double a)
 
 inline long double Acosh(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::acoshl(a);
-# endif
+  return ::acoshl(a);
 }
 
 
@@ -678,11 +587,7 @@ inline double Atanh(const double a)
 
 inline long double Atanh(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::atanhl(a);
-# endif
+  return ::atanhl(a);
 }
 #endif // __MINGW32__
 
@@ -706,11 +611,7 @@ inline double Floor(const double a)
 
 inline long double Floor(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::floorl(a);
-# endif
+  return ::floorl(a);
 }
 
 
@@ -733,11 +634,7 @@ inline double Ceil(const double a)
 
 inline long double Ceil(const long double a)
 {
-# ifdef __PGI
-    PGCC_NO_LONG_DOUBLE
-# else
-    return ::ceill(a);
-# endif
+  return ::ceill(a);
 }
 
 } // namespace jlt

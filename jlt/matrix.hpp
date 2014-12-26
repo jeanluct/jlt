@@ -50,11 +50,7 @@
 #endif
 
 #if defined(MATRIX_CHECK_BOUNDS)
-#  if defined(__PGI)
-#    include <assert.h>
-#  else
-#    include <cassert>
-#  endif
+#  include <cassert>
 #  define MATRIX_ASSERT(x) assert(x)
 #else
 #  define MATRIX_ASSERT(x)

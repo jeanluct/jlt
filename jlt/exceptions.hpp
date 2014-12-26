@@ -7,10 +7,6 @@
 #ifndef JLT_EXCEPTIONS_HPP
 #define JLT_EXCEPTIONS_HPP
 
-#ifdef _EXCEPTIONS			// KCC
-# define __EXCEPTIONS			// gcc
-#endif
-
 #ifdef __EXCEPTIONS
 
 #include <stdexcept>			// Include standard library exceptions.

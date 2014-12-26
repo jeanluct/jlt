@@ -4,11 +4,7 @@
 // See the file LICENSE for copying permission.
 //
 
-#ifndef __PGI
-#  include <cassert>
-#else
-#  include <assert.h>
-#endif
+#include <cassert>
 #include <iostream>
 #include <complex>
 #include <jlt/mathvector.hpp>

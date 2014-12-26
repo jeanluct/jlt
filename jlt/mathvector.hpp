@@ -207,40 +207,6 @@ public:
   // Friends
   //
 
-#ifdef __PGI
-  friend mathvector<T,S> operator+(const mathvector<T,S>& v);
-
-  friend mathvector<T,S> operator-(const mathvector<T,S>& v);
-
-  friend mathvector<T,S> operator+(const mathvector<T,S>& v,
-				   const mathvector<T,S>& w);
-
-  friend mathvector<T,S> operator-(const mathvector<T,S>& v,
-				   const mathvector<T,S>& w);
-
-  friend mathvector<T,S> operator*(const_scalar_reference a,
-				   const mathvector<T,S>& v);
-
-  friend mathvector<T,S> operator*(const mathvector<T,S>& v,
-				   const_scalar_reference a);
-
-  friend mathvector<T,S> operator/(const mathvector<T,S>& v,
-				   const_scalar_reference a);
-
-  // Component-wise division.
-  friend mathvector<T,S> operator/(const mathvector<T,S>& v,
-				   const mathvector<T,S>& w);
-
-  // Dot product (not component-wise multiplication).
-  friend scalar_type operator*(const mathvector<T,S>& v,
-			       const mathvector<T,S>& w);
-
-  friend scalar_type dot(const mathvector<T,S>& v, const mathvector<T,S>& w);
-
-  friend scalar_type mag2(const mathvector<T,S>& v);
-
-  friend scalar_type abs(const mathvector<T,S>& v);
-#else
   friend mathvector<T,S> operator+<>(const mathvector<T,S>& v);
 
   friend mathvector<T,S> operator-<>(const mathvector<T,S>& v);
@@ -274,7 +240,6 @@ public:
   friend scalar_type jlt::mag2<>(const mathvector<T,S>& v);
 
   friend scalar_type jlt::abs<>(const mathvector<T,S>& v);
-#endif
 
 
 }; // class mathvector

@@ -32,11 +32,7 @@ template<class T>
 struct format_traits {
 
   // String to separate vector entries.
-# if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-#   define field_sep "  "
-# else
-    static const char field_sep[] = "  ";
-# endif
+  static const char field_sep[];
 
   // Scientific notation takes seven extra characters:
   // sign = 1, decimal point = 1, e = 1, exponent sign = 1, exponent = 2,
@@ -53,15 +49,14 @@ struct format_traits {
   static const int field_width = 15;
 };
 
+template<class T>
+const char format_traits<T>::field_sep[] = "  ";
+
 template<>
 struct format_traits<int> {
 
   // String to separate vector entries.
-# if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-#   define field_sep "  "
-# else
-    static const char field_sep[] = "  ";
-# endif
+  static const char field_sep[];
 
   static const int extra_width_scientific = 0;
 
@@ -69,15 +64,13 @@ struct format_traits<int> {
   static const int field_width = 6;
 };
 
+const char format_traits<int>::field_sep[] = "  ";
+
 template<>
 struct format_traits<float> {
 
   // String to separate vector entries.
-# if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-#   define field_sep "  "
-# else
-    static const char field_sep[] = "  ";
-# endif
+  static const char field_sep[];
 
   static const int extra_width_scientific = 7;
 
@@ -87,15 +80,13 @@ struct format_traits<float> {
   static const int field_width = 13;
 };
 
+const char format_traits<float>::field_sep[] = "  ";
+
 template<>
 struct format_traits<long double> {
 
   // String to separate vector entries.
-# if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-#   define field_sep "  "
-# else
-    static const char field_sep[] = "  ";
-# endif
+  static const char field_sep[];
 
   static const int extra_width_scientific = 7;
 
@@ -103,6 +94,8 @@ struct format_traits<long double> {
   // and decimal point.
   static const int field_width = 22;
 };
+
+const char format_traits<long double>::field_sep[] = "  ";
 
 template<class T>
 std::ostream& operator<<(std::ostream& strm, const std::vector<T>& vv)
@@ -123,11 +116,7 @@ std::ostream& operator<<(std::ostream& strm, const std::vector<T>& vv)
 
   for (unsigned int i = 0; i < vv.size()-1; ++i)
     {
-#     if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-        strm << std::setw(wid) << vv[i] << field_sep;
-#     else
-        strm << std::setw(wid) << vv[i] << format_traits<T>::field_sep;
-#     endif
+      strm << std::setw(wid) << vv[i] << format_traits<T>::field_sep;
     }
 
   strm << std::setw(wid) << vv[vv.size()-1];	// To avoid dangling tab.
@@ -157,11 +146,7 @@ std::ostream& operator<<(std::ostream& strm, const std::valarray<T>& vv)
 
   for (unsigned int i = 0; i < vv.size()-1; ++i)
     {
-#     if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-        strm << std::setw(wid) << vv[i] << field_sep;
-#     else
-        strm << std::setw(wid) << vv[i] << format_traits<T>::field_sep;
-#     endif
+      strm << std::setw(wid) << vv[i] << format_traits<T>::field_sep;
     }
 
   strm << std::setw(wid) << vv[vv.size()-1];	// To avoid dangling tab.
@@ -182,11 +167,8 @@ std::ostream& operator<<(std::ostream& strm, const std::list<T>& ll)
 {
   if (ll.empty()) return strm;
 
-#ifdef __PGI
-  copy(ll.begin(), ll.end(), std::ostream_iterator<T,char>(strm, "\t"));
-#else
   copy(ll.begin(), ll.end(), std::ostream_iterator<T>(strm, "\t"));
-#endif
+
   return strm;
 }
 
@@ -197,12 +179,8 @@ std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
     for (typename std::map<K,T>::const_iterator it = mm.begin();
 	 it != mm.end(); ++it)
       {
-#       if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-	  strm << it->first << field_sep << it->second << std::endl;
-#       else
-	  strm << it->first << format_traits<T>::field_sep << it->second
-	       << std::endl;
-#       endif
+	strm << it->first << format_traits<T>::field_sep << it->second
+	     << std::endl;
       }
 
     return strm;
@@ -223,11 +201,7 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
 	strm.precision(prec);
 	strm.setf(std::ios::scientific);
 
-#       if defined(__PGI) || defined(__KCC) || !defined(__STATIC_INIT_FIXED__)
-	  strm << std::setw(wid) << it->first << field_sep;
-#       else
-	  strm << std::setw(wid) << it->first << format_traits<T>::field_sep;
-#       endif
+	strm << std::setw(wid) << it->first << format_traits<T>::field_sep;
 	strm << it->second  << std::endl;
       }
 

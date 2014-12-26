@@ -12,11 +12,7 @@
 #include <jlt/matrix.hpp>
 #include <jlt/lapack.hpp>
 
-#if defined(__PGI)
-#  include <assert.h>
-#else
-#  include <cassert>
-#endif
+#include <cassert>
 #include <algorithm>
 
 // No data() method in std::vector prior to GCC 4.1.
@@ -38,10 +34,7 @@ int symmetric_matrix_eigensystem(matrix<T>& A,
   char uplo = 'L';	// 'L'ower or 'U'pper triangle stored (opposite)
   int N = A.rows();	// Dimensions of matrix.
 
-# ifdef __PGI
-# else
-    assert(N == (int)A.columns() && N == (int)eigvals.size());
-# endif
+  assert(N == (int)A.columns() && N == (int)eigvals.size());
 
   int info;
 
@@ -96,10 +89,7 @@ int matrix_eigenvalues(matrix<T>& A,
   char jobVR = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
   int N = A.rows();	// Dimensions of matrix.
 
-# ifdef __PGI
-# else
-    assert(N == (int)A.columns() && N == (int)eigvals.size());
-# endif
+  assert(N == (int)A.columns() && N == (int)eigvals.size());
 
   int info, ldVL = 1, ldVR = 1;
 
@@ -152,10 +142,7 @@ int matrix_eigenvalues(matrix<std::complex<T> >& A,
   int rworksize = 2 * A.rows();
   std::vector<T> rwork(rworksize);
 
-# ifdef __PGI
-# else
-    assert(N == (int)A.columns() && N == (int)eigvals.size());
-# endif
+  assert(N == (int)A.columns() && N == (int)eigvals.size());
 
   int info, ldVL = 1, ldVR = 1;
 
