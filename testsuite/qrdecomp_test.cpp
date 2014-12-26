@@ -59,7 +59,7 @@ int main()
   mathmatrix<double> Merr = M - Md;
   double err = 0;
   for (matrix<double>::const_iterator i = Merr.begin(); i != Merr.end(); ++i) {
-    err += jlt::Abs(*i);
+    err += std::abs(*i);
   }
   cout << "\nTypical error = " << err/(n*n) << endl;
 }

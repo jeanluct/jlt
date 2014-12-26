@@ -12,8 +12,8 @@
 //
 
 #include <stdexcept>
+#include <complex>
 #include <jlt/vector.hpp>
-#include <jlt/math.hpp>
 #include <jlt/stlio.hpp>
 
 namespace jlt {
@@ -476,14 +476,7 @@ inline S mag2(const mathvector<std::complex<T>,S>& v)
 template<class T, class S>
 inline S abs(const mathvector<T,S>& v)
 {
-  return Sqrt(mag2((v)));
-}
-
-// For compatibility with math.hpp
-template<class T, class S>
-inline S Abs(const mathvector<T,S>& v)
-{
-  return abs(v);
+  return std::sqrt(mag2((v)));
 }
 
 } // namespace jlt

@@ -6,14 +6,13 @@
 
 #include <iostream>
 #include <iomanip>
-#include <jlt/math.hpp>
-
+#include <cmath>
 
 int main()
 {
   using std::cout;
   using std::endl;
-  using namespace jlt;
+  using namespace std;
 
   long double al = 1./9.L;
   long double bl = 1./3.L;
@@ -30,80 +29,80 @@ int main()
   cout << ".9  = " << aad << endl;
   cout << ".9f = " << aaf << endl << endl;
 
-  cout << "Sqrt:\n";
-  cout << Sqrt(al) << endl;
-  cout << Sqrt((double)al) << endl;
-  cout << Sqrt((float)al) << endl;
+  cout << "sqrt:\n";
+  cout << sqrt(al) << endl;
+  cout << sqrt((double)al) << endl;
+  cout << sqrt((float)al) << endl;
   cout << endl;
-  cout << "Pow:\n";
-  cout << Pow(Pow(1./al,bl),1./bl) << endl;
-  cout << Pow(Pow((double)(1./al),(double)bl),(double)(1./bl)) << endl;
-  cout << Pow(Pow((float)(1./al),(float)bl),(float)(1./bl)) << endl;
+  cout << "pow:\n";
+  cout << pow(pow(1./al,bl),1./bl) << endl;
+  cout << pow(pow((double)(1./al),(double)bl),(double)(1./bl)) << endl;
+  cout << pow(pow((float)(1./al),(float)bl),(float)(1./bl)) << endl;
 
   for (int i = 1; i <= 4; ++i) {
     cout << endl;
-    cout << Pow(10.L,-i) << endl;
-    cout << Pow(10.,-i) << endl;
+    cout << pow(10.L,-i) << endl;
+    cout << pow(10.,-i) << endl;
   }
   for (int i = 1; i <= 4; ++i) {
     cout << endl;
-    cout << Pow(10.L,-(long double)i) << endl;
-    cout << Pow(10.,-(double)i) << endl;
+    cout << pow(10.L,-(long double)i) << endl;
+    cout << pow(10.,-(double)i) << endl;
   }
 
   cout.setf(std::ios::scientific);
 
   cout << endl;
-  cout << "Sin:\n";
-  cout << Sin(cl) << endl;
-  cout << Sin((double)cl) << endl;
-  cout << Sin((float)cl) << endl;
+  cout << "sin:\n";
+  cout << sin(cl) << endl;
+  cout << sin((double)cl) << endl;
+  cout << sin((float)cl) << endl;
 
   cout << endl;
-  cout << "Tan:\n";
-  cout << Tan(cl) << endl;
-  cout << Tan((double)cl) << endl;
-  cout << Tan((float)cl) << endl;
+  cout << "tan:\n";
+  cout << tan(cl) << endl;
+  cout << tan((double)cl) << endl;
+  cout << tan((float)cl) << endl;
 
   cout << endl;
-  cout << "Sinh:\n";
-  cout << Sinh(cl) << endl;
-  cout << Sinh((double)cl) << endl;
-  cout << Sinh((float)cl) << endl;
+  cout << "sinh:\n";
+  cout << sinh(cl) << endl;
+  cout << sinh((double)cl) << endl;
+  cout << sinh((float)cl) << endl;
 
   cout << endl;
-  cout << "Tanh:\n";
-  cout << Tanh(cl) << endl;
-  cout << Tanh((double)cl) << endl;
-  cout << Tanh((float)cl) << endl;
+  cout << "tanh:\n";
+  cout << tanh(cl) << endl;
+  cout << tanh((double)cl) << endl;
+  cout << tanh((float)cl) << endl;
 
   cout << endl;
   cout << "Asin:\n";
-  cout << Asin(cl) << endl;
-  cout << Asin((double)cl) << endl;
-  cout << Asin((float)cl) << endl;
+  cout << asin(cl) << endl;
+  cout << asin((double)cl) << endl;
+  cout << asin((float)cl) << endl;
 
   cout << endl;
   cout << "Atan:\n";
-  cout << Atan(cl) << endl;
-  cout << Atan((double)cl) << endl;
-  cout << Atan((float)cl) << endl;
+  cout << atan(cl) << endl;
+  cout << atan((double)cl) << endl;
+  cout << atan((float)cl) << endl;
 
   cout << endl;
   cout << "Asinh:\n";
-  cout << Asinh(cl) << endl;
-  cout << Asinh((double)cl) << endl;
-  cout << Asinh((float)cl) << endl;
+  cout << asinh(cl) << endl;
+  cout << asinh((double)cl) << endl;
+  cout << asinh((float)cl) << endl;
 
   cout << endl;
   cout << "Atanh:\n";
-  cout << Atanh(cl) << endl;
-  cout << Atanh((double)cl) << endl;
-  cout << Atanh((float)cl) << endl;
+  cout << atanh(cl) << endl;
+  cout << atanh((double)cl) << endl;
+  cout << atanh((float)cl) << endl;
 
   cout << endl;
-  cout << "Expm1:\n";
-  cout << Expm1(cl) << endl;
-  cout << Expm1((double)cl) << endl;
-  cout << Expm1((float)cl) << endl;
+  cout << "expm1:\n";
+  cout << expm1(cl) << endl;
+  cout << expm1((double)cl) << endl;
+  cout << expm1((float)cl) << endl;
 }

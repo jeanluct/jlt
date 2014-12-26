@@ -13,7 +13,6 @@
 
 #include <iostream>
 #include <string>
-#include <jlt/math.hpp>
 #include <jlt/vector.hpp>
 
 
@@ -80,8 +79,9 @@ public:
   polynomial(const_coeff_type _coeff = 0, const_power_type _pow = 0) :
     pmin(_pow), pmax(_pow), cap(initial_cap)
   {
-    coeff.resize(cap); /* Is this the best thing to do? */
-			      /* I think it would be preferable to let the vector manage this. */
+    /* Is this the best thing to do? */
+    /* I think it would be preferable to let the vector manage this. */
+    coeff.resize(cap);
     coeff[0] = _coeff;
   }
 
@@ -328,8 +328,8 @@ public:
 	  if (coeff[i] < 0) strm << " - ";
 	}
 	if (i+pmin != 0) {
-	  if (Abs(coeff[i]) != 1) {
-	    strm << Abs(coeff[i]) << " ";
+	  if (std::abs(coeff[i]) != 1) {
+	    strm << std::abs(coeff[i]) << " ";
 	  }
 	  if (i+pmin != 1) {
 	    strm << var << "^" << pmin+i;
@@ -337,7 +337,7 @@ public:
 	    strm << var;
 	  }
 	} else {
-	  strm << Abs(coeff[i]);
+	  strm << std::abs(coeff[i]);
 	}
       }
     }
@@ -381,8 +381,8 @@ public:
   {
     S c = 0;
     /* I don't have this conversion quite right.  Need to think about this. */
-    /* S xp = (S)Pow((S)x,(S)pmin); */
-    S xp = (S)Pow((T)x,(T)pmin);
+    /* S xp = (S)std::pow((S)x,(S)pmin); */
+    S xp = (S)std::pow((T)x,(T)pmin);
 
     for (P i = 0; i <= pmax-pmin; ++i) {
       c += coeff[i] * xp;
@@ -425,7 +425,7 @@ public:
   {
     S c = 0;
     /* I don't have this conversion quite right.  Need to think about this. */
-    S xp = (S)Pow((S)x,(S)pmin-1);
+    S xp = (S)std::pow((S)x,(S)pmin-1);
 
     for (P i = 0; i <= pmax-pmin; ++i) {
       c += (pmin+i)*coeff[i]*xp;

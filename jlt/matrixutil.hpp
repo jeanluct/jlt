@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <jlt/math.hpp>
+#include <cmath>
 
 #ifndef MATRIX_ASSERT
 #  define MATRIX_ASSERT(x)
@@ -20,6 +20,8 @@ namespace jlt {
 template<class T, class T_Matrix>
 void LUdecomp(T_Matrix& A, int* row_index, int* perm)
 {
+  using std::abs;
+
   int	imax = 0;
   int	n = A.dim();
   T	big, dum, sum, temp;
@@ -34,7 +36,7 @@ void LUdecomp(T_Matrix& A, int* row_index, int* perm)
     {
       big = 0.0;
       for (int j = 0; j < n; ++j)
-	if (Abs(temp = Abs(A(i,j))) > Abs(big)) big = temp;
+	if (abs(temp = abs(A(i,j))) > abs(big)) big = temp;
       if (big == 0.0)
 	{
 	  JLT_THROW(std::runtime_error("Singular Matrix in LUdecomp."));
@@ -54,7 +56,7 @@ void LUdecomp(T_Matrix& A, int* row_index, int* perm)
 	for (int k = 0; k < j; ++k)
 	  sum -= A(i,k)*A(k,j);
 	A(i,j) = sum;
-	if (Abs(dum = vv[i]*Abs(sum)) >= Abs(big)) {
+	if (abs(dum = vv[i]*abs(sum)) >= abs(big)) {
 	  big = dum;
 	  imax = i;
 	}
@@ -83,6 +85,8 @@ void LUdecomp(T_Matrix& A, int* row_index, int* perm)
 template<class T, class T_Matrix>
 void LUbacksub(T_Matrix& A, int* row_index, T* b)
 {
+  using std::abs;
+
   int n = A.dim();
   int i_nonzero = -1, i_perm;
   T sum;
@@ -96,7 +100,7 @@ void LUbacksub(T_Matrix& A, int* row_index, T* b)
       if (i_nonzero >= 0)
 	for (int j = i_nonzero; j < i; ++j) sum -= A(i,j)*b[j];
       else
-	if (Abs(sum)) i_nonzero = i;
+	if (abs(sum)) i_nonzero = i;
 
       b[i] = sum;
     }
@@ -157,12 +161,15 @@ bool QRdecomp(T_Matrix& A, T_Vector& c, T_Vector& d, int m)
   // still completed in this case; otherwise it returns false.
   //
 
+  using std::abs;
+  using std::sqrt;
+
   bool sing = false;
   T scale = 0.;
 
   for (int k = 0; k < m-1; ++k)
     {
-      for (int i = k; i < m; ++i) scale = std::max(scale, Abs(A(i,k)));
+      for (int i = k; i < m; ++i) scale = std::max(scale, abs(A(i,k)));
       if (scale == 0.)
 	{
 	  sing = true;
@@ -173,7 +180,7 @@ bool QRdecomp(T_Matrix& A, T_Vector& c, T_Vector& d, int m)
 	  T sum = 0.;
 	  for (int i = k; i < m; ++i) sum += A(i,k)*A(i,k);
 
-	  T sigma = (A(k,k) >= 0. ? Abs(Sqrt(sum)) : -Abs(Sqrt(sum)));
+	  T sigma = (A(k,k) >= 0. ? abs(sqrt(sum)) : -abs(sqrt(sum)));
 
 	  A(k,k) += sigma;
 	  c[k] = sigma*A(k,k);
@@ -288,7 +295,7 @@ void GramSchmidtOrthonorm(T_Matrix& A)
       // Normalize the vector (row)
       double norm = 0;
       for (int j = 0; j < n; ++j) norm += A(i,j)*A(i,j);
-      norm = Sqrt(norm);
+      norm = std::sqrt(norm);
       for (int j = 0; j < n; ++j) A(i,j) /= norm;
 
       // Subtract component of ith vector (row) from subsequent ones.
@@ -313,7 +320,7 @@ void GramSchmidtOrthonorm(T_Matrix& A, T_Vector& norm)
       // Normalize the vector (row)
       norm[i] = 0;
       for (int j = 0; j < n; ++j) norm[i] += A(i,j)*A(i,j);
-      norm[i] = Sqrt(norm[i]);
+      norm[i] = std::sqrt(norm[i]);
       for (int j = 0; j < n; ++j) A(i,j) /= norm[i];
 
       // Subtract component of ith vector (row) from subsequent ones.
@@ -338,7 +345,7 @@ void GramSchmidtOrthonorm(T_Matrix& A, T_Matrix& proj)
       // Normalize the vector (row)
       proj(i,i) = 0;
       for (int j = 0; j < n; ++j) proj(i,i) += A(i,j)*A(i,j);
-      proj(i,i) = Sqrt(proj(i,i));
+      proj(i,i) = std::sqrt(proj(i,i));
       for (int j = 0; j < n; ++j) A(i,j) /= proj(i,i);
 
       // Subtract component of ith vector (row) from subsequent ones.
