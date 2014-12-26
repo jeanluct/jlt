@@ -327,6 +327,11 @@ inline long double Sqrt(const long double a)
 # endif
 }
 
+template<class T>
+inline std::complex<T> Sqrt(const std::complex<T> a)
+{
+  return sqrt(a);
+}
 
 template<class T>
 inline T Sin(const T a)
