@@ -26,7 +26,7 @@ int main ()
   M(3,9) = 9;
   M(4,9) = -1;
 
-  jlt::cs_auto_ptr T(jlt::mathmatrix_to_cs_sparse_matrix(M));
+  jlt::cs_unique_ptr T(jlt::mathmatrix_to_cs_sparse_matrix(M));
 
   csparse::cs_print(T,1);
 
@@ -34,7 +34,7 @@ int main ()
 
   if (M == M2) cout << "Equal!\n";
 
-  jlt::csd_auto_ptr BT(csparse::cs_dmperm(T,1));
+  jlt::csd_unique_ptr BT(csparse::cs_dmperm(T,1));
 
   if (!BT) { std::cerr << "Error\n"; exit(1); }
 

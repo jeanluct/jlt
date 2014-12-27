@@ -4,6 +4,16 @@
 // See the file LICENSE for copying permission.
 //
 
+//
+// Routines to interface with the CSparse library.
+//
+// CSparse is Copyright (c) Timothy A. Davis, 2006-2012
+//
+// See http://www.cise.ufl.edu/research/sparse/CSparse
+//
+// Compile with -lcsparse flag.
+//
+
 #ifndef JLT_CSPARSE_HPP
 #define JLT_CSPARSE_HPP
 
@@ -12,31 +22,35 @@
 #include <memory>
 #include <jlt/mathmatrix.hpp>
 
-namespace csparse {
-extern "C" {
+namespace csparse
+{
+extern "C"
+{
 #include "cs.h"
 }
 } // namespace csparse
 
-//
-// Routines to interface with the CSparse library.
-//
-// CSparse is Copyright (c) Timothy A. Davis, 2006-2007
-//
-// See http://www.cise.ufl.edu/research/sparse/CSparse
-//
-// Compile with -lcsparse flag.
+namespace jlt
+{
+#if __cplusplus > 199711L
+  template<class T>
+  using auto_ptr = std::unique_ptr<T>;
+#else
+  using std::auto_ptr;
+#endif
+} // namespace jlt
+
 
 namespace jlt {
 
-// auto_ptr wrappers for csparse pointers that will take care of
+// unique_ptr wrappers for csparse pointers that will take care of
 // freeing the memory when we're done with a matrix.
 
 // Derived wrapper for csparse::cs pointers.
-class cs_auto_ptr : public std::auto_ptr<csparse::cs>
+class cs_unique_ptr : public auto_ptr<csparse::cs>
 {
 public:
-  cs_auto_ptr(csparse::cs* p_ = 0) : std::auto_ptr<csparse::cs>(p_) {}
+  cs_unique_ptr(csparse::cs* p_ = 0) : auto_ptr<csparse::cs>(p_) {}
 
   // Conversion to normal dumb pointer.
   operator csparse::cs*() { return get(); }
@@ -44,14 +58,14 @@ public:
   // Returns true if pointer is null.
   bool operator!() const { return (get() == 0); }
 
-  ~cs_auto_ptr()
+  ~cs_unique_ptr()
   {
     // Free the internals of the csparse pointer.
     //
     // From csparse::cs_spfree defined in cs_util.c
     //
     // We do not call this function directly, since we have to let the
-    // base auto_ptr<> free the actual pointer.
+    // base unique_ptr<> free the actual pointer.
     if (!get())
       {
 	csparse::cs_free(get()->p);
@@ -62,10 +76,10 @@ public:
 };
 
 // Derived wrapper for csparse::csd pointers.
-class csd_auto_ptr : public std::auto_ptr<csparse::csd>
+class csd_unique_ptr : public auto_ptr<csparse::csd>
 {
 public:
-  csd_auto_ptr(csparse::csd* p_ = 0) : std::auto_ptr<csparse::csd>(p_) {}
+  csd_unique_ptr(csparse::csd* p_ = 0) : auto_ptr<csparse::csd>(p_) {}
 
   // Conversion to normal dumb pointer.
   operator csparse::csd*() { return get(); }
@@ -73,14 +87,14 @@ public:
   // Returns true if pointer is null.
   bool operator!() const { return (get() == 0); }
 
-  ~csd_auto_ptr()
+  ~csd_unique_ptr()
   {
     // Free the internals of the csparse pointer.
     //
     // From csparse::cs_dfree defined in cs_util.c
     //
     // We do not call this function directly, since we have to let the
-    // base auto_ptr<> free the actual pointer.
+    // base unique_ptr<> free the actual pointer.
     if (!get())
       {
 	csparse::cs_free(get()->p);
@@ -91,13 +105,13 @@ public:
   }
 };
 
-// Note that we return a pointer, not an auto_ptr, since the return
+// Note that we return a pointer, not an unique_ptr, since the return
 // value is a temporary.
 template<class T>
 csparse::cs* mathmatrix_to_cs_sparse_matrix(const mathmatrix<T>& M)
 {
   int m = M.rows(), n = M.columns();
-  cs_auto_ptr csM(csparse::cs_spalloc(0,0,1,1,1));
+  cs_unique_ptr csM(csparse::cs_spalloc(0,0,1,1,1));
 
   for (int i = 0; i < m; ++i)
     for (int j = 0; j < n; ++j)
@@ -109,7 +123,7 @@ csparse::cs* mathmatrix_to_cs_sparse_matrix(const mathmatrix<T>& M)
 }
 
 template<class T>
-mathmatrix<T> cs_sparse_matrix_to_mathmatrix(const cs_auto_ptr& csM)
+mathmatrix<T> cs_sparse_matrix_to_mathmatrix(const cs_unique_ptr& csM)
 {
   if (!csM) return mathmatrix<T>();
 
