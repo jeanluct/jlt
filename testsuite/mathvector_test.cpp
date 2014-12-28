@@ -68,6 +68,13 @@ int main()
 
   cout << aa+aa << endl;
 
+#if __cplusplus > 199711L
+  // C++11: Create mathvector from initializer list.
+  jlt::mathvector<double> vv{1,2,3,4,5};
+  jlt::mathvector<double> vv2 = {1,2,3,4,5};
+  cout << "\nmathvector from initializer list:" << vv << endl << endl;
+#endif
+
   mathmatrix<double> AA(3,3,1);
   cout << AA;
   mathmatrix<double> BB(3,3,2);

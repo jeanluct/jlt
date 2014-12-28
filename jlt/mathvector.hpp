@@ -95,6 +95,14 @@ public:
   // Constructors
   //
 
+#if __cplusplus > 199711L
+  // Use C++11-style argument forwarding.
+  template<typename... Args>
+  mathvector(Args&&... args) : vector<T>(std::forward<Args>(args)...) {}
+
+  // Forward initializer list as well.
+  mathvector(std::initializer_list<T> args) : vector<T>(args) {}
+#else
   // Empty vector of size 0.
   mathvector() : vector<T>() {}
 
@@ -109,6 +117,7 @@ public:
     {
       return vector<T>::operator=(v);
     }
+#endif
 
   //
   // Vector Operations
