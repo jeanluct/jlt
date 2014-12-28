@@ -84,6 +84,15 @@ public:
   // Constructors
   //
 
+#if __cplusplus > 199711L
+  // Use C++11-style argument forwarding.
+  template<typename... Args>
+  mathmatrix(Args&&... _args) : matrix<T>(std::forward<Args>(_args)...) {}
+
+  // Forward initializer list as well.
+  mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
+    : matrix<T>(_m,_n,_l) {}
+#else
   mathmatrix() : matrix<T>() {}
 
   // Matrix of size _m*_n filled with _x.
@@ -91,6 +100,7 @@ public:
     : matrix<T>(_m,_n,_x) {}
 
   mathmatrix(const matrix<T>& _M) : matrix<T>(_M) {}	// Copy constructor.
+#endif
 
   //
   // Elementary Matrix Operations

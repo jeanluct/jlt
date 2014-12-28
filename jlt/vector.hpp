@@ -50,10 +50,10 @@ public:
 #if __cplusplus > 199711L
   // Use C++11-style argument forwarding.
   template<typename... Args>
-  vector(Args&&... args) : std::vector<T>(std::forward<Args>(args)...) {}
+  vector(Args&&... _args) : std::vector<T>(std::forward<Args>(_args)...) {}
 
   // Forward initializer list as well.
-  vector(std::initializer_list<T> args) : std::vector<T>(args) {}
+  vector(std::initializer_list<T> _l) : std::vector<T>(_l) {}
 #else
   // Empty vector of size 0.
   vector() : std::vector<T>() {}

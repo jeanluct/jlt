@@ -100,7 +100,7 @@ public:
       for (iterator i = start; i != finish; ++i) *i = _x;
     }
 
-  matrix(const matrix<T>& _M)	: m(_M.m), n(_M.n)	// Copy constructor.
+  matrix(const matrix<T>& _M) : m(_M.m), n(_M.n)	// Copy constructor.
     {
       size_type mn = _M.size();
 
@@ -111,6 +111,27 @@ public:
       const_iterator i = _M.start;
       while (j != finish) *j++ = *i++;
     }
+
+#if __cplusplus > 199711L
+  // C++11-style list initialization.
+  // example: matrix(3,2,{1,2,3,4,5,6})
+  matrix(size_type _m, size_type _n, std::initializer_list<T> _l)
+    : m(_m), n(_n)
+    {
+      size_type mn = _l.size();
+
+      if (mn != m*n)
+	{
+	  JLT_THROW
+	    (std::out_of_range("Out of range exception in jlt::matrix."));
+	}
+
+      start = new T[mn];
+      finish = start + mn;
+
+      std::uninitialized_copy(_l.begin(),_l.end(),start);
+    }
+#endif
 
   // Destructor
   ~matrix() { if (start != 0) delete[] start; }
