@@ -54,3 +54,5 @@ The folder [matlab][8] contains Matlab functions.
 [7]: http://svnbook.red-bean.com/en/1.4/svn.advanced.props.special.keywords.html
 [8]: https://github.com/jeanluct/jlt/tree/master/matlab
 [9]: https://github.com/jeanluct/jlt/raw/master/LICENSE
+
+[![Analytics](https://ga-beacon.appspot.com/UA-58116885-1/jlt/readme)](https://github.com/igrigorik/ga-beacon)
