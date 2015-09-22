@@ -8,6 +8,7 @@
 #define JLT_EIGENSYSTEM_HPP
 
 #include <vector>
+#include <cmath>
 #include <complex>
 #include <jlt/matrix.hpp>
 #include <jlt/lapack.hpp>
@@ -191,7 +192,7 @@ T spectral_radius(matrix<T>& A)
   T spec = 0;
   for (it i = ev.begin(); i != ev.end(); ++i)
     {
-      if (Abs(*i) > spec) spec = Abs(*i);
+      if (std::abs(*i) > spec) spec = std::abs(*i);
     }
 
   return spec;
