@@ -45,7 +45,6 @@ struct format_traits {
 template<class T>
 const char format_traits<T>::field_sep[] = "  ";
 
-
 template<>
 struct format_traits<int> {
 
@@ -58,6 +57,7 @@ struct format_traits<int> {
   static const int field_width = 6;
 };
 
+const char format_traits<int>::field_sep[] = "  ";
 
 template<>
 struct format_traits<float> {
@@ -73,6 +73,7 @@ struct format_traits<float> {
   static const int field_width = 13;
 };
 
+const char format_traits<float>::field_sep[] = "  ";
 
 template<>
 struct format_traits<long double> {
@@ -87,6 +88,7 @@ struct format_traits<long double> {
   static const int field_width = 22;
 };
 
+const char format_traits<long double>::field_sep[] = "  ";
 
 template<class T>
 std::ostream& operator<<(std::ostream& strm, const std::vector<T>& vv)
