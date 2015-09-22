@@ -20,6 +20,7 @@ int main()
   using jlt::mathvector;
   using jlt::mathmatrix;
 
+  mathvector<int> aint(3);
   mathvector<double> a(3);
   mathvector<double> b(3);
   mathvector<double> ma(3);
@@ -31,6 +32,11 @@ int main()
   a[0] = 1.;
   a[1] = -1.;
   a[2] = 1.;
+
+  aint[0] = 1;
+  aint[1] = -1;
+  aint[2] = 1;
+  cout << aint << endl;
 
   b[0] = 1.;
   b[1] = 0.;
