@@ -1,3 +1,5 @@
 #include "staticchar.hpp"
 
-class B {};
+class B {
+  void f() {};
+};
