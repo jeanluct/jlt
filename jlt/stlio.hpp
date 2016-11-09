@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <string>
 #include <iterator>
 #include <vector>
 #include <valarray>
@@ -24,8 +25,13 @@ namespace jlt {
 template<class T>
 struct format_traits {
 
+#ifdef JLT_FIELD_SEP_STRING
   // String to separate vector entries.
   static const char field_sep[];
+#else
+  // Number of spaces between entries.
+  static const int field_sep = 2;
+#endif
 
   // Scientific notation takes seven extra characters:
   // sign = 1, decimal point = 1, e = 1, exponent sign = 1, exponent = 2,
@@ -42,14 +48,21 @@ struct format_traits {
   static const int field_width = 15;
 };
 
+#ifdef JLT_FIELD_SEP_STRING
 template<class T>
 const char format_traits<T>::field_sep[] = "  ";
+#endif
 
 template<>
 struct format_traits<int> {
 
+#ifdef JLT_FIELD_SEP_STRING
   // String to separate vector entries.
   static const char field_sep[];
+#else
+  // Number of spaces between entries.
+  static const int field_sep = 2;
+#endif
 
   static const int extra_width_scientific = 0;
 
@@ -57,13 +70,20 @@ struct format_traits<int> {
   static const int field_width = 6;
 };
 
+#ifdef JLT_FIELD_SEP_STRING
 const char format_traits<int>::field_sep[] = "  ";
+#endif
 
 template<>
 struct format_traits<float> {
 
+#ifdef JLT_FIELD_SEP_STRING
   // String to separate vector entries.
   static const char field_sep[];
+#else
+  // Number of spaces between entries.
+  static const int field_sep = 2;
+#endif
 
   static const int extra_width_scientific = 7;
 
@@ -73,13 +93,20 @@ struct format_traits<float> {
   static const int field_width = 13;
 };
 
+#ifdef JLT_FIELD_SEP_STRING
 const char format_traits<float>::field_sep[] = "  ";
+#endif
 
 template<>
 struct format_traits<long double> {
 
+#ifdef JLT_FIELD_SEP_STRING
   // String to separate vector entries.
   static const char field_sep[];
+#else
+  // Number of spaces between entries.
+  static const int field_sep = 2;
+#endif
 
   static const int extra_width_scientific = 7;
 
@@ -88,7 +115,9 @@ struct format_traits<long double> {
   static const int field_width = 22;
 };
 
+#ifdef JLT_FIELD_SEP_STRING
 const char format_traits<long double>::field_sep[] = "  ";
+#endif
 
 template<class T>
 std::ostream& operator<<(std::ostream& strm, const std::vector<T>& vv)
@@ -109,7 +138,12 @@ std::ostream& operator<<(std::ostream& strm, const std::vector<T>& vv)
 
   for (unsigned int i = 0; i < vv.size()-1; ++i)
     {
-      strm << std::setw(wid) << vv[i] << format_traits<T>::field_sep;
+      strm << std::setw(wid) << vv[i]
+#ifdef JLT_FIELD_SEP_STRING
+	   << format_traits<T>::field_sep;
+#else
+	   << std::string(format_traits<T>::field_sep,' ');
+#endif
     }
 
   strm << std::setw(wid) << vv[vv.size()-1];	// To avoid dangling tab.
@@ -139,7 +173,12 @@ std::ostream& operator<<(std::ostream& strm, const std::valarray<T>& vv)
 
   for (unsigned int i = 0; i < vv.size()-1; ++i)
     {
-      strm << std::setw(wid) << vv[i] << format_traits<T>::field_sep;
+      strm << std::setw(wid) << vv[i]
+#ifdef JLT_FIELD_SEP_STRING
+	   << format_traits<T>::field_sep;
+#else
+	   << std::string(format_traits<T>::field_sep,' ');
+#endif
     }
 
   strm << std::setw(wid) << vv[vv.size()-1];	// To avoid dangling tab.
@@ -172,7 +211,13 @@ std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
     for (typename std::map<K,T>::const_iterator it = mm.begin();
 	 it != mm.end(); ++it)
       {
-	strm << it->first << format_traits<T>::field_sep << it->second
+	strm << it->first
+#ifdef JLT_FIELD_SEP_STRING
+	     << format_traits<T>::field_sep
+#else
+	     << std::string(format_traits<T>::field_sep,' ')
+#endif
+	     << it->second
 	     << std::endl;
       }
 
@@ -194,8 +239,14 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
 	strm.precision(prec);
 	strm.setf(std::ios::scientific);
 
-	strm << std::setw(wid) << it->first << format_traits<T>::field_sep;
-	strm << it->second  << std::endl;
+	strm << std::setw(wid)
+	     << it->first
+#ifdef JLT_FIELD_SEP_STRING
+	     << format_traits<T>::field_sep
+#else
+	     << std::string(format_traits<T>::field_sep,' ')
+#endif
+	     << it->second << std::endl;
       }
 
     return strm;
