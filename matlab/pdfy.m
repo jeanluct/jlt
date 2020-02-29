@@ -11,7 +11,7 @@ function [yb,Py] = pdfy(x,y,dydx,ny,intmethod,tol)
 %   See also INTERPY, INTERP1, PDFFIT.
 
 %
-% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+% Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 %
 % See the file LICENSE for copying permission.
 %

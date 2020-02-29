@@ -11,7 +11,7 @@ function Lk = fft2op(L)
 % taken to the left or right.
 
 %
-% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+% Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 %
 % See the file LICENSE for copying permission.
 %

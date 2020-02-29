@@ -1,6 +1,8 @@
 The MIT License (MIT)
 
-Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+jlt lib: A C++ and Matlab library of utility functions
+
+Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

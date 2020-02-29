@@ -9,7 +9,7 @@ function fr = refine2(f,M,N)
 %   See also REFINE, REFINEK, REFINEK2.
 
 %
-% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+% Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 %
 % See the file LICENSE for copying permission.
 %

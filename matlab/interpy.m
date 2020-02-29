@@ -8,7 +8,7 @@ function y = interpy(x,xd,yd,y0,intmethod)
 %   See also PDFY, INTERP1.
 
 %
-% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+% Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 %
 % See the file LICENSE for copying permission.
 %

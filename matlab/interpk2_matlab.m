@@ -10,7 +10,7 @@ function fx = interpk2_matlab(fk,x)
 % TODO: use real symmetry to cut down execution time.
 
 %
-% Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+% Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 %
 % See the file LICENSE for copying permission.
 %

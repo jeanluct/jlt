@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2014 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
