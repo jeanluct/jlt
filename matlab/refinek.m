@@ -12,7 +12,7 @@ function fk = refinek(f,N,dim)
 %   REFINEK(F,N,DIM) applies the refinement operation across the dimension
 %   DIM.
 %
-%   See also REFINEK2, REFINE, REFINE2.
+%   See also REFINE, REFINE2.
 
 %
 % Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
