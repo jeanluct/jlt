@@ -9,7 +9,7 @@ import subprocess
 from distutils.version import StrictVersion
 
 # Choose a particular compiler by specifying the version here.
-#GCC_version = StrictVersion('4.9.2');
+#GCC_version = StrictVersion('9.3.0');
 
 cc = 'gcc'
 cxx = 'g++'
@@ -17,7 +17,9 @@ cxx = 'g++'
 if 'GCC_version' not in locals():
    # If we didn't define a GCC version number, find out what it is.
    GCC_version = StrictVersion(
-      subprocess.check_output([cxx,'-dumpversion']))
+   	       subprocess
+	       .check_output([cxx,'-dumpfullversion'])
+	       .decode('utf-8'))
 else:
    # If we define a version number, call the appropriate compiler.
    cc = cc + '-' + str(GCC_version)
