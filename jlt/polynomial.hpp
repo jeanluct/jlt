@@ -212,7 +212,7 @@ public:
 	pmin = n;
 	coeff[0] = c;
       }
-    } catch (std::out_of_range oor) {
+    } catch (std::out_of_range& oor) {
       // We're going to run out of capacity.
       // Grow the vector.
       cap = 2*(size_t)(std::max(pmax,n) - std::min(pmin,n) + 1);
@@ -250,7 +250,7 @@ public:
   polynomial<T,P>&
   multiply_by_polynomial(const polynomial<T,P>& p)
   {
-    polynomial<T,P>(q);
+    polynomial<T,P> q;
 
     for (P i = 0; i <= p.pmax-p.pmin; ++i) {
       q.add_polynomial_X_monomial(*this, p.pmin+i, p.coeff[i]);

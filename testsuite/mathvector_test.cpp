@@ -105,7 +105,7 @@ int main()
   cout << "Trying bounds-checked access...\n";
   try {
     a.at(3) = 1;
-  } catch(std::out_of_range) {
+  } catch(std::out_of_range&) {
     cout << "Out of range exception! ...Good\n";
   }
 
