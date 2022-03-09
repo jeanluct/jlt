@@ -84,7 +84,7 @@ int symmetric_matrix_eigensystem(matrix<T>& A,
 
 template<class T>
 int matrix_eigenvalues(matrix<T>& A,
-		       std::vector<std::complex<T> >& eigvals)
+		       std::vector<std::complex<T>>& eigvals)
 {
   char jobVL = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
   char jobVR = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
@@ -134,8 +134,8 @@ int matrix_eigenvalues(matrix<T>& A,
 
 
 template<class T>
-int matrix_eigenvalues(matrix<std::complex<T> >& A,
-		       std::vector<std::complex<T> >& eigvals)
+int matrix_eigenvalues(matrix<std::complex<T>>& A,
+		       std::vector<std::complex<T>>& eigvals)
 {
   char jobVL = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
   char jobVR = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
@@ -163,7 +163,7 @@ int matrix_eigenvalues(matrix<std::complex<T> >& A,
 
   // Now allocate the memory for the workspace.
   cworksize = (int)ctmpwork[0].real();
-  std::vector<std::complex<T> > cwork(cworksize);
+  std::vector<std::complex<T>> cwork(cworksize);
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::geev(&jobVL, &jobVR, &N, A.data(), &N,
@@ -184,13 +184,12 @@ int matrix_eigenvalues(matrix<std::complex<T> >& A,
 template<class T>
 T spectral_radius(matrix<T>& A)
 {
-  typedef typename std::vector<std::complex<T> >::const_iterator it;
-  std::vector<std::complex<T> > ev(A.rows());
+  std::vector<std::complex<T>> ev(A.rows());
   matrix_eigenvalues(A,ev);
 
   // Find the eigenvalue with the largest magnitude.
   T spec = 0;
-  for (it i = ev.begin(); i != ev.end(); ++i)
+  for (auto i = ev.cbegin(); i != ev.cend(); ++i)
     {
       if (std::abs(*i) > spec) spec = std::abs(*i);
     }
@@ -200,15 +199,14 @@ T spectral_radius(matrix<T>& A)
 
 
 template<class T>
-T spectral_radius(matrix<std::complex<T> >& A)
+T spectral_radius(matrix<std::complex<T>>& A)
 {
-  typedef typename std::vector<std::complex<T> >::const_iterator it;
-  std::vector<std::complex<T> > ev(A.rows());
+  std::vector<std::complex<T>> ev(A.rows());
   matrix_eigenvalues(A,ev);
 
   // Find the eigenvalue with the largest magnitude.
   T spec = 0;
-  for (it i = ev.begin(); i != ev.end(); ++i)
+  for (auto i = ev.cbegin(); i != ev.cend(); ++i)
     {
       if (Abs(*i) > spec) spec = Abs(*i);
     }

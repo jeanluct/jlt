@@ -116,19 +116,19 @@ int main()
   cout << "identity_matrix(5) =" << endl;
   cout << jlt::identity_matrix<double>(5) << endl;
 
-  mathmatrix<std::complex<double> > Ac(3,3,std::complex<double>(1,1));
+  mathmatrix<std::complex<double>> Ac(3,3,std::complex<double>(1,1));
   Ac(0,0) = 0.;
   Ac(1,1) = 0.;
   Ac(2,2) = 0.;
   cout << "\nComplex matrix:\n";
   cout << Ac << endl;
-  mathmatrix<std::complex<double> > Aci(Ac.inverse());
+  mathmatrix<std::complex<double>> Aci(Ac.inverse());
   cout << "and its inverse:\n";
   cout << Aci << endl;
   cout << "Check:\n";
   cout << Ac*Aci << endl;
 
-  mathvector<std::complex<double> > v(3,std::complex<double>(1,1));
+  mathvector<std::complex<double>> v(3,std::complex<double>(1,1));
   cout << "\nComplex vector (complex double scalar type):\n";
   cout << v << endl;
   cout << "and its magnitude: |v| = ";

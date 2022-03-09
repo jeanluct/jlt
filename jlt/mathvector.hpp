@@ -130,8 +130,8 @@ public:
     {
       VECTOR_ASSERT(this->size() == v.size());
 
-      iterator k = begin();
-      for (const_iterator i = v.begin(); i != v.end(); ++i, ++k)
+      auto k = begin();
+      for (auto i = v.cbegin(); i != v.cend(); ++i, ++k)
 	{
 	  *k += *i;
 	}
@@ -143,8 +143,8 @@ public:
     {
       VECTOR_ASSERT(this->size() == v.size());
 
-      iterator k = begin();
-      for (const_iterator i = v.begin(); i != v.end(); ++i, ++k)
+      auto k = begin();
+      for (auto i = v.cbegin(); i != v.cend(); ++i, ++k)
 	{
 	  *k -= *i;
 	}
@@ -154,7 +154,7 @@ public:
 
   mathvector<T,S>& operator*=(const_scalar_reference a)
     {
-      for (iterator k = begin(); k != end(); ++k)
+      for (auto k = begin(); k != end(); ++k)
 	{
 	  *k *= a;
 	}
@@ -164,7 +164,7 @@ public:
 
   mathvector<T,S>& operator/=(const_scalar_reference a)
     {
-      for (iterator k = begin(); k != end(); ++k)
+      for (auto k = begin(); k != end(); ++k)
 	{
 	  *k /= a;
 	}
@@ -177,8 +177,8 @@ public:
     {
       VECTOR_ASSERT(this->size() == v.size());
 
-      iterator k = begin();
-      for (const_iterator i = v.begin(); i != v.end(); ++i, ++k)
+      auto k = begin();
+      for (auto i = v.cbegin(); i != v.cend(); ++i, ++k)
 	{
 	  *k /= *i;
 	}
@@ -190,7 +190,7 @@ public:
     {
       T _sum = T();
 
-      for (const_iterator i = begin(); i != end(); ++i)
+      for (auto i = this->cbegin(); i != this->cend(); ++i)
         {
 	  _sum += *i;
         }
@@ -204,7 +204,7 @@ public:
 
   bool isZero() const
     {
-      for (const_iterator i = begin(); i != end(); ++i)
+      for (auto i = this->cbegin(); i != this->cend(); ++i)
 	{
 	  if (*i != T()) return false;
 	}
@@ -320,9 +320,8 @@ inline mathvector<T,S> operator-(const mathvector<T,S>& v)
 {
   mathvector<T,S> res(v.size());
 
-  typename mathvector<T,S>::iterator k = res.begin();
-  for (typename mathvector<T,S>::const_iterator i = v.begin();
-       i != v.end(); ++i,++k)
+  auto k = res.begin();
+  for (auto i = v.cbegin(); i != v.cend(); ++i,++k)
     {
       *k = -(*i);
     }
@@ -338,9 +337,8 @@ inline mathvector<T,S> operator+(const mathvector<T,S>& v,
 
   mathvector<T,S> res(v.size());
 
-  typename mathvector<T,S>::iterator k = res.begin();
-  for (typename mathvector<T,S>::const_iterator i = v.begin(), j = w.begin();
-       i != v.end(); ++i,++j,++k)
+  auto k = res.begin();
+  for (auto i = v.cbegin(), j = w.cbegin(); i != v.cend(); ++i,++j,++k)
     {
       *k = (*i) + (*j);
     }
@@ -356,9 +354,8 @@ inline mathvector<T,S> operator-(const mathvector<T,S>& v,
 
   mathvector<T,S> res(v.size());
 
-  typename mathvector<T,S>::iterator k = res.begin();
-  for (typename mathvector<T,S>::const_iterator i = v.begin(), j = w.begin();
-       i != v.end(); ++i,++j,++k)
+  auto k = res.begin();
+  for (auto i = v.cbegin(), j = w.cbegin(); i != v.cend(); ++i,++j,++k)
     {
       *k = (*i) - (*j);
     }
@@ -371,9 +368,8 @@ inline mathvector<T,S> operator*(const S& a, const mathvector<T,S>& v)
 {
   mathvector<T,S> res(v.size());
 
-  typename mathvector<T,S>::iterator k = res.begin();
-  for (typename mathvector<T,S>::const_iterator i = v.begin();
-       i != v.end(); ++i, ++k)
+  auto k = res.begin();
+  for (auto i = v.cbegin(); i != v.cend(); ++i, ++k)
     {
       *k = a * (*i);
     }
@@ -386,9 +382,8 @@ inline mathvector<T,S> operator*(const mathvector<T,S>& v, const S& a)
 {
   mathvector<T,S> res(v.size());
 
-  typename mathvector<T,S>::iterator k = res.begin();
-  for (typename mathvector<T,S>::const_iterator i = v.begin();
-       i != v.end(); ++i, ++k)
+  auto k = res.begin();
+  for (auto i = v.cbegin(); i != v.cend(); ++i, ++k)
     {
       *k = a * (*i);
     }
@@ -401,9 +396,8 @@ inline mathvector<T,S> operator/(const mathvector<T,S>& v, const S& a)
 {
   mathvector<T,S> res(v.size());
 
-  typename mathvector<T,S>::iterator k = res.begin();
-  for (typename mathvector<T,S>::const_iterator i = v.begin();
-       i != v.end(); ++i, ++k)
+  auto k = res.begin();
+  for (auto i = v.cbegin(); i != v.cend(); ++i, ++k)
     {
       *k = (*i) / a;
     }
@@ -420,9 +414,8 @@ inline mathvector<T,S> operator/(const mathvector<T,S>& v,
 
   mathvector<T,S> res(v.size());
 
-  typename mathvector<T,S>::iterator k = res.begin();
-  for (typename mathvector<T,S>::const_iterator i = v.begin(), j = w.begin();
-       i != v.end(); ++i,++j,++k)
+  auto k = res.begin();
+  for (auto i = v.cbegin(), j = w.cbegin(); i != v.cend(); ++i,++j,++k)
     {
       *k = (*i) / (*j);
     }
@@ -437,8 +430,7 @@ inline S dot(const mathvector<T,S>& v, const mathvector<T,S>& w)
 
   S dotp = S();
 
-  for (typename mathvector<T,S>::const_iterator i = v.begin(), j = w.begin();
-       i != v.end(); ++i, ++j)
+  for (auto i = v.cbegin(), j = w.cbegin(); i != v.cend(); ++i, ++j)
     {
       dotp += (*i)*(*j);
     }
@@ -457,8 +449,7 @@ inline S mag2(const mathvector<T,S>& v)
 {
   S magn = S();
 
-  for (typename mathvector<T,S>::const_iterator i = v.begin();
-       i != v.end(); ++i)
+  for (auto i = v.cbegin(); i != v.cend(); ++i)
     {
       magn += (*i)*(*i);
     }
@@ -472,8 +463,7 @@ inline S mag2(const mathvector<std::complex<T>,S>& v)
 {
   S magn = S();
 
-  for (typename mathvector<std::complex<T>,T>::const_iterator i = v.begin();
-       i != v.end(); ++i)
+  for (auto i = v.cbegin(); i != v.cend(); ++i)
     {
       // Note that std::complex::norm returns the squared magnitude.
       magn += norm(*i);

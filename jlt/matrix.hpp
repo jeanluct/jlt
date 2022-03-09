@@ -255,8 +255,10 @@ public:
 
   iterator begin() { return iterator(start); }
   const_iterator begin() const { return iterator(start); }
+  const_iterator cbegin() const { return iterator(start); }
   iterator end() { return iterator(finish); }
   const_iterator end() const { return iterator(finish); }
+  const_iterator cend() const { return iterator(finish); }
 
   // row/column iterators?  Diagonal iterator?
 
@@ -442,7 +444,7 @@ std::ostream& operator<<(std::ostream& strm, const matrix<T>& M)
 template<class T>
 std::istream& operator>>(std::istream& strm, matrix<T>& M)
 {
-  for (typename matrix<T>::iterator i = M.begin(); i != M.end(); ++i)
+  for (auto i = M.begin(); i != M.end(); ++i)
     {
       strm >> *i;
     }

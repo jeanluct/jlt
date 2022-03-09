@@ -55,7 +55,7 @@ int main()
   mathmatrix<double> M = U.inverse()*diagonal_matrix(w)*U;
   M.printMatrixForm(cout);
 
-  mathvector<std::complex<double> > wc(n);
+  mathvector<std::complex<double>> wc(n);
 
   // Nonsymmetric U.
   U(0,0) = 1;
@@ -75,7 +75,7 @@ int main()
 
   cout << "\nEigenvalues w = " << wc << endl;
 
-  mathmatrix<std::complex<double> > Uc(n,n);
+  mathmatrix<std::complex<double>> Uc(n,n);
   const std::complex<double> i(0,1);
 
   Uc(0,0) = i;

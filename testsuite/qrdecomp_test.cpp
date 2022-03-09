@@ -35,7 +35,7 @@ int main()
 
 #ifndef GSTEST
   // QR decomposition of M.
-  jlt::QRdecomp<double,matrix<double>,std::vector<double> >(Md,Q,R);
+  jlt::QRdecomp<double,matrix<double>,std::vector<double>>(Md,Q,R);
 #else
   // Test Gram-Schmidt instead.
   Md.transpose();
@@ -58,7 +58,7 @@ int main()
 
   mathmatrix<double> Merr = M - Md;
   double err = 0;
-  for (matrix<double>::const_iterator i = Merr.begin(); i != Merr.end(); ++i) {
+  for (auto i = Merr.cbegin(); i != Merr.cend(); ++i) {
     err += std::abs(*i);
   }
   cout << "\nTypical error = " << err/(n*n) << endl;

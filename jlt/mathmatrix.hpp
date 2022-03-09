@@ -111,8 +111,7 @@ public:
 
   mathmatrix<T,S>& operator+=(const mathmatrix<T,S>& A)
     {
-      const_iterator j = A.begin();
-      for (iterator i = begin(); i != end(); ++i, ++j)
+      for (auto i = begin(), j = A.cbegin(); i != end(); ++i, ++j)
 	{
 	  *i += *j;
 	}
@@ -135,8 +134,7 @@ public:
 
   mathmatrix<T,S>& operator-=(const mathmatrix<T,S>& A)
     {
-      const_iterator j = A.begin();
-      for (iterator i = begin(); i != end(); ++i, ++j)
+      for (auto i = begin(), j = A.cbegin(); i != end(); ++i, ++j)
 	{
 	  *i -= *j;
 	}
@@ -195,8 +193,8 @@ public:
 
   bool operator==(const mathmatrix<T,S>& A) const
     {
-      const_iterator j = A.begin();
-      for (const_iterator i = begin(); i != end(); ++i, ++j)
+      for (auto i = this->cbegin(), j = A.cbegin();
+	   i != this->cend(); ++i, ++j)
 	{
 	  if (*i != *j) return false;
 	}
@@ -213,7 +211,7 @@ public:
   // Equality to a single T: every element has to equal that T.
   bool operator==(const_reference a) const
     {
-      for (const_iterator i = begin(); i != end(); ++i)
+      for (auto i = cbegin(); i != cend(); ++i)
 	{
 	  if (*i != a) return false;
 	}
@@ -226,7 +224,7 @@ public:
   bool isReducible() const
     {
 #if 0
-        size_type ma = A.rows();
+  size_type ma = A.rows();
   size_type na = A.columns();
   size_type nb = B.columns();
 
@@ -277,7 +275,7 @@ public:
 	}
 
       // Now look for zeros.
-      for (const_iterator i = M.begin(); i != M.end(); ++i)
+      for (auto i = M.cbegin(); i != M.cend(); ++i)
 	{
 	  if (*i == T()) return true;
 	}
@@ -288,7 +286,7 @@ public:
   // Replace nonzero entries by 1.
   mathmatrix<T,S>& ones_and_zeros()
   {
-    for (iterator i = begin(); i != end(); ++i)
+    for (auto i = begin(); i != end(); ++i)
       {
 	if (*i != T()) *i = 1;
       }
@@ -338,7 +336,7 @@ public:
       int perm;
       int* row_index = new int[n];
 
-      LUdecomp<T,mathmatrix<T,S> >(*this, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(*this, row_index, &perm);
 
       T* col = new T[n];
       mathmatrix<T,S> Ainv(n,n);
@@ -347,13 +345,13 @@ public:
 	{
 	  for (unsigned int i = 0; i < n; ++i) col[i] = 0.;
 	  col[j] = 1.;
-	  LUbacksub<T,mathmatrix<T,S> >(*this, row_index, col);
+	  LUbacksub<T,mathmatrix<T,S>>(*this, row_index, col);
 	  for (unsigned int i = 0; i < n; ++i) Ainv(i,j) = col[i];
 	}
 
       // Copy Ainv to A, without reallocating.
-      iterator j = begin();
-      const_iterator i = Ainv.begin();
+      auto j = begin();
+      auto i = Ainv.cbegin();
       while (j != end()) *j++ = *i++;
 
       delete[] col;
@@ -371,7 +369,7 @@ public:
       int perm;
       int* row_index = new int[n];
 
-      LUdecomp<T,mathmatrix<T,S> >(*this, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(*this, row_index, &perm);
 
       T* col = new T[n];
 
@@ -379,7 +377,7 @@ public:
 	{
 	  for (unsigned int i = 0; i < n; ++i) col[i] = 0.;
 	  col[j] = 1.;
-	  LUbacksub<T,mathmatrix<T,S> >(*this, row_index, col);
+	  LUbacksub<T,mathmatrix<T,S>>(*this, row_index, col);
 	  for (unsigned int i = 0; i < n; ++i) Ainv(i,j) = col[i];
 	}
 
@@ -398,7 +396,7 @@ public:
 
       mathmatrix<T,S> A_LU(*this);
 
-      LUdecomp<T,mathmatrix<T,S> >(A_LU, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(A_LU, row_index, &perm);
 
       T* col = new T[n];
       mathmatrix<T,S> Ainv(n,n);
@@ -407,7 +405,7 @@ public:
 	{
 	  for (unsigned int i = 0; i < n; ++i) col[i] = 0.;
 	  col[j] = 1.;
-	  LUbacksub<T,mathmatrix<T,S> >(A_LU, row_index, col);
+	  LUbacksub<T,mathmatrix<T,S>>(A_LU, row_index, col);
 	  for (unsigned int i = 0; i < n; ++i) Ainv(i,j) = col[i];
 	}
 
@@ -429,7 +427,7 @@ public:
 
       mathmatrix<T,S> A_LU(*this);
 
-      LUdecomp<T,mathmatrix<T,S> >(A_LU, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(A_LU, row_index, &perm);
 
       T* col = new T[n];
 
@@ -437,7 +435,7 @@ public:
 	{
 	  for (unsigned int i = 0; i < n; ++i) col[i] = 0.;
 	  col[j] = 1.;
-	  LUbacksub<T,mathmatrix<T,S> >(A_LU, row_index, col);
+	  LUbacksub<T,mathmatrix<T,S>>(A_LU, row_index, col);
 	  for (unsigned int i = 0; i < n; ++i) Ainv(i,j) = col[i];
 	}
 
@@ -462,7 +460,7 @@ public:
       // The price to pay to leave the object intact is creating a temporary.
       mathmatrix<T,S> A_LU(*this);
 
-      LUdecomp<T,mathmatrix<T,S> >(A_LU, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(A_LU, row_index, &perm);
 
       for (size_type i = 0; i < columns(); ++i) det *= A_LU(i,i);
 
@@ -577,9 +575,7 @@ inline mathmatrix<T,S> operator-(const mathmatrix<T,S>& A)
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  typename mathmatrix<T,S>::iterator k = res.begin();
-  for (typename mathmatrix<T,S>::const_iterator i = A.begin();
-       i != A.end(); ++i, ++k)
+  for (auto i = A.cbegin(), k = res.begin(); i != A.cend(); ++i, ++k)
     {
       *k = -(*i);
     }
@@ -593,9 +589,8 @@ inline mathmatrix<T,S> operator+(const mathmatrix<T,S>& A,
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  typename mathmatrix<T,S>::iterator k = res.begin();
-  for (typename mathmatrix<T,S>::const_iterator i = A.begin(), j = B.begin();
-       i != A.end(); ++i, ++j, ++k)
+  for (auto i = A.cbegin(), j = B.cbegin(), k = res.begin();
+       i != A.cend(); ++i, ++j, ++k)
     {
       *k = *i + *j;
     }
@@ -609,9 +604,8 @@ inline mathmatrix<T,S> operator-(const mathmatrix<T,S>& A,
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  typename mathmatrix<T,S>::iterator k = res.begin();
-  for (typename mathmatrix<T,S>::const_iterator i = A.begin(), j = B.begin();
-       i != A.end(); ++i, ++j, ++k)
+  for (auto i = A.cbegin(), j = B.cbegin(), k = res.begin();
+       i != A.cend(); ++i, ++j, ++k)
     {
       *k = *i - *j;
     }
@@ -624,9 +618,7 @@ inline mathmatrix<T,S> operator*(const S& a, const mathmatrix<T,S>& A)
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  typename mathmatrix<T,S>::iterator k = res.begin();
-  for (typename mathmatrix<T,S>::const_iterator i = A.begin();
-       i != A.end(); ++i, ++k)
+  for (auto i = A.cbegin(), k = res.begin(); i != A.cend(); ++i, ++k)
     {
       *k = a * (*i);
     }
@@ -638,18 +630,18 @@ template<class T, class S_T, class V, class S_V>
 inline mathvector<V,S_V> operator*(const mathmatrix<T,S_T>& A,
 				   const mathvector<V,S_V>& v)
 {
-  typename mathmatrix<T,S_T>::size_type m = A.rows();
-  typename mathmatrix<T,S_T>::size_type n = A.columns();
+  auto m = A.rows();
+  auto n = A.columns();
 
   MATRIX_ASSERT(n == v.size());
 
   mathvector<V,S_V> res(m);
 
-  for (typename mathmatrix<T,S_T>::size_type i = 0; i < m; ++i)
+  for (auto i = 0u; i < m; ++i)
     {
       // Multiplication of a type T and type V must be defined.
       res[i] = A(i,0)*v[0];
-      for (typename mathmatrix<T,S_T>::size_type k = 1; k < n; ++k)
+      for (auto k = 1u; k < n; ++k)
 	res[i] += A(i,k)*v[k];
     }
 
@@ -661,9 +653,7 @@ inline mathmatrix<T,S> operator*(const mathmatrix<T,S>& A, const S& a)
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  typename mathmatrix<T,S>::iterator k = res.begin();
-  for (typename mathmatrix<T,S>::const_iterator i = A.begin();
-       i != A.end(); ++i, ++k)
+  for (auto i = A.cbegin(), k = res.begin(); i != A.cend(); ++i, ++k)
     {
       *k = a * (*i);
     }
@@ -676,9 +666,7 @@ inline mathmatrix<T,S> operator/(const mathmatrix<T,S>& A, const S& a)
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  typename mathmatrix<T,S>::iterator k = res.begin();
-  for (typename mathmatrix<T,S>::const_iterator i = A.begin();
-       i != A.end(); ++i, ++k)
+  for (auto i = A.cbegin(), k = res.begin(); i != A.cend(); ++i, ++k)
     {
       *k = (*i) / a;
     }
@@ -690,21 +678,19 @@ template<class T, class S>
 inline mathmatrix<T,S> operator*(const mathmatrix<T,S>& A,
 				 const mathmatrix<T,S>& B)
 {
-  typedef typename mathmatrix<T,S>::size_type size_type;
-
-  size_type ma = A.rows();
-  size_type na = A.columns();
-  size_type nb = B.columns();
+  auto ma = A.rows();
+  auto na = A.columns();
+  auto nb = B.columns();
 
   MATRIX_ASSERT(na == B.rows());
 
   mathmatrix<T,S> res(ma,nb);
 
-  for (size_type i = 0; i < ma; ++i)
+  for (auto i = 0u; i < ma; ++i)
     {
-      for (size_type j = 0; j < nb; ++j)
+      for (auto j = 0u; j < nb; ++j)
 	{
-	  for (size_type k = 0; k < na; ++k) res(i,j) += A(i,k)*B(k,j);
+	  for (auto k = 0u; k < na; ++k) res(i,j) += A(i,k)*B(k,j);
 	}
     }
 
@@ -716,7 +702,7 @@ inline mathmatrix<T,S> identity_matrix(typename mathmatrix<T,S>::size_type n)
 {
   mathmatrix<T,S> id(n,n);
 
-  for (typename mathmatrix<T,S>::size_type i = 0; i < n; ++i) id(i,i) = 1;
+  for (auto i = 0u; i < n; ++i) id(i,i) = 1;
 
   return id;
 }
@@ -726,7 +712,7 @@ inline mathmatrix<T> identity_matrix(typename mathmatrix<T>::size_type n)
 {
   mathmatrix<T> id(n,n);
 
-  for (typename mathmatrix<T>::size_type i = 0; i < n; ++i) id(i,i) = 1;
+  for (auto i = 0u; i < n; ++i) id(i,i) = 1;
 
   return id;
 }
@@ -734,10 +720,10 @@ inline mathmatrix<T> identity_matrix(typename mathmatrix<T>::size_type n)
 template<class T, class S>
 inline mathmatrix<T,S> diagonal_matrix(const mathvector<T,S>& v)
 {
-  typename mathmatrix<T,S>::size_type n = v.size();
+  auto n = v.size();
   mathmatrix<T,S> diag(n,n);
 
-  for (typename mathmatrix<T,S>::size_type i = 0; i < n; ++i) diag(i,i) = v[i];
+  for (auto i = 0u; i < n; ++i) diag(i,i) = v[i];
 
   return diag;
 }
@@ -747,11 +733,11 @@ inline mathmatrix<T,S> diagonal_matrix(const mathvector<T,S>& v,
 				       typename mathmatrix<T>::size_type m,
 				       typename mathmatrix<T>::size_type n)
 {
-  typename mathmatrix<T>::size_type d = std::min(m,n);
+  auto d = std::min(m,n);
   assert(v.size() == d);
   mathmatrix<T,S> diag(m,n);
 
-  for (typename mathmatrix<T,S>::size_type i = 0; i < d; ++i) diag(i,i) = v[i];
+  for (auto i = 0u; i < d; ++i) diag(i,i) = v[i];
 
   return diag;
 }

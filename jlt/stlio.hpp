@@ -208,8 +208,7 @@ std::ostream& operator<<(std::ostream& strm, const std::list<T>& ll)
 template<class K, class T>
 std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
   {
-    for (typename std::map<K,T>::const_iterator it = mm.begin();
-	 it != mm.end(); ++it)
+    for (auto it = mm.cbegin(); it != mm.cend(); ++it)
       {
 	strm << it->first
 #ifdef JLT_FIELD_SEP_STRING
@@ -232,8 +231,7 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
     const int prec = 5;		// Precision (number of digits - 1).
     const int wid = prec + 7;	// Extra characters in scientific notation.
 
-    for (typename std::map<double,T>::const_iterator it = mm.begin();
-	 it != mm.end(); ++it)
+    for (auto it = mm.cbegin(); it != mm.cend(); ++it)
       {
 	// Should save ios flags and restore them at the end.
 	strm.precision(prec);
@@ -261,7 +259,7 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
 template<class T>
 std::istream& operator>>(std::istream& strm, std::vector<T>& vv)
 {
-  for (typename std::vector<T>::iterator i = vv.begin(); i != vv.end(); ++i)
+  for (auto i = vv.begin(); i != vv.end(); ++i)
     {
       strm >> *i;
     }

@@ -123,8 +123,7 @@ public:
       if (name) strm << name << " = ";
 
       strm << "{";
-      for (typename std::vector<T>::const_iterator i = this->begin();
-	   i != this->end()-1; ++i)
+      for (auto i = this->cbegin(); i != this->cend()-1; ++i)
 	{
 	  strm << *i << ",";
 	}
@@ -152,8 +151,7 @@ public:
 
       strm << "[\n";
 
-      for (typename std::vector<T>::const_iterator i = this->begin();
-	   i != this->end(); ++i)
+      for (auto i = this->cbegin(); i != this->cend(); ++i)
 	{
 	  strm << " " << *i << std::endl;
 	}
