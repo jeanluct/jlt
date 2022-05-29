@@ -35,7 +35,7 @@ std::string get_command_output(const std::string& commandstr)
 
   std::string output;
   char buffer[256];
-  while(fgets(buffer,sizeof(buffer),pipe) != NULL)
+  while(fgets(buffer,sizeof(buffer),pipe) != nullptr)
     {
       std::string file = buffer;
       output += file.substr(0,file.size()-1);

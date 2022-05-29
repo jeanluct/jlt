@@ -28,7 +28,7 @@ public:
   too_many_steps(const std::string& _descr, unsigned long int _nsteps)
     : std::runtime_error(_descr), nsteps(_nsteps) {}
 
-  unsigned long int how_many() const { return nsteps; }
+  [[nodiscard]] unsigned long int how_many() const { return nsteps; }
 };
 
 

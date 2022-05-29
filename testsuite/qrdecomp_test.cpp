@@ -58,8 +58,8 @@ int main()
 
   mathmatrix<double> Merr = M - Md;
   double err = 0;
-  for (auto i = Merr.cbegin(); i != Merr.cend(); ++i) {
-    err += std::abs(*i);
+  for (double i : Merr) {
+    err += std::abs(i);
   }
   cout << "\nTypical error = " << err/(n*n) << endl;
 }

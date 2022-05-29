@@ -78,15 +78,15 @@ class mathvector : public vector<T> // note that this is jlt::vector
 {
 public:
   typedef typename std::vector<T>::size_type		size_type;
-  typedef typename std::vector<T>::reference		reference;
-  typedef typename std::vector<T>::const_reference	const_reference;
-  typedef typename std::vector<T>::iterator		iterator;
-  typedef typename std::vector<T>::const_iterator	const_iterator;
+  using reference = typename std::vector<T>::reference;
+  using const_reference = typename std::vector<T>::const_reference;
+  using iterator = typename std::vector<T>::iterator;
+  using const_iterator = typename std::vector<T>::const_iterator;
 
-  typedef S		scalar_type;
-  typedef const S	const_scalar_type;
-  typedef S&		scalar_reference;
-  typedef const S&	const_scalar_reference;
+  using scalar_type = S;
+  using const_scalar_type = const S;
+  using scalar_reference = S &;
+  using const_scalar_reference = const S &;
 
   using vector<T>::begin;
   using vector<T>::end;
@@ -186,7 +186,7 @@ public:
       return *this;
     }
 
-  T sum() const
+  [[nodiscard]] T sum() const
     {
       T _sum = T();
 
@@ -202,7 +202,7 @@ public:
   // Queries
   //
 
-  bool isZero() const
+  [[nodiscard]] bool isZero() const
     {
       for (auto i = this->cbegin(); i != this->cend(); ++i)
 	{

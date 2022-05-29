@@ -63,14 +63,14 @@ private:
   vector<T> coeff;
 
 public:
-  typedef size_t	size_type;
-  typedef P		power_type;
-  typedef const P	const_power_type;
+  using size_type = size_t;
+  using power_type = P;
+  using const_power_type = const P;
 
-  typedef T		coeff_type;
-  typedef const T	const_coeff_type;
-  typedef T&		coeff_reference;
-  typedef const T&	const_coeff_reference;
+  using coeff_type = T;
+  using const_coeff_type = const T;
+  using coeff_reference = T &;
+  using const_coeff_reference = const T &;
 
   //
   // Constructors
@@ -350,10 +350,10 @@ public:
   // Info
   //
 
-  P degree() const { return pmax; }
-  P minpower() const { return pmin; }
-  P maxpower() const { return pmax; }
-  P spread() const { return (pmax-pmin); }
+  [[nodiscard]] P degree() const { return pmax; }
+  [[nodiscard]] P minpower() const { return pmin; }
+  [[nodiscard]] P maxpower() const { return pmax; }
+  [[nodiscard]] P spread() const { return (pmax-pmin); }
 
   // Return a coefficient of the polynomial.
   const T operator[](const P i) const
@@ -411,7 +411,7 @@ public:
   }
 
   // Return the derivative of the polynomial.
-  polynomial<T,P>  derivative() const
+  [[nodiscard]] polynomial<T,P>  derivative() const
   {
     polynomial<T,P> q(*this);
 

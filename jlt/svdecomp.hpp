@@ -111,7 +111,7 @@ int SVdecomp(matrix<T>& A, std::vector<T>& w)
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(),
-		0, &N, 0, &M, tmpwork, &worksize, &info);
+		nullptr, &N, nullptr, &M, tmpwork, &worksize, &info);
 # else
   lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
 		0, &N, 0, &M, tmpwork, &worksize, &info);
@@ -129,7 +129,7 @@ int SVdecomp(matrix<T>& A, std::vector<T>& w)
 #endif
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
-  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), 0, &N, 0, &M,
+  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), nullptr, &N, nullptr, &M,
 		work.data(), &worksize, &info);
 # else
   lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),

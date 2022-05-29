@@ -38,8 +38,8 @@ class vector : public std::vector<T>
 {
 public:
   typedef typename std::vector<T>::size_type		size_type;
-  typedef typename std::vector<T>::reference		reference;
-  typedef typename std::vector<T>::const_reference	const_reference;
+  using reference = typename std::vector<T>::reference;
+  using const_reference = typename std::vector<T>::const_reference;
 
   using std::vector<T>::size;
 
@@ -97,7 +97,7 @@ public:
       return std::vector<T>::operator[](i);
     }
 
-  const_reference at(size_type i) const
+  [[nodiscard]] const_reference at(size_type i) const
     {
       if (i >= size())
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::vector."));
@@ -111,8 +111,8 @@ public:
     }
 
   std::ostream& printMathematicaForm(std::ostream& strm,
-				     const char name[] = 0,
-				     const char comment[] = 0) const
+				     const char name[] = nullptr,
+				     const char comment[] = nullptr) const
     {
       if (this->empty()) return strm;
 
@@ -135,8 +135,8 @@ public:
     }
 
   std::ostream& printMatlabForm(std::ostream& strm,
-				const char name[] = 0,
-				const char comment[] = 0) const
+				const char name[] = nullptr,
+				const char comment[] = nullptr) const
     {
       if (this->empty()) return strm;
 

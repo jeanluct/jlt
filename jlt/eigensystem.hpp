@@ -102,7 +102,7 @@ int matrix_eigenvalues(matrix<T>& A,
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::geev(&jobVL, &jobVR, &N, A.data(), &N,
-	       evr.data(), evi.data(), 0, &ldVL, 0, &ldVR,
+	       evr.data(), evi.data(), nullptr, &ldVL, nullptr, &ldVR,
 	       tmpwork, &worksize, &info);
 # else
   lapack::geev(&jobVL, &jobVR, &N, &(*A.begin()), &N,
@@ -116,7 +116,7 @@ int matrix_eigenvalues(matrix<T>& A,
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::geev(&jobVL, &jobVR, &N, A.data(), &N,
-	       evr.data(), evi.data(), 0, &ldVL, 0, &ldVR,
+	       evr.data(), evi.data(), nullptr, &ldVL, nullptr, &ldVR,
 	       work.data(), &worksize, &info);
 # else
   lapack::geev(&jobVL, &jobVR, &N, &(*A.begin()), &N,
@@ -153,7 +153,7 @@ int matrix_eigenvalues(matrix<std::complex<T>>& A,
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::geev(&jobVL, &jobVR, &N, A.data(), &N,
-	       eigvals.data(), 0, &ldVL, 0, &ldVR,
+	       eigvals.data(), nullptr, &ldVL, nullptr, &ldVR,
 	       ctmpwork, &cworksize, rwork.data(), &info);
 # else
   lapack::geev(&jobVL, &jobVR, &N, &(*A.begin()), &N,
@@ -167,7 +167,7 @@ int matrix_eigenvalues(matrix<std::complex<T>>& A,
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::geev(&jobVL, &jobVR, &N, A.data(), &N,
-	       eigvals.data(), 0, &ldVL, 0, &ldVR,
+	       eigvals.data(), nullptr, &ldVL, nullptr, &ldVR,
 	       cwork.data(), &cworksize, rwork.data(), &info);
 # else
   lapack::geev(&jobVL, &jobVR, &N, &(*A.begin()), &N,

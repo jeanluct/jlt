@@ -67,26 +67,26 @@ template<class T>
 class matrix
 {
 public:
-  typedef T			value_type;	
-  typedef T*			pointer;
-  typedef const T*		const_pointer;
-  typedef pointer		iterator;
-  typedef const_pointer		const_iterator;
-  typedef T&			reference;
-  typedef const T&		const_reference;
-  typedef size_t		size_type;
+  using value_type = T;
+  using pointer = T *;
+  using const_pointer = const T *;
+  using iterator = pointer;
+  using const_iterator = const_pointer;
+  using reference = T &;
+  using const_reference = const T &;
+  using size_type = size_t;
 
 private:
   pointer	start;
   pointer	finish;
-  size_type	m, n;		// Number of rows, columns.
+  size_type	m{0}, n{0};		// Number of rows, columns.
 
 public:
   //
   // Constructors
   //
 
-  matrix() : start(0), finish(0), m(0), n(0) {}
+  matrix() : start(nullptr), finish(nullptr) {}
 
   // Matrix of size _m*_n filled with _x.
   explicit matrix(size_type _m, size_type _n, const_reference _x = T())
@@ -134,7 +134,7 @@ public:
 #endif
 
   // Destructor
-  ~matrix() { if (start != 0) delete[] start; }
+  ~matrix() { if (start != nullptr) delete[] start; }
 
   //
   // Element access.
@@ -166,7 +166,7 @@ public:
       return *(start + n*i + j);
     }
 
-  const_reference at(size_type i, size_type j) const
+  [[nodiscard]] const_reference at(size_type i, size_type j) const
     {
       if (i >= m || j >= n)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
@@ -216,12 +216,12 @@ public:
     }
 
   // data() const returns a const_pointer to the beginning of the data.
-  const_pointer data() const
+  [[nodiscard]] const_pointer data() const
     {
       return start;
     }
 
-  std::vector<T> row(size_type i) const
+  [[nodiscard]] std::vector<T> row(size_type i) const
     {
 #ifdef MATRIX_CHECK_BOUNDS
       if (i >= m)
@@ -231,34 +231,34 @@ public:
     }
 
   // size() returns the total number of elements.
-  size_type size() const { return m*n; }
+  [[nodiscard]] size_type size() const { return m*n; }
 
   // dim() returns the number of columns.
   // Meant to be used with square matrices.
-  size_type dim() const { return n; }
+  [[nodiscard]] size_type dim() const { return n; }
   // size_type dim() const { MATRIX_ASSERT(m=n); return n; }
 
-  size_type rows() const { return m; }		// Number of rows.
-  size_type columns() const { return n; }	// Number of columns.
+  [[nodiscard]] size_type rows() const { return m; }		// Number of rows.
+  [[nodiscard]] size_type columns() const { return n; }	// Number of columns.
 
   //
   // Queries
   //
 
-  bool empty() const { return (!start); }
+  [[nodiscard]] bool empty() const { return (!start); }
 
-  bool isSquare() const { return (m == n); }
+  [[nodiscard]] bool isSquare() const { return (m == n); }
 
   //
   // Iterators
   //
 
   iterator begin() { return iterator(start); }
-  const_iterator begin() const { return iterator(start); }
-  const_iterator cbegin() const { return iterator(start); }
+  [[nodiscard]] const_iterator begin() const { return iterator(start); }
+  [[nodiscard]] const_iterator cbegin() const { return iterator(start); }
   iterator end() { return iterator(finish); }
-  const_iterator end() const { return iterator(finish); }
-  const_iterator cend() const { return iterator(finish); }
+  [[nodiscard]] const_iterator end() const { return iterator(finish); }
+  [[nodiscard]] const_iterator cend() const { return iterator(finish); }
 
   // row/column iterators?  Diagonal iterator?
 
@@ -271,7 +271,7 @@ public:
       size_type mn = size();
 
       // Free the matrix if not empty.
-      if (start != 0) delete[] start;
+      if (start != nullptr) delete[] start;
 
       start = new T[mn];
       finish = start + mn;
@@ -318,7 +318,7 @@ public:
   // The default printing style is on one line.
   std::ostream& printOn(std::ostream& strm) const
     {
-      if (start == 0) return strm;
+      if (start == nullptr) return strm;
 
       for (const_iterator i = start; i != finish-1; ++i)
 	{
@@ -331,7 +331,7 @@ public:
 
   std::ostream& printMatrixForm(std::ostream& strm) const
     {
-      if (start == 0) return strm;
+      if (start == nullptr) return strm;
 
       for (const_iterator i = start; i != finish; i += n) {
 	for (const_iterator j = i; j != i+n-1; ++j)
@@ -345,8 +345,8 @@ public:
     }
 
   std::ostream& printMathematicaForm(std::ostream& strm,
-				const char name[] = 0,
-				const char comment[] = 0) const
+				const char name[] = nullptr,
+				const char comment[] = nullptr) const
     {
       if (start == 0) return strm;
 
@@ -376,8 +376,8 @@ public:
     }
 
   std::ostream& printMatlabForm(std::ostream& strm,
-				const char name[] = 0,
-				const char comment[] = 0) const
+				const char name[] = nullptr,
+				const char comment[] = nullptr) const
     {
       // Print comment if specified.
       if (comment) strm << "% " << comment << std::endl;

@@ -50,13 +50,13 @@ namespace jlt {
 class cs_unique_ptr : public auto_ptr<csparse::cs>
 {
 public:
-  cs_unique_ptr(csparse::cs* p_ = 0) : auto_ptr<csparse::cs>(p_) {}
+  cs_unique_ptr(csparse::cs* p_ = nullptr) : auto_ptr<csparse::cs>(p_) {}
 
   // Conversion to normal dumb pointer.
   operator csparse::cs*() { return get(); }
 
   // Returns true if pointer is null.
-  bool operator!() const { return (get() == 0); }
+  bool operator!() const { return (get() == nullptr); }
 
   ~cs_unique_ptr()
   {
@@ -79,13 +79,13 @@ public:
 class csd_unique_ptr : public auto_ptr<csparse::csd>
 {
 public:
-  csd_unique_ptr(csparse::csd* p_ = 0) : auto_ptr<csparse::csd>(p_) {}
+  csd_unique_ptr(csparse::csd* p_ = nullptr) : auto_ptr<csparse::csd>(p_) {}
 
   // Conversion to normal dumb pointer.
   operator csparse::csd*() { return get(); }
 
   // Returns true if pointer is null.
-  bool operator!() const { return (get() == 0); }
+  bool operator!() const { return (get() == nullptr); }
 
   ~csd_unique_ptr()
   {

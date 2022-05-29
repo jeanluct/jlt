@@ -65,15 +65,15 @@ class mathmatrix : public matrix<T>
 {
 public:
   typedef typename matrix<T>::size_type		size_type;
-  typedef typename matrix<T>::reference		reference;
-  typedef typename matrix<T>::const_reference	const_reference;
-  typedef typename matrix<T>::iterator		iterator;
-  typedef typename matrix<T>::const_iterator	const_iterator;
+  using reference = typename matrix<T>::reference;
+  using const_reference = typename matrix<T>::const_reference;
+  using iterator = typename matrix<T>::iterator;
+  using const_iterator = typename matrix<T>::const_iterator;
 
-  typedef S		scalar_type;
-  typedef const S	const_scalar_type;
-  typedef S&		scalar_reference;
-  typedef const S&	const_scalar_reference;
+  using scalar_type = S;
+  using const_scalar_type = const S;
+  using scalar_reference = S &;
+  using const_scalar_reference = const S &;
 
   using matrix<T>::begin;
   using matrix<T>::end;
@@ -221,7 +221,7 @@ public:
 #endif
 
   // Reducible matrix: a high-enough power still contains zeros.
-  bool isReducible() const
+  [[nodiscard]] bool isReducible() const
     {
 #if 0
   size_type ma = A.rows();
@@ -248,7 +248,7 @@ public:
 
       // See Ham and Song preprint (2006), p. 9.
       // Take log2 since we nest the multiplications.
-      size_type pmax = (size_type)ceil(log2(n*n - 2*n + 2));
+      auto pmax = (size_type)ceil(log2(n*n - 2*n + 2));
 
       // Take powers of matrix.  Do this in place since we need to
       // renormalise to avoid blow-up.
@@ -386,7 +386,7 @@ public:
     }
 
   // Does not alter matrix.
-  mathmatrix<T,S> inverse() const
+  [[nodiscard]] mathmatrix<T,S> inverse() const
     {
       MATRIX_ASSERT(isSquare());
       unsigned int n = rows();
@@ -449,7 +449,7 @@ public:
   // Determinant and trace
   //
 
-  T det() const
+  [[nodiscard]] T det() const
     {
       MATRIX_ASSERT(isSquare());
 
@@ -467,7 +467,7 @@ public:
       return (perm*det);
     }
 
-  T trace() const
+  [[nodiscard]] T trace() const
     {
       MATRIX_ASSERT(isSquare());
 
@@ -481,7 +481,7 @@ public:
       return tr;
     }
 
-  polynomial<T> charpoly() const
+  [[nodiscard]] polynomial<T> charpoly() const
     {
       MATRIX_ASSERT(isSquare());
       size_type n = rows();
