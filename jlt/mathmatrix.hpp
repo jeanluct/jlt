@@ -575,10 +575,13 @@ inline mathmatrix<T,S> operator-(const mathmatrix<T,S>& A)
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  for (auto i = A.cbegin(), k = res.begin(); i != A.cend(); ++i, ++k)
-    {
-      *k = -(*i);
-    }
+  {
+    auto k = res.begin();
+    for (auto i = A.cbegin(); i != A.cend(); ++i, ++k)
+      {
+	*k = -(*i);
+      }
+  }
 
   return res;
 }
@@ -589,11 +592,14 @@ inline mathmatrix<T,S> operator+(const mathmatrix<T,S>& A,
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  for (auto i = A.cbegin(), j = B.cbegin(), k = res.begin();
-       i != A.cend(); ++i, ++j, ++k)
-    {
-      *k = *i + *j;
-    }
+  {
+    auto k = res.begin();
+    for (auto i = A.cbegin(), j = B.cbegin();
+	 i != A.cend(); ++i, ++j, ++k)
+      {
+	*k = *i + *j;
+      }
+  }
 
   return res;
 }
@@ -604,11 +610,14 @@ inline mathmatrix<T,S> operator-(const mathmatrix<T,S>& A,
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  for (auto i = A.cbegin(), j = B.cbegin(), k = res.begin();
-       i != A.cend(); ++i, ++j, ++k)
-    {
-      *k = *i - *j;
-    }
+  {
+    auto k = res.begin();
+    for (auto i = A.cbegin(), j = B.cbegin();
+	 i != A.cend(); ++i, ++j, ++k)
+      {
+	*k = *i - *j;
+      }
+  }
 
   return res;
 }
@@ -618,10 +627,13 @@ inline mathmatrix<T,S> operator*(const S& a, const mathmatrix<T,S>& A)
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  for (auto i = A.cbegin(), k = res.begin(); i != A.cend(); ++i, ++k)
-    {
-      *k = a * (*i);
-    }
+  {
+    auto k = res.begin();
+    for (auto i = A.cbegin(); i != A.cend(); ++i, ++k)
+      {
+	*k = a * (*i);
+      }
+  }
 
   return res;
 }
@@ -653,10 +665,13 @@ inline mathmatrix<T,S> operator*(const mathmatrix<T,S>& A, const S& a)
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  for (auto i = A.cbegin(), k = res.begin(); i != A.cend(); ++i, ++k)
-    {
-      *k = a * (*i);
-    }
+  {
+    auto k = res.begin();
+    for (auto i = A.cbegin(); i != A.cend(); ++i, ++k)
+      {
+	*k = a * (*i);
+      }
+  }
 
   return res;
 }
@@ -666,10 +681,13 @@ inline mathmatrix<T,S> operator/(const mathmatrix<T,S>& A, const S& a)
 {
   mathmatrix<T,S> res(A.rows(),A.columns());
 
-  for (auto i = A.cbegin(), k = res.begin(); i != A.cend(); ++i, ++k)
-    {
-      *k = (*i) / a;
-    }
+  {
+    auto k = res.begin();
+    for (auto i = A.cbegin(); i != A.cend(); ++i, ++k)
+      {
+	*k = (*i) / a;
+      }
+  }
 
   return res;
 }
