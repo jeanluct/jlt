@@ -5,7 +5,7 @@
 #
 
 SConscript('SConscript')
-Import(['env','matlabenv','lapackenv','csparseenv'])
+Import(['env','matlabenv','lapackenv','csparseenv','boost_timerenv'])
 
 progs = ['finitediff_test','math_test','mathvector_test',
          'qrdecomp_test','polynomial_test','vcs_test']
@@ -21,3 +21,5 @@ for p in lapackprogs:
 matlabenv.Program('matlab_test.cpp')
 
 csparseenv.Program('csparse_test.cpp')
+
+boost_timerenv.Program('tictoc_test.cpp')

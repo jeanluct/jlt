@@ -33,6 +33,8 @@ Here is a list of some of the more useful C++ functions and classes, in the fold
 
 * `jlt/exceptions.hpp` provides some exceptions tailored to numerical problems, such as `stepsize_too_small`, `failed_to_converge`, `too_many_steps`.  It also defines macros such as `JLT_THROW`, etc, which can be selectively redefined to compile out exception testing.  (In the old days exceptions were a much bigger performance hit than they are now, I suspect, so it made sense to test a code and then remove exceptions completely.)
 
+* `jlt::tictoc` works a bit like Matlab's `tic` and `toc` to time programs.  It uses `boost/timer/timer.hpp`.  See the testsuite program `tictoc_test.cpp`.
+
 * `jlt/vcs.hpp` provides functions for extracting commit info from Version Control Systems, using Subversion [keyword strings][7] or dynamically in the case of Mercurial and Git.  See `vcs_test.cpp` for an example.  Note that this is a bit fragile: if you run a command from outside the repo then the version information won't be detected.  In that case `printVCSBanner` simply does nothing.
 
 * Other `.hpp` files you might find in there are a bit dodgy and maybe haven't been tested in a while.

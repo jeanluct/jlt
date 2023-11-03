@@ -56,4 +56,8 @@ csparseenv.AppendUnique(CPPPATH = '../../CSparse/Include',
                         LIBS = ['csparse'],
                         LIBPATH = '../../CSparse/Lib')
 
-Export('env','matlabenv','lapackenv','csparseenv')
+# Clone env, add some flags for compiling against Boost timer library.
+boost_timerenv = env.Clone()
+boost_timerenv.AppendUnique(LIBS = ['boost_timer'])
+
+Export('env','matlabenv','lapackenv','csparseenv','boost_timerenv')
