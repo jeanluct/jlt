@@ -390,10 +390,10 @@ public:
 	  // Print description as string name_description, before variable.
 	  auto name_descr = name + "_descr";
 	  if (!description.empty())
-	    strm << name_descr << " = '" << description << "'" << std::endl;
+	    strm << name_descr << " = '" << description << "';" << std::endl;
 	}
 
-      // Only print = if filename is specified.
+      // Only print = if name is specified.
       if (!name.empty()) strm << name << " = ";
 
       // If the vector is empty, just print "[];"

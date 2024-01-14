@@ -151,7 +151,7 @@ public:
 	  // Print description as string name_description, before variable.
 	  auto name_descr = name + "_descr";
 	  if (!description.empty())
-	    strm << name_descr << " = '" << description << "'" << std::endl;
+	    strm << name_descr << " = '" << description << "';" << std::endl;
 	}
 
       // Only print = if variable name is specified.
