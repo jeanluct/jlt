@@ -388,7 +388,7 @@ public:
       else
 	{
 	  // Print description as string name_description, before variable.
-	  auto name_descr = name + "descr";
+	  auto name_descr = name + "_descr";
 	  if (!description.empty())
 	    strm << name_descr << " = '" << description << "'" << std::endl;
 	}
