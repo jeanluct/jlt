@@ -9,9 +9,6 @@
 
 #include <string>
 
-#ifdef JLT_MATLAB_LIB_SUPPORT
-#  include "mat.h"
-#endif
 
 namespace jlt {
 
@@ -21,6 +18,8 @@ namespace jlt {
 // TODO: more objects.  Move matrix.hpp and vector.hpp output to here.
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
+
+#include "mat.h"
 
 void printMatlabForm(MATFile *pmat,
 		     const double var,
@@ -70,8 +69,74 @@ void printMatlabForm(MATFile *pmat,
     }
 }
 
-} // namespace jlt
+#else // JLT_MATLAB_LIB_SUPPORT
+
+#include <iostream>
+
+// iostream versions (no need to have JLT_MATLAB_LIB_SUPPORT defined).
+
+std::ostream& printMatlabForm(std::ostream& strm,
+			      const double var,
+			      const std::string name,
+			      const std::string description = "")
+{
+  if (name.empty())
+    {
+      // Print description as comment if specified without name.
+      if (!description.empty()) strm << "% " << description << std::endl;
+    }
+  else
+    {
+      // Print description as string name_description, before variable.
+      auto name_descr = name + "_descr";
+      if (!description.empty())
+	strm << name_descr << " = '" << description << "';" << std::endl;
+    }
+
+  // Only print = if name is specified.
+  if (!name.empty()) strm << name << " = ";
+  strm << var << ";\n";
+
+  return strm;
+}
+
+// Overload for "old" format.
+std::ostream& printMatlabForm(std::ostream& strm,
+			      const std::string name,
+			      const double var,
+			      const std::string description = "")
+{
+  return printMatlabForm(strm,var,name,description);
+}
+
+// Overload for string output.  Too much code duplication for now.
+std::ostream& printMatlabForm(std::ostream& strm,
+			      const std::string str,
+			      const std::string name,
+			      const std::string description = "")
+{
+  if (name.empty())
+    {
+      // Print description as comment if specified without name.
+      if (!description.empty()) strm << "% " << description << std::endl;
+    }
+  else
+    {
+      // Print description as string name_description, before variable.
+      auto name_descr = name + "_descr";
+      if (!description.empty())
+	strm << name_descr << " = '" << description << "';" << std::endl;
+    }
+
+  // Only print = if name is specified.
+  if (!name.empty()) strm << name << " = ";
+  strm << str << ";\n";
+
+  return strm;
+}
 
 #endif // JLT_MATLAB_LIB_SUPPORT
+
+} // namespace jlt
 
 #endif // JLT_MATLAB_HPP
