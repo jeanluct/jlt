@@ -378,7 +378,7 @@ public:
 
   std::ostream& printMatlabForm(std::ostream& strm,
 				const std::string name = "",
-				const std::string comment = "") const
+				const std::string description = "") const
     {
       if (name.empty())
 	{
