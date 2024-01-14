@@ -380,8 +380,18 @@ public:
 				const std::string name = "",
 				const std::string comment = "") const
     {
-      // Print comment if specified.
-      if (!comment.empty()) strm << "% " << comment << std::endl;
+      if (name.empty())
+	{
+	  // Print description as comment if specified without name.
+	  if (!description.empty()) strm << "% " << description << std::endl;
+	}
+      else
+	{
+	  // Print description as string name_description, before variable.
+	  auto name_descr = name + description;
+	  if (!description.empty())
+	    strm << name_descr << " = "  << description << std::endl;
+	}
 
       // Only print = if filename is specified.
       if (!name.empty()) strm << name << " = ";

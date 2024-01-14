@@ -116,7 +116,7 @@ public:
     {
       if (this->empty()) return strm;
 
-      // Print description if specified.
+      // Print description as comment if specified.
       if (!description.empty())
 	strm << "(* " << description << " *)" << std::endl;
 
@@ -141,8 +141,18 @@ public:
     {
       if (this->empty()) return strm;
 
-      // Print description if specified.
-      if (!description.empty()) strm << "% " << description << std::endl;
+      if (name.empty())
+	{
+	  // Print description as comment if specified without name.
+	  if (!description.empty()) strm << "% " << description << std::endl;
+	}
+      else
+	{
+	  // Print description as string name_description, before variable.
+	  auto name_descr = name + description;
+	  if (!description.empty())
+	    strm << name_descr << " = "  << description << std::endl;
+	}
 
       // Only print = if variable name is specified.
       if (!name.empty()) strm << name << " = ";
