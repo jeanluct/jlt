@@ -45,15 +45,23 @@ int main()
   cout << "\nWrite to MAT file " << matfile << ":";
 
   // Write matrix using member function.
+
   // "M" will be the Matlab workspace name.
   M.printMatlabForm(pmat,"M");
   // "v" will be the Matlab workspace name.
   v.printMatlabForm(pmat,"v");
+  // Output as a row vector.
+  v.printMatlabForm(pmat,"v_row","","row");
 
-  // Write an number using function.
-  // "a" will be the Matlab workspace name.
-  double a = 1.23;
-  jlt::printMatlabForm(pmat,"a",a);
+  // Write with a description string.
+  M.printMatlabForm(pmat,"M2","a matrix");
+  v.printMatlabForm(pmat,"v2","a vector");
+
+  // Write a number using function.
+  // "b" will be the Matlab workspace name.
+  double b = 1.23;
+  jlt::printMatlabForm(pmat,b,"b");
+  jlt::printMatlabForm(pmat,b,"b2","a constant");
 
   matClose(pmat);
 

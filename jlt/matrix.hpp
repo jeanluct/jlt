@@ -43,6 +43,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include <jlt/exceptions.hpp>
 
 #ifdef MATRIX_BOUNDS_CHECK
@@ -345,16 +346,16 @@ public:
     }
 
   std::ostream& printMathematicaForm(std::ostream& strm,
-				const char name[] = nullptr,
-				const char comment[] = nullptr) const
+				     const std::string name = "",
+				     const std::string comment = "") const
     {
       if (start == 0) return strm;
 
       // Print comment if specified.
-      if (comment) strm << "(* " << comment << " *)" << std::endl;
+      if (!comment.empty()) strm << "(* " << comment << " *)" << std::endl;
 
       // Only print = if variable name is specified.
-      if (name) strm << name << " = ";
+      if (!name.empty()) strm << name << " = ";
 
       strm << "{";
       for (const_iterator i = start; i != finish; i += n) {
@@ -376,14 +377,14 @@ public:
     }
 
   std::ostream& printMatlabForm(std::ostream& strm,
-				const char name[] = nullptr,
-				const char comment[] = nullptr) const
+				const std::string name = "",
+				const std::string comment = "") const
     {
       // Print comment if specified.
-      if (comment) strm << "% " << comment << std::endl;
+      if (!comment.empty()) strm << "% " << comment << std::endl;
 
       // Only print = if filename is specified.
-      if (name) strm << name << " = ";
+      if (!name.empty()) strm << name << " = ";
 
       // If the vector is empty, just print "[];"
       if (start == 0) { strm << "[];\n"; return strm; }
@@ -402,12 +403,11 @@ public:
     }
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
-  void printMatlabForm(MATFile *pmat, const char name[],
-		       const char description[] = 0) const
+  void printMatlabForm(MATFile *pmat,
+		       const std::string name = "",
+		       const std::string description = "") const
   {
-    // The optional description string is currently ignored.  It is
-    // included for compatibility with printMatlabForm(std::ostream).
-    // In the future, could write to MAT file a name_descr string.
+    // description string is written to name_descr in the MAT file.
     mxArray *A;
     if (this->empty())
       {
@@ -425,9 +425,16 @@ public:
 	      }
 	  }
       }
-    matPutVariable(pmat, name, A);
-
+    matPutVariable(pmat,name.c_str(),A);
     mxDestroyArray(A);
+
+    if (!description.empty())
+      {
+	auto name_descr = name + "_descr";
+	auto mxdescr = mxCreateString(description.c_str());
+	matPutVariable(pmat,name_descr.c_str(),mxdescr);
+	mxDestroyArray(mxdescr);
+      }
   }
 #endif // JLT_MATLAB_LIB_SUPPORT
 
