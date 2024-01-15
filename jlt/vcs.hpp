@@ -113,13 +113,16 @@ void printVCSBanner(std::ostream& ostr, const std::string s)
   // command from outside the repo.
   if (revdate == "") return;
 
-  string halfdashes(22,'-');
-  string banner = halfdashes + " " + s + " ";
-  banner += revdate + " ";
-  banner += halfdashes;
-  string fulldashes(banner.length(),'-');
+  string banner = " " + s + " " + revdate + " ";
+  int banner_len = banner.length();
+  int halfdash_len = (80 - banner_len)/2;
 
-  ostr << fulldashes << endl << banner << endl << fulldashes << endl;
+  string halfdashes(halfdash_len,'-');
+  string middashes(banner_len,'-');
+
+  ostr << halfdashes << middashes << halfdashes << endl;
+  ostr << halfdashes << banner << halfdashes << endl;
+  ostr << halfdashes << middashes << halfdashes << endl;
 }
 
 
