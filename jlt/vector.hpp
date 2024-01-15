@@ -23,12 +23,9 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <jlt/matlab.hpp>
 #include <jlt/stlio.hpp>
 #include <jlt/exceptions.hpp>
-
-#ifdef JLT_MATLAB_LIB_SUPPORT
-#  include <jlt/matlab.hpp>
-#endif
 
 
 namespace jlt {
@@ -139,36 +136,7 @@ public:
 				const std::string name = "",
 				const std::string description = "") const
     {
-      if (this->empty()) return strm;
-
-      if (name.empty())
-	{
-	  // Print description as comment if specified without name.
-	  if (!description.empty()) strm << "% " << description << std::endl;
-	}
-      else
-	{
-	  // Print description as string name_description, before variable.
-	  auto name_descr = name + "_descr";
-	  if (!description.empty())
-	    strm << name_descr << " = '" << description << "';" << std::endl;
-	}
-
-      // Only print = if variable name is specified.
-      if (!name.empty()) strm << name << " = ";
-
-      // If the vector is empty, just print "[];"
-      if (this->empty()) { strm << "[];\n"; return strm; }
-
-      strm << "[\n";
-
-      for (auto i = this->cbegin(); i != this->cend(); ++i)
-	{
-	  strm << " " << *i << std::endl;
-	}
-      strm << "];\n";
-
-      return strm;
+      return jlt::printMatlabForm(strm,*this,name,description);
     }
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
@@ -176,55 +144,9 @@ public:
 		       const std::string name,
 		       const std::string description = "",
 		       const std::string orientation = "") const
-  {
-    // description string is written to name_descr in the MAT file.
-    //
-    // orientation is either "row" or "column" (default).
-    mxArray *A;
-
-    if (description == "row" || description == "column")
-      {
-	JLT_THROW(std::invalid_argument(
-          "\"row\"/\"column\" specification should be 3rd argument."));
-      }
-
-    if (this->empty())
-      {
-	A = mxCreateDoubleMatrix(0,0,mxREAL);
-      }
-    else
-      {
-	if (orientation.empty())
-	  {
-	    // Default is a column vector.
-	    A = mxCreateDoubleMatrix(size(),1,mxREAL);
-	  }
-	else
-	  {
-	    if (orientation == "column")
-	      A = mxCreateDoubleMatrix(size(),1,mxREAL);
-	    else if (orientation == "row")
-	      A = mxCreateDoubleMatrix(1,size(),mxREAL);
-	    else
-	      {
-		JLT_THROW(std::invalid_argument(
-		  "3rd argument should be \"row\" or \"column\"."));
-	      }
-	  }
-	double *Ap = mxGetPr(A);
-	for (int i = 0; i < (int)size(); ++i) Ap[i] = (*this)[i];
-      }
-    matPutVariable(pmat,name.c_str(),A);
-    mxDestroyArray(A);
-
-    if (!description.empty())
-      {
-	auto name_descr = name + "_descr";
-	auto mxdescr = mxCreateString(description.c_str());
-	matPutVariable(pmat,name_descr.c_str(),mxdescr);
-	mxDestroyArray(mxdescr);
-      }
-}
+    {
+      jlt::printMatlabForm(pmat,*this,name,description,orientation);
+    }
 #endif // JLT_MATLAB_LIB_SUPPORT
 
 };

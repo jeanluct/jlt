@@ -7,71 +7,161 @@
 #ifndef JLT_MATLAB_HPP
 #define JLT_MATLAB_HPP
 
+#include <iostream>
 #include <string>
+#include <vector>
+#include <jlt/matrix.hpp>
+#include <jlt/exceptions.hpp>
+#ifdef JLT_MATLAB_LIB_SUPPORT
+#  include "mat.h"
+#endif
 
 
 namespace jlt {
 
-// TODO: add the iostream versions (no need to have
-// JLT_MATLAB_LIB_SUPPORT defined).
-
-// TODO: more objects.  Move matrix.hpp and vector.hpp output to here.
-
 #ifdef JLT_MATLAB_LIB_SUPPORT
-
-#include "mat.h"
 
 void printMatlabForm(MATFile *pmat,
 		     const double var,
-		     const std::string name,
+		     const std::string name = "",
 		     const std::string description = "")
-{
-  mxArray *A = mxCreateDoubleMatrix(1,1,mxREAL);
-  double *Ap = mxGetPr(A);
-  Ap[0] = var;
-  matPutVariable(pmat,name.c_str(),A);
-  mxDestroyArray(A);
+  {
+    mxArray *A = mxCreateDoubleMatrix(1,1,mxREAL);
+    double *Ap = mxGetPr(A);
+    Ap[0] = var;
+    matPutVariable(pmat,name.c_str(),A);
+    mxDestroyArray(A);
 
-  if (!description.empty())
-    {
-      auto name_descr = name + "_descr";
-      auto mxdescr = mxCreateString(description.c_str());
-      matPutVariable(pmat,name_descr.c_str(),mxdescr);
-      mxDestroyArray(mxdescr);
-    }
-}
+    if (!description.empty())
+      {
+	auto name_descr = name + "_descr";
+	auto mxdescr = mxCreateString(description.c_str());
+	matPutVariable(pmat,name_descr.c_str(),mxdescr);
+	mxDestroyArray(mxdescr);
+      }
+  }
 
 // Overload for "old" format.
 void printMatlabForm(MATFile *pmat,
 		     const std::string name,
 		     const double var,
 		     const std::string description = "")
-{
-  printMatlabForm(pmat,var,name,description);
-}
+  {
+    printMatlabForm(pmat,var,name,description);
+  }
 
 // Overload for string output.  Too much code duplication for now.
 void printMatlabForm(MATFile *pmat,
 		     const std::string str,
 		     const std::string name,
 		     const std::string description = "")
-{
-  mxArray *A = mxCreateString(str.c_str());
-  matPutVariable(pmat,name.c_str(),A);
-  mxDestroyArray(A);
+  {
+    mxArray *A = mxCreateString(str.c_str());
+    matPutVariable(pmat,name.c_str(),A);
+    mxDestroyArray(A);
 
-  if (!description.empty())
-    {
-      auto name_descr = name + "_descr";
-      auto mxdescr = mxCreateString(description.c_str());
-      matPutVariable(pmat,name_descr.c_str(),mxdescr);
-      mxDestroyArray(mxdescr);
-    }
-}
+    if (!description.empty())
+      {
+	auto name_descr = name + "_descr";
+	auto mxdescr = mxCreateString(description.c_str());
+	matPutVariable(pmat,name_descr.c_str(),mxdescr);
+	mxDestroyArray(mxdescr);
+      }
+  }
 
-#else // JLT_MATLAB_LIB_SUPPORT
+template<typename T>
+void printMatlabForm(MATFile *pmat,
+		     const std::vector<T>& v,
+		     const std::string name,
+		     const std::string description = "",
+		     const std::string orientation = "")
+  {
+    // description string is written to name_descr in the MAT file.
+    //
+    // orientation is either "row" or "column" (default).
+    mxArray *A;
 
-#include <iostream>
+    if (description == "row" || description == "column")
+      {
+	JLT_THROW(std::invalid_argument(
+          "\"row\"/\"column\" specification should be 3rd argument."));
+      }
+
+    if (v.empty())
+      {
+	A = mxCreateDoubleMatrix(0,0,mxREAL);
+      }
+    else
+      {
+	if (orientation.empty())
+	  {
+	    // Default is a column vector.
+	    A = mxCreateDoubleMatrix(v.size(),1,mxREAL);
+	  }
+	else
+	  {
+	    if (orientation == "column")
+	      A = mxCreateDoubleMatrix(v.size(),1,mxREAL);
+	    else if (orientation == "row")
+	      A = mxCreateDoubleMatrix(1,v.size(),mxREAL);
+	    else
+	      {
+		JLT_THROW(std::invalid_argument(
+		  "3rd argument should be \"row\" or \"column\"."));
+	      }
+	  }
+	double *Ap = mxGetPr(A);
+	for (int i = 0; i < (int)v.size(); ++i) Ap[i] = v[i];
+      }
+    matPutVariable(pmat,name.c_str(),A);
+    mxDestroyArray(A);
+
+    if (!description.empty())
+      {
+	auto name_descr = name + "_descr";
+	auto mxdescr = mxCreateString(description.c_str());
+	matPutVariable(pmat,name_descr.c_str(),mxdescr);
+	mxDestroyArray(mxdescr);
+      }
+  }
+
+template<typename T>
+void printMatlabForm(MATFile *pmat,
+		     const matrix<T>& A,
+		     const std::string name = "",
+		     const std::string description = "")
+  {
+    // description string is written to name_descr in the MAT file.
+    mxArray *mxA;
+    if (A.empty())
+      {
+	mxA = mxCreateDoubleMatrix(0,0,mxREAL);
+      }
+    else
+      {
+	mxA = mxCreateDoubleMatrix(A.rows(),A.columns(),mxREAL);
+	double *mxAp = mxGetPr(mxA);
+	for (int i = 0; i < (int)A.rows(); ++i)
+	  {
+	    for (int j = 0; j < (int)A.columns(); ++j)
+	      {
+		mxAp[i + A.rows()*j] = A(i,j);
+	      }
+	  }
+      }
+    matPutVariable(pmat,name.c_str(),mxA);
+    mxDestroyArray(mxA);
+
+    if (!description.empty())
+      {
+	auto name_descr = name + "_descr";
+	auto mxdescr = mxCreateString(description.c_str());
+	matPutVariable(pmat,name_descr.c_str(),mxdescr);
+	mxDestroyArray(mxdescr);
+      }
+  }
+#endif // JLT_MATLAB_LIB_SUPPORT
+
 
 // iostream versions (no need to have JLT_MATLAB_LIB_SUPPORT defined).
 
@@ -79,63 +169,138 @@ std::ostream& printMatlabForm(std::ostream& strm,
 			      const double var,
 			      const std::string name,
 			      const std::string description = "")
-{
-  if (name.empty())
-    {
-      // Print description as comment if specified without name.
-      if (!description.empty()) strm << "% " << description << std::endl;
-    }
-  else
-    {
-      // Print description as string name_description, before variable.
-      auto name_descr = name + "_descr";
-      if (!description.empty())
-	strm << name_descr << " = '" << description << "';" << std::endl;
-    }
+  {
+    if (name.empty())
+      {
+	// Print description as comment if specified without name.
+	if (!description.empty()) strm << "% " << description << std::endl;
+      }
+    else
+      {
+	// Print description as string name_description, before variable.
+	auto name_descr = name + "_descr";
+	if (!description.empty())
+	  strm << name_descr << " = '" << description << "';" << std::endl;
+      }
 
-  // Only print = if name is specified.
-  if (!name.empty()) strm << name << " = ";
-  strm << var << ";\n";
+    // Only print = if name is specified.
+    if (!name.empty()) strm << name << " = ";
+    strm << var << ";\n";
 
-  return strm;
-}
+    return strm;
+  }
 
 // Overload for "old" format.
 std::ostream& printMatlabForm(std::ostream& strm,
 			      const std::string name,
 			      const double var,
 			      const std::string description = "")
-{
-  return printMatlabForm(strm,var,name,description);
-}
+  {
+    return printMatlabForm(strm,var,name,description);
+  }
 
 // Overload for string output.  Too much code duplication for now.
 std::ostream& printMatlabForm(std::ostream& strm,
 			      const std::string str,
 			      const std::string name,
 			      const std::string description = "")
-{
-  if (name.empty())
-    {
-      // Print description as comment if specified without name.
-      if (!description.empty()) strm << "% " << description << std::endl;
+  {
+    if (name.empty())
+      {
+	// Print description as comment if specified without name.
+	if (!description.empty()) strm << "% " << description << std::endl;
+      }
+    else
+      {
+	// Print description as string name_description, before variable.
+	auto name_descr = name + "_descr";
+	if (!description.empty())
+	  strm << name_descr << " = '" << description << "';" << std::endl;
+      }
+
+    // Only print = if name is specified.
+    if (!name.empty()) strm << name << " = ";
+    strm << str << ";\n";
+
+    return strm;
+  }
+
+template<typename T>
+std::ostream& printMatlabForm(std::ostream& strm,
+			      const std::vector<T>& v,
+			      const std::string name = "",
+			      const std::string description = "")
+  {
+    if (v.empty()) return strm;
+
+    if (name.empty())
+      {
+	// Print description as comment if specified without name.
+	if (!description.empty()) strm << "% " << description << std::endl;
+      }
+    else
+      {
+	// Print description as string name_description, before variable.
+	auto name_descr = name + "_descr";
+	if (!description.empty())
+	  strm << name_descr << " = '" << description << "';" << std::endl;
+      }
+
+    // Only print = if variable name is specified.
+    if (!name.empty()) strm << name << " = ";
+
+    // If the vector is empty, just print "[];"
+    if (v.empty()) { strm << "[];\n"; return strm; }
+
+    strm << "[\n";
+
+    for (auto i = v.cbegin(); i != v.cend(); ++i)
+      {
+	strm << " " << *i << std::endl;
+      }
+    strm << "];\n";
+
+    return strm;
+  }
+
+template<typename T>
+std::ostream& printMatlabForm(std::ostream& strm,
+			      const matrix<T>& A,
+			      const std::string name = "",
+			      const std::string description = "")
+  {
+      if (name.empty())
+	{
+	  // Print description as comment if specified without name.
+	  if (!description.empty()) strm << "% " << description << std::endl;
+	}
+      else
+	{
+	  // Print description as string name_description, before variable.
+	  auto name_descr = name + "_descr";
+	  if (!description.empty())
+	    strm << name_descr << " = '" << description << "';" << std::endl;
+	}
+
+      // Only print = if name is specified.
+      if (!name.empty()) strm << name << " = ";
+
+      // If the vector is empty, just print "[];"
+      if (A.empty()) { strm << "[];\n"; return strm; }
+
+      strm << "[\n";
+      for (int i = 0; i < (int)A.rows(); ++i) {
+	for (int j = 0; j < (int)A.columns()-1; ++j)
+	  {
+	    strm << A(i,j) << " ";
+	  }
+	strm << A(i,A.columns()) << "\n";
+      }
+      strm << "];\n";
+
+      return strm;
     }
-  else
-    {
-      // Print description as string name_description, before variable.
-      auto name_descr = name + "_descr";
-      if (!description.empty())
-	strm << name_descr << " = '" << description << "';" << std::endl;
-    }
 
-  // Only print = if name is specified.
-  if (!name.empty()) strm << name << " = ";
-  strm << str << ";\n";
-
-  return strm;
-}
-
-#endif // JLT_MATLAB_LIB_SUPPORT
 
 } // namespace jlt
 

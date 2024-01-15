@@ -58,7 +58,7 @@
 #endif
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
-#  include <jlt/matlab.hpp>
+#  include "mat.h"
 #endif
 
 
@@ -380,6 +380,8 @@ public:
 				const std::string name = "",
 				const std::string description = "") const
     {
+      /* This duplicates the code in matlab.hpp.  However, moving the
+	 function there creates problems with foward declarations. */
       if (name.empty())
 	{
 	  // Print description as comment if specified without name.
@@ -417,6 +419,9 @@ public:
 		       const std::string name = "",
 		       const std::string description = "") const
   {
+    /* This duplicates the code in matlab.hpp.  However, moving the
+       function there creates problems with foward declarations. */
+
     // description string is written to name_descr in the MAT file.
     mxArray *A;
     if (this->empty())
