@@ -322,7 +322,7 @@ std::ostream& printMatlabForm_nodefaults(std::ostream& strm,
 	{
 	  strm << A(i,j) << " ";
 	}
-      strm << A(i,A.columns()) << "\n";
+      strm << A(i,A.columns()-1) << "\n";
     }
     strm << "];\n";
 
