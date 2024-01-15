@@ -237,8 +237,8 @@ std::ostream& printMatlabForm(std::ostream& strm,
       }
 
     // Only print = if name is specified.
-    if (!name.empty()) strm << name << " = ";
-    strm << str << ";\n";
+    if (!name.empty()) strm << name << " = '";
+    strm << str << "';\n";
 
     return strm;
   }
