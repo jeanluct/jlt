@@ -21,6 +21,10 @@ namespace jlt {
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
 
+//
+// MATfile versions (requires linking to Matlab libraries)
+//
+
 void printMatlabForm(MATFile *pmat,
 		     const double var,
 		     const std::string name = "",
@@ -125,11 +129,22 @@ void printMatlabForm(MATFile *pmat,
       }
   }
 
+
 template<typename T>
 void printMatlabForm(MATFile *pmat,
 		     const matrix<T>& A,
 		     const std::string name = "",
 		     const std::string description = "")
+  {
+    // See matrix.hpp for explanation of the nodefautls version.
+    printMatlabForm_nodefaults<T>(pmat,A,name,description);
+  }
+
+template<typename T>
+void printMatlabForm_nodefaults(MATFile *pmat,
+				const matrix<T>& A,
+				const std::string name,
+				const std::string description)
   {
     // description string is written to name_descr in the MAT file.
     mxArray *mxA;
@@ -160,10 +175,13 @@ void printMatlabForm(MATFile *pmat,
 	mxDestroyArray(mxdescr);
       }
   }
+
 #endif // JLT_MATLAB_LIB_SUPPORT
 
 
-// iostream versions (no need to have JLT_MATLAB_LIB_SUPPORT defined).
+//
+// iostream versions
+//
 
 std::ostream& printMatlabForm(std::ostream& strm,
 			      const double var,
@@ -269,38 +287,47 @@ std::ostream& printMatlabForm(std::ostream& strm,
 			      const std::string name = "",
 			      const std::string description = "")
   {
-      if (name.empty())
-	{
-	  // Print description as comment if specified without name.
-	  if (!description.empty()) strm << "% " << description << std::endl;
-	}
-      else
-	{
-	  // Print description as string name_description, before variable.
-	  auto name_descr = name + "_descr";
-	  if (!description.empty())
-	    strm << name_descr << " = '" << description << "';" << std::endl;
-	}
+    // See matrix.hpp for explanation of the nodefautls version.
+    return printMatlabForm_nodefaults<T>(strm,A,name,description);
+  }
 
-      // Only print = if name is specified.
-      if (!name.empty()) strm << name << " = ";
-
-      // If the vector is empty, just print "[];"
-      if (A.empty()) { strm << "[];\n"; return strm; }
-
-      strm << "[\n";
-      for (int i = 0; i < (int)A.rows(); ++i) {
-	for (int j = 0; j < (int)A.columns()-1; ++j)
-	  {
-	    strm << A(i,j) << " ";
-	  }
-	strm << A(i,A.columns()) << "\n";
+template<typename T>
+std::ostream& printMatlabForm_nodefaults(std::ostream& strm,
+					 const matrix<T>& A,
+					 const std::string name,
+					 const std::string description)
+  {
+    if (name.empty())
+      {
+	// Print description as comment if specified without name.
+	if (!description.empty()) strm << "% " << description << std::endl;
       }
-      strm << "];\n";
+    else
+      {
+	// Print description as string name_description, before variable.
+	auto name_descr = name + "_descr";
+	if (!description.empty())
+	  strm << name_descr << " = '" << description << "';" << std::endl;
+      }
 
-      return strm;
+    // Only print = if name is specified.
+    if (!name.empty()) strm << name << " = ";
+
+    // If the vector is empty, just print "[];"
+    if (A.empty()) { strm << "[];\n"; return strm; }
+
+    strm << "[\n";
+    for (int i = 0; i < (int)A.rows(); ++i) {
+      for (int j = 0; j < (int)A.columns()-1; ++j)
+	{
+	  strm << A(i,j) << " ";
+	}
+      strm << A(i,A.columns()) << "\n";
     }
+    strm << "];\n";
 
+    return strm;
+  }
 
 } // namespace jlt
 

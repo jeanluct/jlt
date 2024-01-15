@@ -44,6 +44,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <jlt/matlab.hpp>
 #include <jlt/exceptions.hpp>
 
 #ifdef MATRIX_BOUNDS_CHECK
@@ -61,8 +62,27 @@
 #  include "mat.h"
 #endif
 
-
 namespace jlt {
+
+// Forward declarations.
+template<typename T> class matrix;
+
+// Cannot use printMatlabForm from matlab.hpp, since the forward
+// declarations below takes precendence (for some reason) and GCC
+// complains about providing default arguments.  As a workaround,
+// define nodefaults:: versions, which are just meant to be called
+// internally by the methods in jlt::matrix.
+
+template<typename T> std::ostream&
+printMatlabForm_nodefaults(std::ostream&, const matrix<T>&,
+			   const std::string, const std::string);
+
+#ifdef JLT_MATLAB_LIB_SUPPORT
+template<typename T> void
+printMatlabForm_nodefaults(MATFile *, const matrix<T>&,
+			   const std::string, const std::string);
+#endif
+
 
 template<class T>
 class matrix
@@ -380,38 +400,7 @@ public:
 				const std::string name = "",
 				const std::string description = "") const
     {
-      /* This duplicates the code in matlab.hpp.  However, moving the
-	 function there creates problems with foward declarations. */
-      if (name.empty())
-	{
-	  // Print description as comment if specified without name.
-	  if (!description.empty()) strm << "% " << description << std::endl;
-	}
-      else
-	{
-	  // Print description as string name_description, before variable.
-	  auto name_descr = name + "_descr";
-	  if (!description.empty())
-	    strm << name_descr << " = '" << description << "';" << std::endl;
-	}
-
-      // Only print = if name is specified.
-      if (!name.empty()) strm << name << " = ";
-
-      // If the vector is empty, just print "[];"
-      if (start == 0) { strm << "[];\n"; return strm; }
-
-      strm << "[\n";
-      for (const_iterator i = start; i != finish; i += n) {
-	for (const_iterator j = i; j != i+n-1; ++j)
-	  {
-	    strm << *j << " ";
-	  }
-	strm << *(i+n-1) << "\n";
-      }
-      strm << "];\n";
-
-      return strm;
+      return printMatlabForm_nodefaults(strm,*this,name,description);
     }
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
@@ -419,37 +408,7 @@ public:
 		       const std::string name = "",
 		       const std::string description = "") const
   {
-    /* This duplicates the code in matlab.hpp.  However, moving the
-       function there creates problems with foward declarations. */
-
-    // description string is written to name_descr in the MAT file.
-    mxArray *A;
-    if (this->empty())
-      {
-	A = mxCreateDoubleMatrix(0,0,mxREAL);
-      }
-    else
-      {
-	A = mxCreateDoubleMatrix(rows(),columns(),mxREAL);
-	double *Ap = mxGetPr(A);
-	for (int i = 0; i < (int)rows(); ++i)
-	  {
-	    for (int j = 0; j < (int)columns(); ++j)
-	      {
-		Ap[i + rows()*j] = (*this)(i,j);
-	      }
-	  }
-      }
-    matPutVariable(pmat,name.c_str(),A);
-    mxDestroyArray(A);
-
-    if (!description.empty())
-      {
-	auto name_descr = name + "_descr";
-	auto mxdescr = mxCreateString(description.c_str());
-	matPutVariable(pmat,name_descr.c_str(),mxdescr);
-	mxDestroyArray(mxdescr);
-      }
+    printMatlabForm_nodefaults(pmat,*this,name,description);
   }
 #endif // JLT_MATLAB_LIB_SUPPORT
 
