@@ -221,6 +221,7 @@ public:
 #endif
 
   // Reducible matrix: a high-enough power still contains zeros.
+  /* Warning: this tests for primitivity, no reducibility.  See issue #1. */
   [[nodiscard]] bool isReducible() const
     {
 #if 0

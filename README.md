@@ -21,7 +21,8 @@ Here is a list of some of the more useful C++ functions and classes, in the fold
 * `jlt/csparse.hpp` provides wrappers for Timothy A. Davis's [CSparse][5] library, in particular conversion to and from `jlt::mathmatrix`, wrapping CSparse functions in a namespace `csparse`, and a type `jlt::cs_unique_ptr` derived from `std::unique_ptr` that deallocates pointers automatically.  Link with `-lcsparse`.  See the testsuite program `csparse_test.cpp`.
 
 * `jlt/lapack.h` and `jlt/lapack.hpp` are wrappers for selected functions in the Fortran [LAPACK][6] libraries.  Link with `-lblas -llapack`.
-* `jlt/matlab.hpp` provides `printMatlabForm` for exporting variables in Matlab MAT-file format.  Some of this functionality is provided in-class by `jlt::matrix` and `jlt::vector` as well, and is compiled in if `jlt/matlab.hpp` is included.  See the testsuite program `matlab_test.cpp`, which writes a `mathmatrix` to a MAT file.
+
+* `jlt/matlab.hpp` provides `printMatlabForm` for exporting variables in Matlab MAT-file format or in formatted ASCII text.  Some of this functionality is provided in-class by `jlt::matrix` and `jlt::vector` as well, and is compiled in if `JLT_MATLAB_LIB_SUPPORT` is defined.  See the testsuite program `matlab_test.cpp`, which writes a `mathmatrix` and `mathvector` to a MAT file.
 
 * `jlt/stlio.hpp` defines simple iostream printing for some STL containers.
 
