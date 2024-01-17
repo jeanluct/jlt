@@ -18,7 +18,7 @@ int main()
 
   jlt::mathmatrix<double> M(2,2);
   M(0,0) = 1; M(0,1) = -1;
-  M(1,0) = 2; M(1,2) = 3;
+  M(1,0) = 2; M(1,1) = 3;
   jlt::mathvector<double> v(2);
   v[0] = 0; v[1] = -1;
 
