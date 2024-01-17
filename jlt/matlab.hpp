@@ -197,7 +197,7 @@ std::ostream& printMatlabForm(MATFile *pmat,
 	    A(i,j) = Avv[i][j];
 	  }
       }
-    printMatlabForm(strm,A,name,description);
+    printMatlabForm(pmat,A,name,description);
   }
 #endif // JLT_MATLAB_LIB_SUPPORT
 
