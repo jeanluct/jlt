@@ -181,10 +181,10 @@ void printMatlabForm_nodefaults(MATFile *pmat,
 // If the rows are of different size then it's not really a good
 // object to export to Matlab, except perhaps as a cell array.
 template<typename T>
-std::ostream& printMatlabForm(MATFile *pmat,
-			      const std::vector<std::vector<T>>& Avv,
-			      const std::string name = "",
-			      const std::string description = "")
+void printMatlabForm(MATFile *pmat,
+		     const std::vector<std::vector<T>>& Avv,
+		     const std::string name = "",
+		     const std::string description = "")
   {
     jlt::matrix<T> A(Avv.size(),Avv[0].size());
 
