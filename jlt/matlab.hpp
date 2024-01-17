@@ -176,6 +176,29 @@ void printMatlabForm_nodefaults(MATFile *pmat,
       }
   }
 
+
+// vector<vector> calls matrix.
+// If the rows are of different size then it's not really a good
+// object to export to Matlab, except perhaps as a cell array.
+template<typename T>
+std::ostream& printMatlabForm(MATFile *pmat,
+			      const std::vector<std::vector<T>>& Avv,
+			      const std::string name = "",
+			      const std::string description = "")
+  {
+    jlt::matrix<T> A(Avv.size(),Avv[0].size());
+
+    /* TODO: this should be a constructor; check all rows have same size. */
+    for (int i = 0; i < Avv.size(); ++i)
+      {
+	MATRIX_ASSERT(Avv[i].size() == Avv[0].size());
+	for (int j = 0; j < Avv[i].size(); ++j)
+	  {
+	    A(i,j) = Avv[i][j];
+	  }
+      }
+    printMatlabForm(strm,A,name,description);
+  }
 #endif // JLT_MATLAB_LIB_SUPPORT
 
 
@@ -327,6 +350,30 @@ std::ostream& printMatlabForm_nodefaults(std::ostream& strm,
     strm << "];\n";
 
     return strm;
+  }
+
+
+// vector<vector> calls matrix.
+// If the rows are of different size then it's not really a good
+// object to export to Matlab, except perhaps as a cell array.
+template<typename T>
+std::ostream& printMatlabForm(std::ostream& strm,
+			      const std::vector<std::vector<T>>& Avv,
+			      const std::string name = "",
+			      const std::string description = "")
+  {
+    jlt::matrix<T> A(Avv.size(),Avv[0].size());
+
+    /* TODO: this should be a constructor; check all rows have same size. */
+    for (int i = 0; i < Avv.size(); ++i)
+      {
+	MATRIX_ASSERT(Avv[i].size() == Avv[0].size());
+	for (int j = 0; j < Avv[i].size(); ++j)
+	  {
+	    A(i,j) = Avv[i][j];
+	  }
+      }
+    return printMatlabForm(strm,A,name,description);
   }
 
 } // namespace jlt
