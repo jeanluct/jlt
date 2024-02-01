@@ -19,6 +19,15 @@
 
 namespace jlt {
 
+
+  // Forward declarations.
+template<typename T> class matrix;
+
+template<typename T> std::ostream&
+printMatlabForm_nodefaults(std::ostream&, const matrix<T>&,
+			   const std::string, const std::string);
+
+
 #ifdef JLT_MATLAB_LIB_SUPPORT
 
 //
