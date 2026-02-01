@@ -1,12 +1,18 @@
+//
+// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+//
+// See the file LICENSE for copying permission.
+//
+
 #ifndef JLT_DISPLAY_TASK_HPP
 #define JLT_DISPLAY_TASK_HPP
 
 //
 // display_task.hpp
 //
+
 // Helper class to display messages at the beginning and end of a task,
 // with support for log levels, color control, and RAII scope guards.
-//
 
 #include <iostream>
 #include <sstream>
