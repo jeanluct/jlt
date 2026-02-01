@@ -1,4 +1,5 @@
 csparse_test
+display_task_test
 eigensystem_test
 finitediff_test
 math_test
