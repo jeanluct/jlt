@@ -119,6 +119,16 @@ public:
   static constexpr auto cyan    = colors::cyan;
   static constexpr auto white   = colors::white;
 
+  // Configurable output strings
+  struct strings {
+    static inline std::string
+      task_suffix  = "...",
+      task_done    = "ok",
+      error_prefix = "Error: ",
+      warn_prefix  = "Warning: ",
+      debug_prefix = "[debug] ";
+  };
+
   //
   // Constructor
   //
@@ -160,12 +170,12 @@ public:
     if (muted || level == LogLevel::Silent) return;
 
     // Print the task message first (without tracking)
-    *this << color(colors::cyan) << mesg << "..." << color(colors::normal) << std::flush;
+    *this << color(colors::cyan) << mesg << strings::task_suffix << color(colors::normal) << std::flush;
 
     // In case there are newlines, split into lines and remember
     // length of final line only.
     std::vector<std::string> lines = split_lines(mesg);
-    mesg_length = static_cast<int>(lines.back().length()) + 3;  // +3 for "..."
+    mesg_length = static_cast<int>(lines.back().length() + strings::task_suffix.length());
 
     // Now enable tracking for subsequent output
     interrupted = false;
@@ -183,11 +193,11 @@ public:
     // Stop tracking before we print the status
     tracking_buf.stop_tracking();
 
-    // If output occurred after begin(), "ok" goes on its own line
+    // If output occurred after begin(), status goes on its own line
     // Otherwise it stays on the same line as the message
     int padding = interrupted ? align_length : std::max(1, align_length - mesg_length);
     *this << std::string(padding, ' ');
-    *this << color(colors::cyan) << "ok" << color(colors::normal) << '\n';
+    *this << color(colors::cyan) << strings::task_done << color(colors::normal) << '\n';
 
     mesg_length = -1;
     interrupted = false;
@@ -221,12 +231,12 @@ public:
 
   void error(const std::string& mesg) {
     if (muted || level == LogLevel::Silent) return;
-    *this << color(colors::red) << "Error: " << color(colors::normal) << mesg << '\n';
+    *this << color(colors::red) << strings::error_prefix << color(colors::normal) << mesg << '\n';
   }
 
   void warn(const std::string& mesg) {
     if (muted || level < LogLevel::Warn) return;
-    *this << color(colors::yellow) << "Warning: " << color(colors::normal) << mesg << '\n';
+    *this << color(colors::yellow) << strings::warn_prefix << color(colors::normal) << mesg << '\n';
   }
 
   void info(const std::string& mesg) {
@@ -236,7 +246,7 @@ public:
 
   void debug(const std::string& mesg) {
     if (muted || level < LogLevel::Debug) return;
-    *this << color(colors::magenta) << "[debug] " << color(colors::normal) << mesg << '\n';
+    *this << color(colors::magenta) << strings::debug_prefix << color(colors::normal) << mesg << '\n';
   }
 
   //

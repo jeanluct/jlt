@@ -164,6 +164,31 @@ int main() {
 
   disp << "Captured output:\n" << oss.str();
 
+  //
+  // Example 9: Customizing output strings
+  //
+  disp << "\n=== Example 9: Custom strings ===\n\n";
+
+  // Save defaults
+  auto saved_suffix = jlt::display_task::strings::task_suffix;
+  auto saved_done = jlt::display_task::strings::task_done;
+
+  // Customize
+  jlt::display_task::strings::task_suffix = " ";
+  jlt::display_task::strings::task_done = "done";
+
+  disp.begin("Loading with custom strings");
+  do_work(30);
+  disp.end();
+
+  // Restore defaults
+  jlt::display_task::strings::task_suffix = saved_suffix;
+  jlt::display_task::strings::task_done = saved_done;
+
+  disp.begin("Back to defaults");
+  do_work(30);
+  disp.end();
+
   disp << "\n=== Done ===\n\n";
 
   return 0;
