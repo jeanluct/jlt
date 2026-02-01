@@ -20,6 +20,17 @@
 #include <string>
 #include <stdexcept>
 
+// Check for std::source_location support (C++20)
+#if __has_include(<version>)
+#include <version>
+#endif
+#if defined(__cpp_lib_source_location) && __cpp_lib_source_location >= 201907L
+#include <source_location>
+#define JLT_HAS_SOURCE_LOCATION 1
+#else
+#define JLT_HAS_SOURCE_LOCATION 0
+#endif
+
 #ifdef _WIN32
 #include <io.h>
 #define isatty _isatty
@@ -99,6 +110,7 @@ class display_task : public std::ostream {
   bool color_enabled;
   bool interrupted;   // true if output occurred after begin()
   bool first_write;   // true until first write after begin()
+  bool show_source;   // true to show source location in error/warn
   LogLevel level;
 
 public:
@@ -153,6 +165,7 @@ public:
       color_enabled(true),
       interrupted(false),
       first_write(false),
+      show_source(true),
       level(LogLevel::Info)
   {
     if (auto_detect_color) {
@@ -255,6 +268,33 @@ public:
     *this << color(colors::magenta) << strings::debug_prefix << color(colors::normal) << mesg << '\n';
   }
 
+#if JLT_HAS_SOURCE_LOCATION
+  // Overloads with automatic source location (C++20)
+  void error(const std::string& mesg,
+             const std::source_location& loc) {
+    if (muted || level == LogLevel::Silent) return;
+    *this << color(colors::red) << strings::error_prefix << color(colors::normal);
+    if (show_source) *this << loc.function_name() << ": ";
+    *this << mesg << '\n';
+  }
+
+  void warn(const std::string& mesg,
+            const std::source_location& loc) {
+    if (muted || level < LogLevel::Warn) return;
+    *this << color(colors::yellow) << strings::warn_prefix << color(colors::normal);
+    if (show_source) *this << loc.function_name() << ": ";
+    *this << mesg << '\n';
+  }
+
+  void debug(const std::string& mesg,
+             const std::source_location& loc) {
+    if (muted || level < LogLevel::Debug) return;
+    *this << color(colors::magenta) << strings::debug_prefix << color(colors::normal);
+    if (show_source) *this << loc.function_name() << ": ";
+    *this << mesg << '\n';
+  }
+#endif
+
   //
   // Configuration methods
   //
@@ -264,6 +304,9 @@ public:
 
   void set_color_enabled(bool enabled) { color_enabled = enabled; }
   bool get_color_enabled() const { return color_enabled; }
+
+  void set_show_source(bool enabled) { show_source = enabled; }
+  bool get_show_source() const { return show_source; }
 
   void set_align_length(int len) { align_length = len; }
   int get_align_length() const { return align_length; }
@@ -347,5 +390,19 @@ public:
 };
 
 } // namespace jlt
+
+//
+// Convenience macros for automatic source location capture.
+// Usage: JLT_ERROR(disp, "message") or JLT_WARN(disp, "message")
+//
+#if JLT_HAS_SOURCE_LOCATION
+#define JLT_ERROR(disp, msg) (disp).error((msg), std::source_location::current())
+#define JLT_WARN(disp, msg)  (disp).warn((msg), std::source_location::current())
+#define JLT_DEBUG(disp, msg) (disp).debug((msg), std::source_location::current())
+#else
+#define JLT_ERROR(disp, msg) (disp).error(msg)
+#define JLT_WARN(disp, msg)  (disp).warn(msg)
+#define JLT_DEBUG(disp, msg) (disp).debug(msg)
+#endif
 
 #endif // JLT_DISPLAY_TASK_HPP

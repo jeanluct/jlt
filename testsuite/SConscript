@@ -31,7 +31,7 @@ env = Environment(CC = cc, CXX = cxx,
                   CPPPATH = ['..'])
 
 # Use modern C++ standard (works, but not needed).
-#env.PrependUnique(CXXFLAGS = ['-std=c++0x'])
+env.PrependUnique(CXXFLAGS = ['-std=c++20'])
 
 # Clone env, add some flags for compiling against Matlab libraries.
 matlabbasedir = '/usr/local/MATLAB/'

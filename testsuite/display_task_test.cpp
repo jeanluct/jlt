@@ -189,6 +189,38 @@ int main() {
   do_work(30);
   disp.end();
 
+  //
+  // Example 10: Source location (C++20)
+  //
+  disp << "\n=== Example 10: Source location ===\n\n";
+
+#if JLT_HAS_SOURCE_LOCATION
+  disp << "Source location is available (C++20).\n\n";
+
+  // Using macros (recommended)
+  JLT_ERROR(disp, "error with automatic source location");
+  JLT_WARN(disp, "warning with automatic source location");
+
+  disp.set_level(jlt::LogLevel::Debug);
+  JLT_DEBUG(disp, "debug with automatic source location");
+  disp.set_level(jlt::LogLevel::Info);
+
+  // Disable source display
+  disp << "\nWith show_source disabled:\n";
+  disp.set_show_source(false);
+  JLT_ERROR(disp, "error without source location shown");
+  disp.set_show_source(true);
+
+  // Direct method call (more verbose at call site)
+  disp << "\nDirect method call:\n";
+  disp.error("direct call with source_location", std::source_location::current());
+#else
+  disp << "Source location not available (requires C++20).\n";
+  disp << "Macros fall back to simple versions:\n\n";
+  JLT_ERROR(disp, "error without source location");
+  JLT_WARN(disp, "warning without source location");
+#endif
+
   disp << "\n=== Done ===\n\n";
 
   return 0;
