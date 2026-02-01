@@ -1,13 +1,11 @@
 //
-// display_task.cpp
+// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+//
+// See the file LICENSE for copying permission.
+//
+
 //
 // Examples demonstrating jlt::display_task usage.
-//
-// Compile with:
-//   g++ -std=c++17 -I.. display_task.cpp -o display_task
-//
-// Or from the conflat build directory:
-//   make display_task
 //
 
 #include "jlt/display_task.hpp"
@@ -37,9 +35,25 @@ int main() {
   disp.end();
 
   //
-  // Example 2: RAII scope guard (automatic end)
+  // Example 2: Interrupted output (reprints message for alignment)
   //
-  disp << "\n=== Example 2: RAII scope guard ===\n\n";
+  disp << "\n=== Example 2: Interrupted output ===\n\n";
+
+  disp.begin("Processing data");
+  do_work(50);
+  disp << "  [info] processed 1000 records\n";
+  disp << "  [info] found 42 matches\n";
+  do_work(50);
+  disp.end();  // reprints "Processing data..." before aligned "ok"
+
+  disp.begin("Without interruption");
+  do_work(50);
+  disp.end();  // normal aligned "ok"
+
+  //
+  // Example 3: RAII scope guard (automatic end)
+  //
+  disp << "\n=== Example 3: RAII scope guard ===\n\n";
 
   {
     jlt::scoped_task task(disp, "Processing data");
@@ -55,9 +69,9 @@ int main() {
   }
 
   //
-  // Example 3: Custom end status
+  // Example 4: Custom end status
   //
-  disp << "\n=== Example 3: Custom status ===\n\n";
+  disp << "\n=== Example 4: Custom status ===\n\n";
 
   disp.begin("Checking network connection");
   do_work(50);
@@ -74,9 +88,9 @@ int main() {
   }
 
   //
-  // Example 4: Log levels
+  // Example 5: Log levels
   //
-  disp << "\n=== Example 4: Log levels ===\n\n";
+  disp << "\n=== Example 5: Log levels ===\n\n";
 
   disp.info("This is an informational message");
   disp.warn("This is a warning message");
