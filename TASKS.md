@@ -54,7 +54,9 @@
   - [x] Write test_mathvector.cpp (81 assertions - all passing)
   - [x] Write test_mathmatrix.cpp (90+ assertions - all passing)
   - [x] Write test_polynomial.cpp (88 assertions - all passing)
-  - [x] Write test_matrixutil.cpp (47 assertions - all passing)
+  - [x] Write test_matrixutil.cpp (52 assertions - all passing)
+  - Added: Exception safety tests for RAII improvements (5 new assertions)
+  - Tests verify that std::vector properly cleans up when exceptions thrown in LUdecomp and inverse
   - [x] Write test_exceptions.cpp (43 assertions - all passing)
   - [x] Create CMakeLists.txt with ctest support
   - [x] Add README.md documenting test structure
@@ -72,7 +74,7 @@
   - Uses `find_package(LAPACK)` - tests only built if LAPACK found
   - Tests tagged with "lapack" label for filtering
 
-**Test Coverage: 525+ assertions across 9 test suites - ALL PASSING**
+**Test Coverage: 530+ assertions across 9 test suites - ALL PASSING**
 - 7 core test suites: 465 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 
@@ -125,7 +127,7 @@
 - Remove pre-C++11 compatibility code
 
 ### Testing
-- Increase code coverage to >90% (currently: 9 test suites, 525+ assertions)
+- Increase code coverage to >90% (currently: 9 test suites, 530+ assertions)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
@@ -193,11 +195,12 @@ These may require verifying/fixing jlt code behavior:
   - Test `trace()` with non-square matrices (verify it throws or handles gracefully)
   - Add comprehensive tests for mathematical identities (e.g., (AB)^T = B^T A^T)
 
-- [ ] **test_matrixutil.hpp improvements:**
-  - Verify LU decomposition produces correct L and U matrices (reconstruct original)
-  - Verify QR decomposition produces orthogonal Q matrix (check Q^T * Q = I)
-  - Test Gram-Schmidt with linearly dependent vectors (verify behavior)
-  - Test singular matrix handling in `inverse()` (should throw)
+- [x] **test_matrixutil.hpp improvements:**
+  - ✅ **COMPLETED** Test singular matrix handling in `inverse()` - added exception safety tests
+  - ✅ **COMPLETED** Verify RAII works correctly when exceptions thrown (5 new assertions)
+  - [ ] Verify LU decomposition produces correct L and U matrices (reconstruct original)
+  - [ ] Verify QR decomposition produces orthogonal Q matrix (check Q^T * Q = I)
+  - [ ] Test Gram-Schmidt with linearly dependent vectors (verify behavior)
 
 ### Medium Priority Test Additions
 

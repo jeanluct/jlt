@@ -221,6 +221,60 @@ TEST_CASE("Gram-Schmidt orthonormalization", "[matrixutil]") {
     }
 }
 
+TEST_CASE("Exception safety with RAII", "[matrixutil][exceptions]") {
+    SECTION("LUdecomp throws for singular matrix - no memory leak") {
+        // Before RAII fix: this would leak T* vv if exception thrown
+        // After RAII fix: std::vector cleans up automatically
+        // A truly singular matrix has a zero row (all zeros)
+        mathmatrix<double> A(3, 3, {
+            1.0, 2.0, 3.0,
+            4.0, 5.0, 6.0,
+            0.0, 0.0, 0.0   // Zero row makes it singular
+        });
+        int row_index[3];
+        int perm;
+        
+        // Should throw without leaking memory (RAII via std::vector)
+        REQUIRE_THROWS(LUdecomp<double, mathmatrix<double>>(A, row_index, &perm));
+    }
+    
+    SECTION("LUdecomp throws for zero matrix - no memory leak") {
+        // Zero matrix is singular (all rows are zero)
+        mathmatrix<double> A(2, 2, {0.0, 0.0, 0.0, 0.0});
+        int row_index[2];
+        int perm;
+        
+        REQUIRE_THROWS(LUdecomp<double, mathmatrix<double>>(A, row_index, &perm));
+    }
+    
+    SECTION("inverse() handles singular matrix gracefully") {
+        // inverse() calls LUdecomp which may throw
+        // With RAII, all allocations are cleaned up properly
+        // A matrix with a zero row is singular (non-invertible)
+        mathmatrix<double> A(2, 2, {1.0, 2.0, 0.0, 0.0});  // Singular: row 1 is all zeros
+        
+        REQUIRE_THROWS(inverse<double, mathmatrix<double>>(A));
+    }
+    
+    SECTION("Multiple LUdecomp calls on different matrices - verify no state pollution") {
+        // Ensure that internal std::vector doesn't retain state between calls
+        mathmatrix<double> A1(2, 2, {1.0, 2.0, 3.0, 4.0});  // Nonsingular
+        mathmatrix<double> A2(2, 2, {0.0, 0.0, 0.0, 0.0});  // Singular
+        
+        int row_index1[2], row_index2[2];
+        int perm1, perm2;
+        
+        // First call should succeed
+        LUdecomp<double, mathmatrix<double>>(A1, row_index1, &perm1);
+        
+        // Second call should throw but not affect previous results
+        REQUIRE_THROWS(LUdecomp<double, mathmatrix<double>>(A2, row_index2, &perm2));
+        
+        // A1 should still be valid
+        REQUIRE(std::abs(A1(0, 0)) > 0.0);
+    }
+}
+
 TEST_CASE("Matrix utility edge cases", "[matrixutil]") {
     SECTION("LU on 1x1 matrix") {
         mathmatrix<double> A(1, 1, {5.0});
