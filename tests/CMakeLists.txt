@@ -68,6 +68,11 @@ add_executable(test_vcs test_vcs.cpp)
 target_link_libraries(test_vcs catch2)
 add_test(NAME test_vcs COMMAND test_vcs)
 
+# Display task tests
+add_executable(test_display_task test_display_task.cpp)
+target_link_libraries(test_display_task catch2)
+add_test(NAME test_display_task COMMAND test_display_task)
+
 # LAPACK-dependent tests (only if LAPACK is found)
 if(LAPACK_FOUND)
     # Eigensystem tests (eigenvalue/eigenvector decomposition)
