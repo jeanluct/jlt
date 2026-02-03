@@ -57,6 +57,10 @@
   - [x] Write test_matrixutil.cpp (52 assertions - all passing)
   - Added: Exception safety tests for RAII improvements (5 new assertions)
   - Tests verify that std::vector properly cleans up when exceptions thrown in LUdecomp and inverse
+- [x] Write test_math.cpp (53 assertions - all passing)
+  - Tests Mod function: basic ops, negative values, different precisions (float/double/long double)
+  - Tests Sign function: positive, negative, zero values, edge cases
+  - Tests combined operations
   - [x] Write test_exceptions.cpp (43 assertions - all passing)
   - [x] Create CMakeLists.txt with ctest support
   - [x] Add README.md documenting test structure
@@ -74,8 +78,8 @@
   - Uses `find_package(LAPACK)` - tests only built if LAPACK found
   - Tests tagged with "lapack" label for filtering
 
-**Test Coverage: 530+ assertions across 9 test suites - ALL PASSING**
-- 7 core test suites: 465 assertions (no external dependencies)
+**Test Coverage: 583+ assertions across 10 test suites - ALL PASSING**
+- 8 core test suites: 518 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 
 ## In Progress
@@ -127,7 +131,7 @@
 - Remove pre-C++11 compatibility code
 
 ### Testing
-- Increase code coverage to >90% (currently: 9 test suites, 530+ assertions)
+- Increase code coverage to >90% (currently: 10 test suites, 583+ assertions)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
@@ -144,7 +148,7 @@
 The following components in `jlt/` still need test coverage:
 
 ### Core Components (No External Dependencies)
-- [ ] **math.hpp** - Mathematical utility functions (Mod, Sign)
+- [x] **math.hpp** - Mathematical utility functions (Mod, Sign) ✅ **COMPLETED** - 53 assertions
 - [ ] **finitediff.hpp** - Finite difference calculations
 - [ ] **display_task.hpp** - Task display utilities
 - [ ] **reciprocal_polynomial.hpp** - Monic reciprocal polynomial operations
