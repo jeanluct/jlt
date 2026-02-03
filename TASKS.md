@@ -37,6 +37,13 @@
   - Tests: All 131 mathmatrix assertions still passing
   - Date: 2026-02-03
 
+- [x] Refactor matrixutil.hpp to fix exception safety issues
+  - Fixed: `LUdecomp()` - `T* vv = new T[n]` → `std::vector<T> vv(n)` (was leaking if singular matrix exception thrown)
+  - Fixed: `inverse()` - `int* row_index` and `T* col` → `std::vector` (exception-safe)
+  - Impact: Exception-safe, automatic cleanup even if exceptions thrown during LU decomposition
+  - Tests: All 47 matrixutil assertions still passing
+  - Date: 2026-02-03
+
 ### Test Suite
 - [x] Create comprehensive Catch2 test suite in tests/
   - [x] Set up Catch2 v2.13.10 single-header framework
@@ -70,7 +77,7 @@
 ## In Progress
 
 ### High Priority
-- [ ] Fix exception safety in assignment operators (if any issues remain)
+- [ ] (No high priority code fixes remaining - see Future Improvements)
 
 ### Medium Priority
 - [ ] Fix static variable thread-safety issues
@@ -91,12 +98,12 @@
 ### Memory Safety
 - ✅ **FIXED** matrix.hpp: Raw pointer management without RAII → Now uses std::vector
 - ✅ **FIXED** mathmatrix.hpp: Manual array allocations (row_index, col arrays) → Now uses std::vector
-- matrixutil.hpp: Manual memory management in LU decomposition
+- ✅ **FIXED** matrixutil.hpp: Manual memory management in LU decomposition → Now uses std::vector
 
 ### Exception Safety
 - ✅ **FIXED** matrix.hpp: Assignment operator not exception-safe → Now uses copy-and-swap
 - ✅ **FIXED** mathmatrix.hpp: Manual allocations without exception protection → Now uses std::vector
-- matrixutil.hpp: Complex algorithm without proper cleanup
+- ✅ **FIXED** matrixutil.hpp: Complex algorithm without proper cleanup → Now uses std::vector, automatic cleanup
 
 ### Thread Safety
 - matrix.hpp: Static variables in operator[] methods (not thread-safe)
