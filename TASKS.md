@@ -97,11 +97,12 @@
 - Remove pre-C++11 compatibility code
 
 ### Testing
-- Increase code coverage to >90% (currently: 7 test suites, 445+ assertions)
+- Increase code coverage to >90% (currently: 9 test suites, 506+ assertions)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
 - [x] Add integration tests for LAPACK-dependent components (eigensystem, svdecomp) - COMPLETED 2026-02-03
+- See "Test Improvements for Existing Components" section below for detailed audit results
 
 ### Documentation
 - Add API documentation with examples
@@ -140,3 +141,71 @@ These tests would only be built if the respective libraries are found:
 ### Wrapper/Interface Files (Low Priority)
 - [ ] **lapack.hpp** - LAPACK wrapper functions
   - Note: Already tested indirectly via eigensystem.hpp and svdecomp.hpp tests
+
+## Test Improvements for Existing Components
+
+The following improvements would strengthen existing test coverage:
+
+### High Priority Test Additions
+These may require verifying/fixing jlt code behavior:
+
+- [ ] **test_vector.hpp improvements:**
+  - Test `at()` with bounds checking enabled (`VECTOR_CHECK_BOUNDS`)
+  - Test size mismatch operations (should they throw?)
+  - Verify exception messages in `at()` out-of-range throws
+  
+- [ ] **test_mathvector.hpp improvements:**
+  - Test zero division in `operator/=` (verify behavior)
+  - Test operations with vectors of different sizes (should throw exception)
+  - Add normalization/unit vector tests (verify `normalize()` exists and works)
+  
+- [ ] **test_mathmatrix.hpp improvements:**
+  - Test matrix-vector multiplication
+  - Test invalid operations (multiplying incompatible sizes - should throw)
+  - Test `trace()` with non-square matrices (verify it throws or handles gracefully)
+  - Add comprehensive tests for mathematical identities (e.g., (AB)^T = B^T A^T)
+
+- [ ] **test_matrixutil.hpp improvements:**
+  - Verify LU decomposition produces correct L and U matrices (reconstruct original)
+  - Verify QR decomposition produces orthogonal Q matrix (check Q^T * Q = I)
+  - Test Gram-Schmidt with linearly dependent vectors (verify behavior)
+  - Test singular matrix handling in `inverse()` (should throw)
+
+### Medium Priority Test Additions
+
+- [ ] **test_matrix.hpp improvements:**
+  - Test column access (if available in the API)
+  - Test move constructor and move assignment
+  - Test column iterators (if they exist)
+  - Add more `at()` bounds checking tests for both dimensions
+  
+- [ ] **test_polynomial.hpp improvements:**
+  - Test polynomial evaluation at specific points (`p(x)`)
+  - Test `printFancy()` output format (verify format matches expected)
+  - Test degree changes after arithmetic operations
+
+### Low Priority Test Additions
+
+- [ ] **test_eigensystem.hpp improvements (LAPACK):**
+  - Add tests for larger matrices (5x5, 10x10)
+  - Add tests for ill-conditioned matrices
+  - Test repeated eigenvalues
+  
+- [ ] **test_svdecomp.hpp improvements (LAPACK):**
+  - Add tests for near-singular matrices
+  - Test very large condition numbers
+  - Add rectangular matrix stress tests
+
+- [ ] **Output format tests:**
+  - Test `printMatlabForm()` output format for vector and matrix
+  - Test `printMathematicaForm()` output format
+  - Test STL container printing via `stlio.hpp`
+
+### Code Improvements Required
+Some test additions may require jlt code improvements:
+
+- [ ] Verify exception handling for invalid operations (add throws where missing)
+- [ ] Implement bounds checking for matrix operations (`MATRIX_CHECK_BOUNDS`)
+- [ ] Add `normalize()` function to mathvector if missing
+- [ ] Improve QR decomposition to guarantee orthogonality of Q
+- [ ] Add input validation to `trace()` for non-square matrices
