@@ -61,6 +61,10 @@
   - Tests Mod function: basic ops, negative values, different precisions (float/double/long double)
   - Tests Sign function: positive, negative, zero values, edge cases
   - Tests combined operations
+- [x] Write test_command.cpp (24 assertions - all passing)
+  - Tests Unix command execution via get_command_output()
+  - Tests output capture, empty output, long output, special characters
+  - Tests stderr redirection (2>&1)
   - [x] Write test_exceptions.cpp (43 assertions - all passing)
   - [x] Create CMakeLists.txt with ctest support
   - [x] Add README.md documenting test structure
@@ -78,8 +82,8 @@
   - Uses `find_package(LAPACK)` - tests only built if LAPACK found
   - Tests tagged with "lapack" label for filtering
 
-**Test Coverage: 583+ assertions across 10 test suites - ALL PASSING**
-- 8 core test suites: 518 assertions (no external dependencies)
+**Test Coverage: 607+ assertions across 11 test suites - ALL PASSING**
+- 9 core test suites: 542 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 
 ## In Progress
@@ -131,7 +135,7 @@
 - Remove pre-C++11 compatibility code
 
 ### Testing
-- Increase code coverage to >90% (currently: 10 test suites, 583+ assertions)
+- Increase code coverage to >90% (currently: 11 test suites, 607+ assertions)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
@@ -148,12 +152,12 @@
 The following components in `jlt/` still need test coverage:
 
 ### Core Components (No External Dependencies)
+- [x] **command.hpp** - Unix command execution wrapper ✅ **COMPLETED** - 24 assertions
 - [x] **math.hpp** - Mathematical utility functions (Mod, Sign) ✅ **COMPLETED** - 53 assertions
 - [ ] **finitediff.hpp** - Finite difference calculations
 - [ ] **display_task.hpp** - Task display utilities
 - [ ] **reciprocal_polynomial.hpp** - Monic reciprocal polynomial operations
 - [ ] **stlio.hpp** - STL container I/O printing
-- [ ] **command.hpp** - Command execution wrapper
 - [ ] **vcs.hpp** - Version control system info extraction
 
 ### External Dependency Tests (Optional)

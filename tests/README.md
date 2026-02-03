@@ -61,6 +61,7 @@ All tests passing - 465 assertions total:
 - [x] **mathvector.hpp** - 81 assertions covering mathematical operations, dot/cross products, magnitudes, and complex numbers
 - [x] **mathmatrix.hpp** - 90+ assertions covering matrix operations, multiplication, inverse, determinant, trace, and identity operations
 - [x] **polynomial.hpp** - 88 assertions covering construction, coefficient access, arithmetic, evaluation, differentiation, and I/O
+- [x] **command.hpp** - 24 assertions covering Unix command execution and output capture
 - [x] **math.hpp** - 53 assertions covering Mod function (modulo with sign preservation) and Sign function
 - [x] **matrixutil.hpp** - 52 assertions covering LU decomposition, QR decomposition, matrix inverse, Gram-Schmidt orthonormalization, and exception safety with RAII
 - [x] **exceptions.hpp** - 43 assertions covering custom exception classes, throwing, catching, inheritance, and macros
@@ -88,14 +89,15 @@ test_polynomial:    88 assertions - ALL PASSED
 test_matrixutil:    52 assertions - ALL PASSED
 test_exceptions:    43 assertions - ALL PASSED
 test_math:          53 assertions - ALL PASSED
+test_command:       24 assertions - ALL PASSED
 --------------------------------------------------
-Core Total:        465 assertions - ALL PASSED
+Core Total:        489 assertions - ALL PASSED
 
 LAPACK Tests (if available):
 test_eigensystem:   20 assertions - ALL PASSED
 test_svdecomp:      40 assertions - ALL PASSED
 --------------------------------------------------
-Grand Total:       583+ assertions - ALL PASSED
+Grand Total:       607+ assertions - ALL PASSED
 ```
 
 ## Installing LAPACK (Optional)
