@@ -63,6 +63,11 @@ add_executable(test_command test_command.cpp)
 target_link_libraries(test_command catch2)
 add_test(NAME test_command COMMAND test_command)
 
+# VCS (Version Control System) tests
+add_executable(test_vcs test_vcs.cpp)
+target_link_libraries(test_vcs catch2)
+add_test(NAME test_vcs COMMAND test_vcs)
+
 # LAPACK-dependent tests (only if LAPACK is found)
 if(LAPACK_FOUND)
     # Eigensystem tests (eigenvalue/eigenvector decomposition)
@@ -84,7 +89,7 @@ enable_testing()
 # Print summary
 message(STATUS "")
 message(STATUS "Test Summary:")
-message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command")
+message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command, vcs")
 if(LAPACK_FOUND)
     message(STATUS "  LAPACK tests: eigensystem, svdecomp")
 else()
