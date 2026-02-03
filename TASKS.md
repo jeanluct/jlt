@@ -16,6 +16,17 @@
   - Impact: row() now returns correct number of columns
   - Tests: All 64 matrix assertions passing
 
+### Code Quality Improvements
+- [x] Refactor matrix.hpp to use RAII (std::vector) instead of raw pointers
+  - Changed: `pointer start, finish` → `std::vector<T> storage`
+  - Eliminated: Manual `new[]`/`delete[]` calls
+  - Fixed: Assignment operator now uses copy-and-swap idiom (exception-safe)
+  - Added: Move constructor and move assignment operator (C++11)
+  - Fixed: Member initialization order bug (was using m/n before they were initialized)
+  - Impact: Eliminates memory leaks, improves exception safety, enables move semantics
+  - Tests: All 64 matrix assertions still passing
+  - Date: 2026-02-03
+
 ### Test Suite
 - [x] Create comprehensive Catch2 test suite in tests/
   - [x] Set up Catch2 v2.13.10 single-header framework
@@ -49,13 +60,12 @@
 ## In Progress
 
 ### High Priority
-- [ ] Fix exception safety in assignment operators
-- [ ] Replace manual memory management with RAII in matrix.hpp
+- [ ] Fix exception safety in assignment operators (mathmatrix.hpp)
 - [ ] Replace manual memory management with RAII in mathmatrix.hpp
 
 ### Medium Priority
 - [ ] Fix static variable thread-safety issues
-- [ ] Add move semantics for performance
+- [x] Add move semantics for performance (matrix.hpp - DONE)
 - [ ] Implement proper bounds checking throughout
 - [ ] Refactor code duplication in mathvector.hpp cross product
 - [ ] Optimize matrix multiplication algorithms
@@ -70,12 +80,12 @@
 ## Known Issues (Documented)
 
 ### Memory Safety
-- matrix.hpp: Raw pointer management without RAII
+- ✅ **FIXED** matrix.hpp: Raw pointer management without RAII → Now uses std::vector
 - mathmatrix.hpp: Manual array allocations (row_index, col arrays)
 - matrixutil.hpp: Manual memory management in LU decomposition
 
 ### Exception Safety
-- matrix.hpp: Assignment operator not exception-safe
+- ✅ **FIXED** matrix.hpp: Assignment operator not exception-safe → Now uses copy-and-swap
 - mathmatrix.hpp: LAPACK calls without exception protection
 - matrixutil.hpp: Complex algorithm without proper cleanup
 
