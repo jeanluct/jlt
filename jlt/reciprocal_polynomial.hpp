@@ -132,6 +132,8 @@ public:
   }
 
   // Evaluate polynomial at a given value of x.
+  // BUG FIX: Added check for n > 0 before adding final term to prevent
+  // double-counting of constant term for degree 0 polynomials.
   template<class S>
   S operator()(const S& x) const
   {
@@ -144,13 +146,13 @@ public:
     for (P i = 1; i <= g; ++i) { p += a[i-1]*xp; xp *= x; }
     // Terms x^(g+1) to x^(n-1)
     for (P i = g+1; i < n; ++i) { p += a[n-1-i]*xp; xp *= x; }
-    // Term x^n
-    p += xp;
+    // Term x^n (only for n > 0; for n=0, x^0 is already counted above)
+    if (n > 0) p += xp;
 
     return p;
   }
 
-  // Return a coefficient of the polynomial.
+  // Return a coefficient of the polynomial (const version).
   const T operator[](const P i) const
   {
     const int g = n/2;
@@ -166,19 +168,25 @@ public:
   }
 
   // Return a coefficient of the polynomial, allow assignment.
+  // Note: coefficients at 0 and n are fixed at 1 (the polynomial is monic).
+  // Throws std::out_of_range for indices 0 and n (cannot modify fixed coefficients).
   T& operator[](const P i)
   {
     const int g = n/2;
 
+    // Fixed coefficients cannot be modified
+    if (i == 0 || i == n) 
+    {
+      std::ostringstream err;
+      err << "Cannot modify fixed coefficient " << i << " in ";
+      err << "reciprocal_polynomial::operator[] (always equals 1).";
+      JLT_THROW(std::out_of_range(err.str()));
+    }
     if (i > 0 && i <= g) return a[i-1];
     if (i > g && i < n) return a[n-1-i];
 
     std::ostringstream err;
-    if (i == 0 || i == n)
-      err << "Unassignable";
-    else
-      err << "Out of range";
-    err << " coefficient " << i << " in ";
+    err << "Out of range coefficient " << i << " in ";
     err << "reciprocal_polynomial::operator[].";
     JLT_THROW(std::out_of_range(err.str()));
   }

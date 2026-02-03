@@ -76,9 +76,15 @@ TEST_CASE("reciprocal_polynomial coefficient access", "[reciprocal_polynomial]")
         REQUIRE(p4[3] == 2.0);  // Should equal p[1]
     }
     
-    SECTION("First and last coefficients via evaluation") {
-        // Can't directly read p4[0] or p4[4] with non-const operator[]
-        // But we can verify via evaluation at x=0 gives 1 (constant term)
+    SECTION("Read first and last coefficients via const reference") {
+        // Use const reference to read fixed coefficients 0 and n
+        const reciprocal_polynomial<double>& cp4 = p4;
+        REQUIRE(cp4[0] == 1.0);  // First coefficient always 1
+        REQUIRE(cp4[4] == 1.0);  // Last coefficient always 1
+    }
+    
+    SECTION("Evaluation at x=0 returns 1 for constant term") {
+        // Bug fix: degree 0 polynomial used to return 2 instead of 1
         REQUIRE(p4(0.0) == 1.0);
     }
     
@@ -238,14 +244,24 @@ TEST_CASE("reciprocal_polynomial edge cases", "[reciprocal_polynomial]") {
     SECTION("Degree 0 polynomial") {
         reciprocal_polynomial<double> p(0);
         REQUIRE(p.degree() == 0);
-        // NOTE: There's a bug in the library for degree 0 evaluation
-        // It returns 2.0 instead of 1.0 due to double-counting the constant term
-        // Skipping evaluation test for degree 0
+        // Bug fix: degree 0 polynomial should evaluate to 1 (just the constant term)
+        // Previously returned 2.0 due to double-counting
+        REQUIRE(p(0.0) == 1.0);
+        REQUIRE(p(1.0) == 1.0);
+        REQUIRE(p(2.0) == 1.0);
+        // Use const reference to read coefficient 0
+        const reciprocal_polynomial<double>& cp = p;
+        REQUIRE(cp[0] == 1.0);
     }
     
     SECTION("Degree 1 polynomial") {
         reciprocal_polynomial<double> p(1);
         REQUIRE(p.degree() == 1);
+        // For degree 1, coefficient 0 and 1 are both the same (both ends)
+        // Use const reference to read fixed coefficients
+        const reciprocal_polynomial<double>& cp = p;
+        REQUIRE(cp[0] == 1.0);  // First coefficient
+        REQUIRE(cp[1] == 1.0);  // Last coefficient (same as first for degree 1)
         // P(x) = 1 + x, so P(1) = 2, P(2) = 3
         REQUIRE(p(1.0) == 2.0);
         REQUIRE(p(2.0) == 3.0);
