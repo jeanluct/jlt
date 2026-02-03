@@ -107,3 +107,36 @@
 - Add API documentation with examples
 - Create migration guide from other libraries
 - Document LAPACK/BLAS dependencies clearly
+
+## Missing Test Coverage
+
+The following components in `jlt/` still need test coverage:
+
+### Core Components (No External Dependencies)
+- [ ] **math.hpp** - Mathematical utility functions (Mod, Sign)
+- [ ] **finitediff.hpp** - Finite difference calculations
+- [ ] **display_task.hpp** - Task display utilities
+- [ ] **reciprocal_polynomial.hpp** - Monic reciprocal polynomial operations
+- [ ] **stlio.hpp** - STL container I/O printing
+- [ ] **command.hpp** - Command execution wrapper
+- [ ] **vcs.hpp** - Version control system info extraction
+
+### External Dependency Tests (Optional)
+These tests would only be built if the respective libraries are found:
+
+- [ ] **matlab.hpp** - Matlab MAT-file format export
+  - Requires: Matlab libraries (`-leng -lmat -lmex -lut -lmx`)
+  - Compile flag: `JLT_MATLAB_LIB_SUPPORT`
+  - Note: Requires Matlab installation
+  
+- [ ] **csparse.hpp** - CSparse sparse matrix library interface
+  - Requires: CSparse library (`-lcsparse`)
+  - Note: Wrapper for Timothy A. Davis's CSparse library
+  
+- [ ] **tictoc.hpp** - Timing utilities
+  - Requires: Boost timer library (`-lboost_timer`)
+  - Note: Uses `boost::timer::cpu_timer`
+
+### Wrapper/Interface Files (Low Priority)
+- [ ] **lapack.hpp** - LAPACK wrapper functions
+  - Note: Already tested indirectly via eigensystem.hpp and svdecomp.hpp tests
