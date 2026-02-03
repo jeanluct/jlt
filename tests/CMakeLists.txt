@@ -30,8 +30,12 @@ add_executable(test_mathmatrix test_mathmatrix.cpp)
 target_link_libraries(test_mathmatrix catch2)
 add_test(NAME test_mathmatrix COMMAND test_mathmatrix)
 
+# Mathematical matrix tests
+add_executable(test_polynomial test_polynomial.cpp)
+target_link_libraries(test_polynomial catch2)
+add_test(NAME test_polynomial COMMAND test_polynomial)
+
 # TODO: Add more tests as they are written:
-# - test_polynomial.cpp (polynomial class)
 # - test_eigensystem.cpp (eigenvalue computation - requires LAPACK)
 # - test_svdecomp.cpp (SVD - requires LAPACK)
 # - test_qrdecomp.cpp (QR decomposition - requires LAPACK)
