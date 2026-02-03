@@ -33,11 +33,11 @@ g++ -std=c++11 -I.. test_matrix.cpp -o test_matrix
 - [x] **mathmatrix.hpp** - 90+ assertions covering matrix operations, multiplication, inverse, determinant, trace, and identity operations
 - [x] **polynomial.hpp** - 88 assertions covering construction, coefficient access, arithmetic, evaluation, differentiation, and I/O
 - [x] **matrixutil.hpp** - 47 assertions covering LU decomposition, QR decomposition, matrix inverse, and Gram-Schmidt orthonormalization
+- [x] **exceptions.hpp** - 43 assertions covering custom exception classes, throwing, catching, inheritance, and macros
 
 ### Planned (TODO)
 - [ ] eigensystem.hpp (requires LAPACK)
 - [ ] svdecomp.hpp (requires LAPACK)
-- [ ] exceptions.hpp
 
 ### Test Results
 ```
@@ -47,4 +47,5 @@ test_mathvector:  81 assertions - ALL PASSED
 test_mathmatrix:  90+ assertions - ALL PASSED
 test_polynomial:  88 assertions - ALL PASSED
 test_matrixutil:  47 assertions - ALL PASSED
+test_exceptions:  43 assertions - ALL PASSED
 ```

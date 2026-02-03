@@ -40,10 +40,10 @@ add_executable(test_matrixutil test_matrixutil.cpp)
 target_link_libraries(test_matrixutil catch2)
 add_test(NAME test_matrixutil COMMAND test_matrixutil)
 
-# TODO: Add more tests as they are written:
-# - test_eigensystem.cpp (eigenvalue computation - requires LAPACK)
-# - test_svdecomp.cpp (SVD - requires LAPACK)
-# - test_qrdecomp.cpp (QR decomposition - requires LAPACK)
+# Exception tests
+add_executable(test_exceptions test_exceptions.cpp)
+target_link_libraries(test_exceptions catch2)
+add_test(NAME test_exceptions COMMAND test_exceptions)
 
 # Enable CTest
 enable_testing()
