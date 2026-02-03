@@ -2,6 +2,13 @@
 
 ## Completed ✓
 
+### Documentation
+- [x] Create AGENTS.md for AI coding agents
+  - File: /home/jeanluc/C/jlt/AGENTS.md
+  - Date: 2026-02-03
+  - Content: Build/lint/test commands, code style guidelines, project structure
+  - Lines: ~150
+
 ### Critical Bugs
 - [x] Fix matrix.hpp row() method bug (line 251: +m → +n)
   - File: jlt/matrix.hpp
@@ -22,13 +29,26 @@
   - [x] Create CMakeLists.txt with ctest support
   - [x] Add README.md documenting test structure
 
-**Test Coverage: 445+ assertions across 7 test suites - ALL PASSING**
+### LAPACK-dependent Tests (optional)
+- [x] Write test_eigensystem.cpp (requires LAPACK)
+  - Tests: symmetric_matrix_eigensystem, matrix_eigenvalues (real & complex)
+  - File: tests/test_eigensystem.cpp
+  - Tag: [lapack][eigensystem]
+- [x] Write test_svdecomp.cpp (requires LAPACK)
+  - Tests: SVdecomp (full and singular values only)
+  - File: tests/test_svdecomp.cpp
+  - Tag: [lapack][svd]
+- [x] Update CMakeLists.txt with LAPACK detection
+  - Uses `find_package(LAPACK)` - tests only built if LAPACK found
+  - Tests tagged with "lapack" label for filtering
+
+**Test Coverage: 506+ assertions across 9 test suites - ALL PASSING**
+- 7 core test suites: 446 assertions (no external dependencies)
+- 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 
 ## In Progress
 
 ### High Priority
-- [ ] Write tests for eigensystem.hpp (requires LAPACK)
-- [ ] Write tests for svdecomp.hpp (requires LAPACK)
 - [ ] Fix exception safety in assignment operators
 - [ ] Replace manual memory management with RAII in matrix.hpp
 - [ ] Replace manual memory management with RAII in mathmatrix.hpp
@@ -39,6 +59,7 @@
 - [ ] Implement proper bounds checking throughout
 - [ ] Refactor code duplication in mathvector.hpp cross product
 - [ ] Optimize matrix multiplication algorithms
+- [ ] Set up automated linting/formatting (clang-format, clang-tidy)
 
 ### Low Priority
 - [ ] Update to C++17 features (remove C++98 compatibility code)
@@ -80,6 +101,7 @@
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
+- [x] Add integration tests for LAPACK-dependent components (eigensystem, svdecomp) - COMPLETED 2026-02-03
 
 ### Documentation
 - Add API documentation with examples

@@ -11,6 +11,14 @@ include_directories(..)
 add_library(catch2 STATIC catch_main.cpp)
 target_include_directories(catch2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+# Find LAPACK (optional - tests will only be built if LAPACK is found)
+find_package(LAPACK)
+if(LAPACK_FOUND)
+    message(STATUS "LAPACK found - building eigensystem and SVD tests")
+else()
+    message(STATUS "LAPACK not found - skipping eigensystem and SVD tests")
+endif()
+
 # Core container tests
 add_executable(test_vector test_vector.cpp)
 target_link_libraries(test_vector catch2)
@@ -45,5 +53,31 @@ add_executable(test_exceptions test_exceptions.cpp)
 target_link_libraries(test_exceptions catch2)
 add_test(NAME test_exceptions COMMAND test_exceptions)
 
+# LAPACK-dependent tests (only if LAPACK is found)
+if(LAPACK_FOUND)
+    # Eigensystem tests (eigenvalue/eigenvector decomposition)
+    add_executable(test_eigensystem test_eigensystem.cpp)
+    target_link_libraries(test_eigensystem catch2 ${LAPACK_LIBRARIES})
+    add_test(NAME test_eigensystem COMMAND test_eigensystem)
+    set_tests_properties(test_eigensystem PROPERTIES LABELS "lapack")
+    
+    # SVD tests (singular value decomposition)
+    add_executable(test_svdecomp test_svdecomp.cpp)
+    target_link_libraries(test_svdecomp catch2 ${LAPACK_LIBRARIES})
+    add_test(NAME test_svdecomp COMMAND test_svdecomp)
+    set_tests_properties(test_svdecomp PROPERTIES LABELS "lapack")
+endif()
+
 # Enable CTest
 enable_testing()
+
+# Print summary
+message(STATUS "")
+message(STATUS "Test Summary:")
+message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions")
+if(LAPACK_FOUND)
+    message(STATUS "  LAPACK tests: eigensystem, svdecomp")
+else()
+    message(STATUS "  LAPACK tests: SKIPPED (LAPACK not found)")
+endif()
+message(STATUS "")
