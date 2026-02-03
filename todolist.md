@@ -14,15 +14,21 @@
   - [x] Set up Catch2 v2.13.10 single-header framework
   - [x] Write test_vector.cpp (32 assertions - all passing)
   - [x] Write test_matrix.cpp (64 assertions - all passing)
+  - [x] Write test_mathvector.cpp (81 assertions - all passing)
+  - [x] Write test_mathmatrix.cpp (90+ assertions - all passing)
+  - [x] Write test_polynomial.cpp (88 assertions - all passing)
+  - [x] Write test_matrixutil.cpp (47 assertions - all passing)
+  - [x] Write test_exceptions.cpp (43 assertions - all passing)
   - [x] Create CMakeLists.txt with ctest support
   - [x] Add README.md documenting test structure
+
+**Test Coverage: 445+ assertions across 7 test suites - ALL PASSING**
 
 ## In Progress
 
 ### High Priority
-- [ ] Write tests for mathvector.hpp
-- [ ] Write tests for mathmatrix.hpp
-- [ ] Write tests for polynomial.hpp
+- [ ] Write tests for eigensystem.hpp (requires LAPACK)
+- [ ] Write tests for svdecomp.hpp (requires LAPACK)
 - [ ] Fix exception safety in assignment operators
 - [ ] Replace manual memory management with RAII in matrix.hpp
 - [ ] Replace manual memory management with RAII in mathmatrix.hpp
@@ -31,9 +37,6 @@
 - [ ] Fix static variable thread-safety issues
 - [ ] Add move semantics for performance
 - [ ] Implement proper bounds checking throughout
-- [ ] Write tests for eigensystem.hpp (requires LAPACK)
-- [ ] Write tests for svdecomp.hpp (requires LAPACK)
-- [ ] Write tests for matrixutil.hpp (LU/QR decomposition)
 - [ ] Refactor code duplication in mathvector.hpp cross product
 - [ ] Optimize matrix multiplication algorithms
 
@@ -73,7 +76,7 @@
 - Remove pre-C++11 compatibility code
 
 ### Testing
-- Increase code coverage to >90%
+- Increase code coverage to >90% (currently: 7 test suites, 445+ assertions)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
