@@ -78,6 +78,11 @@ add_executable(test_stlio test_stlio.cpp)
 target_link_libraries(test_stlio catch2)
 add_test(NAME test_stlio COMMAND test_stlio)
 
+# Reciprocal polynomial tests
+add_executable(test_reciprocal_polynomial test_reciprocal_polynomial.cpp)
+target_link_libraries(test_reciprocal_polynomial catch2)
+add_test(NAME test_reciprocal_polynomial COMMAND test_reciprocal_polynomial)
+
 # LAPACK-dependent tests (only if LAPACK is found)
 if(LAPACK_FOUND)
     # Eigensystem tests (eigenvalue/eigenvector decomposition)
@@ -99,7 +104,7 @@ enable_testing()
 # Print summary
 message(STATUS "")
 message(STATUS "Test Summary:")
-message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command, vcs, display_task, stlio")
+message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command, vcs, display_task, stlio, reciprocal_polynomial")
 if(LAPACK_FOUND)
     message(STATUS "  LAPACK tests: eigensystem, svdecomp")
 else()
