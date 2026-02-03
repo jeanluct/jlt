@@ -25,8 +25,12 @@ add_executable(test_mathvector test_mathvector.cpp)
 target_link_libraries(test_mathvector catch2)
 add_test(NAME test_mathvector COMMAND test_mathvector)
 
+# Mathematical matrix tests
+add_executable(test_mathmatrix test_mathmatrix.cpp)
+target_link_libraries(test_mathmatrix catch2)
+add_test(NAME test_mathmatrix COMMAND test_mathmatrix)
+
 # TODO: Add more tests as they are written:
-# - test_mathmatrix.cpp (mathematical matrix with LAPACK)
 # - test_polynomial.cpp (polynomial class)
 # - test_eigensystem.cpp (eigenvalue computation - requires LAPACK)
 # - test_svdecomp.cpp (SVD - requires LAPACK)
