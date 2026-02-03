@@ -335,18 +335,18 @@ public:
       unsigned int n = rows();
 
       int perm;
-      int* row_index = new int[n];
+      std::vector<int> row_index(n);
 
-      LUdecomp<T,mathmatrix<T,S>>(*this, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(*this, row_index.data(), &perm);
 
-      T* col = new T[n];
+      std::vector<T> col(n);
       mathmatrix<T,S> Ainv(n,n);
 
       for (unsigned int j = 0; j < n; ++j)
 	{
 	  for (unsigned int i = 0; i < n; ++i) col[i] = 0.;
 	  col[j] = 1.;
-	  LUbacksub<T,mathmatrix<T,S>>(*this, row_index, col);
+	  LUbacksub<T,mathmatrix<T,S>>(*this, row_index.data(), col.data());
 	  for (unsigned int i = 0; i < n; ++i) Ainv(i,j) = col[i];
 	}
 
@@ -354,9 +354,6 @@ public:
       auto j = begin();
       auto i = Ainv.cbegin();
       while (j != end()) *j++ = *i++;
-
-      delete[] col;
-      delete[] row_index;
     }
 
   // Replaces matrix Ainv by inverse, detroying *this.
@@ -368,22 +365,19 @@ public:
       unsigned int n = rows();
 
       int perm;
-      int* row_index = new int[n];
+      std::vector<int> row_index(n);
 
-      LUdecomp<T,mathmatrix<T,S>>(*this, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(*this, row_index.data(), &perm);
 
-      T* col = new T[n];
+      std::vector<T> col(n);
 
       for (unsigned int j = 0; j < n; ++j)
 	{
 	  for (unsigned int i = 0; i < n; ++i) col[i] = 0.;
 	  col[j] = 1.;
-	  LUbacksub<T,mathmatrix<T,S>>(*this, row_index, col);
+	  LUbacksub<T,mathmatrix<T,S>>(*this, row_index.data(), col.data());
 	  for (unsigned int i = 0; i < n; ++i) Ainv(i,j) = col[i];
 	}
-
-      delete[] col;
-      delete[] row_index;
     }
 
   // Does not alter matrix.
@@ -393,25 +387,22 @@ public:
       unsigned int n = rows();
 
       int perm;
-      int* row_index = new int[n];
+      std::vector<int> row_index(n);
 
       mathmatrix<T,S> A_LU(*this);
 
-      LUdecomp<T,mathmatrix<T,S>>(A_LU, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(A_LU, row_index.data(), &perm);
 
-      T* col = new T[n];
+      std::vector<T> col(n);
       mathmatrix<T,S> Ainv(n,n);
 
       for (unsigned int j = 0; j < n; ++j)
 	{
 	  for (unsigned int i = 0; i < n; ++i) col[i] = 0.;
 	  col[j] = 1.;
-	  LUbacksub<T,mathmatrix<T,S>>(A_LU, row_index, col);
+	  LUbacksub<T,mathmatrix<T,S>>(A_LU, row_index.data(), col.data());
 	  for (unsigned int i = 0; i < n; ++i) Ainv(i,j) = col[i];
 	}
-
-      delete[] col;
-      delete[] row_index;
 
       return Ainv;
     }
@@ -424,24 +415,21 @@ public:
       unsigned int n = rows();
 
       int perm;
-      int* row_index = new int[n];
+      std::vector<int> row_index(n);
 
       mathmatrix<T,S> A_LU(*this);
 
-      LUdecomp<T,mathmatrix<T,S>>(A_LU, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(A_LU, row_index.data(), &perm);
 
-      T* col = new T[n];
+      std::vector<T> col(n);
 
       for (unsigned int j = 0; j < n; ++j)
 	{
 	  for (unsigned int i = 0; i < n; ++i) col[i] = 0.;
 	  col[j] = 1.;
-	  LUbacksub<T,mathmatrix<T,S>>(A_LU, row_index, col);
+	  LUbacksub<T,mathmatrix<T,S>>(A_LU, row_index.data(), col.data());
 	  for (unsigned int i = 0; i < n; ++i) Ainv(i,j) = col[i];
 	}
-
-      delete[] col;
-      delete[] row_index;
 
       return Ainv;
     }
@@ -456,12 +444,12 @@ public:
 
       T det = 1;
       int perm;
-      int* row_index = new int[columns()];
+      std::vector<int> row_index(columns());
 
       // The price to pay to leave the object intact is creating a temporary.
       mathmatrix<T,S> A_LU(*this);
 
-      LUdecomp<T,mathmatrix<T,S>>(A_LU, row_index, &perm);
+      LUdecomp<T,mathmatrix<T,S>>(A_LU, row_index.data(), &perm);
 
       for (size_type i = 0; i < columns(); ++i) det *= A_LU(i,i);
 

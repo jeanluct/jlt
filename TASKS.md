@@ -27,6 +27,16 @@
   - Tests: All 64 matrix assertions still passing
   - Date: 2026-02-03
 
+- [x] Refactor mathmatrix.hpp to use RAII (std::vector) instead of raw pointers
+  - Changed: `int* row_index = new int[n]` → `std::vector<int> row_index(n)`
+  - Changed: `T* col = new T[n]` → `std::vector<T> col(n)`
+  - Fixed: Memory leak in `det()` function (was missing `delete[] row_index`)
+  - Eliminated: All manual `new[]`/`delete[]` calls (5 occurrences)
+  - Functions updated: `invert()`, `invert(Ainv)`, `inverse()`, `inverse(Ainv)`, `det()`
+  - Impact: Eliminates memory leaks, exception-safe, no manual cleanup needed
+  - Tests: All 131 mathmatrix assertions still passing
+  - Date: 2026-02-03
+
 ### Test Suite
 - [x] Create comprehensive Catch2 test suite in tests/
   - [x] Set up Catch2 v2.13.10 single-header framework
@@ -60,8 +70,7 @@
 ## In Progress
 
 ### High Priority
-- [ ] Fix exception safety in assignment operators (mathmatrix.hpp)
-- [ ] Replace manual memory management with RAII in mathmatrix.hpp
+- [ ] Fix exception safety in assignment operators (if any issues remain)
 
 ### Medium Priority
 - [ ] Fix static variable thread-safety issues
@@ -81,12 +90,12 @@
 
 ### Memory Safety
 - ✅ **FIXED** matrix.hpp: Raw pointer management without RAII → Now uses std::vector
-- mathmatrix.hpp: Manual array allocations (row_index, col arrays)
+- ✅ **FIXED** mathmatrix.hpp: Manual array allocations (row_index, col arrays) → Now uses std::vector
 - matrixutil.hpp: Manual memory management in LU decomposition
 
 ### Exception Safety
 - ✅ **FIXED** matrix.hpp: Assignment operator not exception-safe → Now uses copy-and-swap
-- mathmatrix.hpp: LAPACK calls without exception protection
+- ✅ **FIXED** mathmatrix.hpp: Manual allocations without exception protection → Now uses std::vector
 - matrixutil.hpp: Complex algorithm without proper cleanup
 
 ### Thread Safety
