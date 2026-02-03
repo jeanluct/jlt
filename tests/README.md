@@ -54,13 +54,14 @@ g++ -std=c++11 -I.. test_vector.cpp catch_main.cpp -o test_vector
 ## Test Coverage
 
 ### Core Tests (No External Dependencies)
-All tests passing - 518 assertions total:
+All tests passing - 561 assertions total:
 
 - [x] **vector.hpp** - 32 assertions covering construction, element access, STL compatibility, and type variations
 - [x] **matrix.hpp** - 83 assertions covering construction, element access, assignment, iterators, row extraction, and move semantics
 - [x] **mathvector.hpp** - 81 assertions covering mathematical operations, dot/cross products, magnitudes, and complex numbers
 - [x] **mathmatrix.hpp** - 90+ assertions covering matrix operations, multiplication, inverse, determinant, trace, and identity operations
 - [x] **polynomial.hpp** - 88 assertions covering construction, coefficient access, arithmetic, evaluation, differentiation, and I/O
+- [x] **stlio.hpp** - 46 assertions covering STL container output formatting (vector, valarray, list, map) and input
 - [x] **display_task.hpp** - 43 assertions covering task display with begin/end, log levels, scoped tasks, and output formatting
 - [x] **vcs.hpp** - 29 assertions covering Git/Mercurial detection, SVN keyword extraction, VCS revision/date extraction
 - [x] **command.hpp** - 24 assertions covering Unix command execution and output capture
@@ -94,14 +95,15 @@ test_math:          53 assertions - ALL PASSED
 test_command:       24 assertions - ALL PASSED
 test_vcs:           29 assertions - ALL PASSED
 test_display_task:  43 assertions - ALL PASSED
+test_stlio:         46 assertions - ALL PASSED
 --------------------------------------------------
-Core Total:        561 assertions - ALL PASSED
+Core Total:        607 assertions - ALL PASSED
 
 LAPACK Tests (if available):
 test_eigensystem:   20 assertions - ALL PASSED
 test_svdecomp:      40 assertions - ALL PASSED
 --------------------------------------------------
-Grand Total:       679+ assertions - ALL PASSED
+Grand Total:       725+ assertions - ALL PASSED
 ```
 
 ## Installing LAPACK (Optional)

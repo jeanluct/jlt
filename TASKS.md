@@ -74,6 +74,11 @@
   - Tests log levels (error, warn, info, debug)
   - Tests scoped_task RAII guard
   - Tests muted behavior and custom status
+- [x] Write test_stlio.cpp (46 assertions - all passing)
+  - Tests STL container output (vector, valarray, list, map)
+  - Tests formatted output with field width and separators
+  - Tests scientific notation handling
+  - Tests input operator for vectors
   - [x] Write test_exceptions.cpp (43 assertions - all passing)
   - [x] Create CMakeLists.txt with ctest support
   - [x] Add README.md documenting test structure
@@ -91,8 +96,8 @@
   - Uses `find_package(LAPACK)` - tests only built if LAPACK found
   - Tests tagged with "lapack" label for filtering
 
-**Test Coverage: 679+ assertions across 13 test suites - ALL PASSING**
-- 11 core test suites: 614 assertions (no external dependencies)
+**Test Coverage: 725+ assertions across 14 test suites - ALL PASSING**
+- 12 core test suites: 660 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 
 ## In Progress
@@ -144,7 +149,7 @@
 - Remove pre-C++11 compatibility code
 
 ### Testing
-- Increase code coverage to >90% (currently: 13 test suites, 679+ assertions)
+- Increase code coverage to >90% (currently: 14 test suites, 725+ assertions)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
@@ -163,11 +168,11 @@ The following components in `jlt/` still need test coverage:
 ### Core Components (No External Dependencies)
 - [x] **command.hpp** - Unix command execution wrapper ✅ **COMPLETED** - 24 assertions
 - [x] **math.hpp** - Mathematical utility functions (Mod, Sign) ✅ **COMPLETED** - 53 assertions
+- [x] **stlio.hpp** - STL container I/O printing ✅ **COMPLETED** - 46 assertions
 - [x] **display_task.hpp** - Task display utilities ✅ **COMPLETED** - 43 assertions
 - [x] **vcs.hpp** - Version control system info extraction ✅ **COMPLETED** - 29 assertions
 - [ ] **finitediff.hpp** - Finite difference calculations
 - [ ] **reciprocal_polynomial.hpp** - Monic reciprocal polynomial operations
-- [ ] **stlio.hpp** - STL container I/O printing
 
 ### External Dependency Tests (Optional)
 These tests would only be built if the respective libraries are found:
