@@ -120,6 +120,61 @@ TEST_CASE("matrix assignment", "[matrix]") {
         REQUIRE(M(0, 0) == 1);
         REQUIRE(M(1, 1) == 4);
     }
+
+#if __cplusplus > 199711L
+    SECTION("move constructor") {
+        matrix<int> M1(2, 2, {1, 2, 3, 4});
+        matrix<int> M2(std::move(M1));
+        
+        // M2 should have the data
+        REQUIRE(M2.rows() == 2);
+        REQUIRE(M2.columns() == 2);
+        REQUIRE(M2(0, 0) == 1);
+        REQUIRE(M2(1, 1) == 4);
+        
+        // M1 should be empty after move
+        REQUIRE(M1.empty());
+    }
+
+    SECTION("move assignment") {
+        matrix<int> M1(2, 2, {1, 2, 3, 4});
+        matrix<int> M2;
+        M2 = std::move(M1);
+        
+        // M2 should have the data
+        REQUIRE(M2.rows() == 2);
+        REQUIRE(M2.columns() == 2);
+        REQUIRE(M2(0, 0) == 1);
+        REQUIRE(M2(1, 1) == 4);
+        
+        // M1 should be empty after move
+        REQUIRE(M1.empty());
+    }
+
+    SECTION("move assignment to non-empty matrix") {
+        matrix<int> M1(2, 2, {1, 2, 3, 4});
+        matrix<int> M2(3, 3, {5, 6, 7, 8, 9, 10, 11, 12, 13});
+        M2 = std::move(M1);
+        
+        // M2 should have M1's data
+        REQUIRE(M2.rows() == 2);
+        REQUIRE(M2.columns() == 2);
+        REQUIRE(M2(0, 0) == 1);
+        REQUIRE(M2(1, 1) == 4);
+        
+        // M1 should be empty
+        REQUIRE(M1.empty());
+    }
+
+    SECTION("self move assignment") {
+        matrix<int> M(2, 2, {1, 2, 3, 4});
+        M = std::move(M);  // Should be safe (no-op or valid state)
+        REQUIRE(M.rows() == 2);
+        REQUIRE(M.columns() == 2);
+        REQUIRE(M(0, 0) == 1);
+        REQUIRE(M(1, 1) == 4);
+    }
+#endif
 }
 
 TEST_CASE("matrix iterators", "[matrix]") {

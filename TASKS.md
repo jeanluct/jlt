@@ -48,7 +48,9 @@
 - [x] Create comprehensive Catch2 test suite in tests/
   - [x] Set up Catch2 v2.13.10 single-header framework
   - [x] Write test_vector.cpp (32 assertions - all passing)
-  - [x] Write test_matrix.cpp (64 assertions - all passing)
+  - [x] Write test_matrix.cpp (83 assertions - all passing)
+    - Added: Move semantics tests (move constructor, move assignment, self-move)
+    - Tests verify C++11 move operations work correctly with std::vector storage
   - [x] Write test_mathvector.cpp (81 assertions - all passing)
   - [x] Write test_mathmatrix.cpp (90+ assertions - all passing)
   - [x] Write test_polynomial.cpp (88 assertions - all passing)
@@ -70,8 +72,8 @@
   - Uses `find_package(LAPACK)` - tests only built if LAPACK found
   - Tests tagged with "lapack" label for filtering
 
-**Test Coverage: 506+ assertions across 9 test suites - ALL PASSING**
-- 7 core test suites: 446 assertions (no external dependencies)
+**Test Coverage: 525+ assertions across 9 test suites - ALL PASSING**
+- 7 core test suites: 465 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 
 ## In Progress
@@ -123,7 +125,7 @@
 - Remove pre-C++11 compatibility code
 
 ### Testing
-- Increase code coverage to >90% (currently: 9 test suites, 506+ assertions)
+- Increase code coverage to >90% (currently: 9 test suites, 525+ assertions)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
@@ -199,11 +201,11 @@ These may require verifying/fixing jlt code behavior:
 
 ### Medium Priority Test Additions
 
-- [ ] **test_matrix.hpp improvements:**
-  - Test column access (if available in the API)
-  - Test move constructor and move assignment
-  - Test column iterators (if they exist)
-  - Add more `at()` bounds checking tests for both dimensions
+- [x] **test_matrix.hpp improvements:**
+  - ✅ **COMPLETED** Test move constructor and move assignment (19 new assertions added)
+  - [ ] Test column access (if available in the API)
+  - [ ] Test column iterators (if they exist)
+  - [ ] Add more `at()` bounds checking tests for both dimensions
   
 - [ ] **test_polynomial.hpp improvements:**
   - Test polynomial evaluation at specific points (`p(x)`)

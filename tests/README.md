@@ -57,7 +57,7 @@ g++ -std=c++11 -I.. test_vector.cpp catch_main.cpp -o test_vector
 All tests passing - 446 assertions total:
 
 - [x] **vector.hpp** - 32 assertions covering construction, element access, STL compatibility, and type variations
-- [x] **matrix.hpp** - 64 assertions covering construction, element access, assignment, iterators, and row extraction
+- [x] **matrix.hpp** - 83 assertions covering construction, element access, assignment, iterators, row extraction, and move semantics
 - [x] **mathvector.hpp** - 81 assertions covering mathematical operations, dot/cross products, magnitudes, and complex numbers
 - [x] **mathmatrix.hpp** - 90+ assertions covering matrix operations, multiplication, inverse, determinant, trace, and identity operations
 - [x] **polynomial.hpp** - 88 assertions covering construction, coefficient access, arithmetic, evaluation, differentiation, and I/O
@@ -80,7 +80,7 @@ These tests are only built if LAPACK is found on your system:
 ### Test Results Summary
 ```
 test_vector:        32 assertions - ALL PASSED
-test_matrix:        64 assertions - ALL PASSED
+test_matrix:        83 assertions - ALL PASSED
 test_mathvector:    81 assertions - ALL PASSED
 test_mathmatrix:    90+ assertions - ALL PASSED
 test_polynomial:    88 assertions - ALL PASSED
@@ -93,7 +93,7 @@ LAPACK Tests (if available):
 test_eigensystem:   20 assertions - ALL PASSED
 test_svdecomp:      40 assertions - ALL PASSED
 --------------------------------------------------
-Grand Total:       506+ assertions - ALL PASSED
+Grand Total:       525+ assertions - ALL PASSED
 ```
 
 ## Installing LAPACK (Optional)
