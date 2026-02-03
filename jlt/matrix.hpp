@@ -248,7 +248,7 @@ public:
       if (i >= m)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
-      return std::vector<T>(start + n*i,start + n*i + m);
+      return std::vector<T>(start + n*i,start + n*i + n);
     }
 
   // size() returns the total number of elements.
