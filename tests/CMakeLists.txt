@@ -108,6 +108,55 @@ if(LAPACK_FOUND)
     set_tests_properties(test_svdecomp PROPERTIES LABELS "lapack")
 endif()
 
+# Find Matlab (optional - tests will only be built if Matlab is found)
+# Look for Matlab in common installation paths
+set(MATLAB_ROOT "/usr/local/MATLAB/R2025a" CACHE PATH "Matlab installation directory")
+find_path(MATLAB_INCLUDE_DIR mat.h
+    PATHS ${MATLAB_ROOT}/extern/include
+          /usr/local/MATLAB/*/extern/include
+          /opt/MATLAB/*/extern/include
+    DOC "Matlab include directory"
+)
+find_library(MATLAB_MAT_LIBRARY mat
+    PATHS ${MATLAB_ROOT}/bin/glnxa64
+          /usr/local/MATLAB/*/bin/glnxa64
+          /opt/MATLAB/*/bin/glnxa64
+    DOC "Matlab MAT library"
+)
+find_library(MATLAB_MX_LIBRARY mx
+    PATHS ${MATLAB_ROOT}/bin/glnxa64
+          /usr/local/MATLAB/*/bin/glnxa64
+          /opt/MATLAB/*/bin/glnxa64
+    DOC "Matlab MX library"
+)
+find_library(MATLAB_ENG_LIBRARY eng
+    PATHS ${MATLAB_ROOT}/bin/glnxa64
+          /usr/local/MATLAB/*/bin/glnxa64
+          /opt/MATLAB/*/bin/glnxa64
+    DOC "Matlab ENG library"
+)
+
+if(MATLAB_INCLUDE_DIR AND MATLAB_MAT_LIBRARY AND MATLAB_MX_LIBRARY)
+    set(MATLAB_FOUND TRUE)
+    set(MATLAB_LIBRARIES ${MATLAB_MAT_LIBRARY} ${MATLAB_MX_LIBRARY} ${MATLAB_ENG_LIBRARY})
+    message(STATUS "Matlab found - building Matlab binary format tests")
+    message(STATUS "  Include: ${MATLAB_INCLUDE_DIR}")
+    message(STATUS "  Libraries: ${MATLAB_LIBRARIES}")
+else()
+    set(MATLAB_FOUND FALSE)
+    message(STATUS "Matlab not found - skipping Matlab binary format tests")
+endif()
+
+# Matlab binary format tests (only if Matlab libraries are found)
+if(MATLAB_FOUND)
+    add_executable(test_matlab_lib test_matlab_lib.cpp)
+    target_include_directories(test_matlab_lib PRIVATE ${MATLAB_INCLUDE_DIR})
+    target_link_libraries(test_matlab_lib catch2 ${MATLAB_LIBRARIES})
+    target_compile_definitions(test_matlab_lib PRIVATE JLT_MATLAB_LIB_SUPPORT)
+    add_test(NAME test_matlab_lib COMMAND test_matlab_lib)
+    set_tests_properties(test_matlab_lib PROPERTIES LABELS "matlab")
+endif()
+
 # Enable CTest
 enable_testing()
 
@@ -119,5 +168,10 @@ if(LAPACK_FOUND)
     message(STATUS "  LAPACK tests: eigensystem, svdecomp")
 else()
     message(STATUS "  LAPACK tests: SKIPPED (LAPACK not found)")
+endif()
+if(MATLAB_FOUND)
+    message(STATUS "  Matlab tests: test_matlab_lib")
+else()
+    message(STATUS "  Matlab tests: SKIPPED (Matlab not found)")
 endif()
 message(STATUS "")

@@ -113,9 +113,24 @@
   - Uses `find_package(LAPACK)` - tests only built if LAPACK found
   - Tests tagged with "lapack" label for filtering
 
-**Test Coverage: 963+ assertions across 17 test suites - ALL PASSING**
+### Matlab-dependent Tests (optional)
+- [x] Write test_matlab_lib.cpp (requires Matlab libraries)
+  - Tests: Binary MAT-file output for double, string, vector, matrix
+  - Tests: Reading back written data and verifying correctness
+  - Tests: Multiple variables in single MAT file
+  - Tests: Empty matrix handling
+  - File: tests/test_matlab_lib.cpp
+  - Tag: [matlab]
+- [x] Update CMakeLists.txt with Matlab detection
+  - Searches in /usr/local/MATLAB/*/ and /opt/MATLAB/*/
+  - Requires: mat.h header and libmat, libmx, libeng libraries
+  - Defines JLT_MATLAB_LIB_SUPPORT when building
+  - Tests tagged with "matlab" label for filtering
+
+**Test Coverage: 1024+ assertions across 18 test suites - ALL PASSING**
 - 15 core test suites: 903 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
+- 1 Matlab test suite: 61 assertions (built conditionally if Matlab found)
 
 ## In Progress
 
@@ -199,7 +214,7 @@ These tests would only be built if the respective libraries are found:
   - Note: Binary MAT-file mode requires Matlab libraries (`-leng -lmat -lmex -lut -lmx`)
   - Compile flag: `JLT_MATLAB_LIB_SUPPORT` enables binary mode
 
-- [ ] **matlab.hpp** - Binary MAT-file export (requires Matlab libraries)
+- [x] **matlab.hpp** - Binary MAT-file export (requires Matlab libraries) ✅ **COMPLETED** - 61 assertions
   - Requires: Matlab libraries (`-leng -lmat -lmex -lut -lmx`)
   - Compile flag: `JLT_MATLAB_LIB_SUPPORT`
   - Note: Requires Matlab installation
