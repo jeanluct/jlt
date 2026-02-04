@@ -9,11 +9,13 @@ This is **jlt** - a C++ header-only library of numerical utility functions. All 
 ### Primary Testing (Catch2 + CMake)
 The `tests/` directory contains the main test suite using Catch2 v2.13.10.
 
+**IMPORTANT:** All test commands must be run from the `tests/build/` directory:
+
 ```bash
 # Build all tests
 cd tests && mkdir -p build && cd build && cmake .. && make
 
-# Run all tests
+# Run all tests (from tests/build/ directory)
 ctest
 
 # Run only non-LAPACK tests (works on any system)
@@ -22,7 +24,7 @@ ctest -E lapack
 # Run only LAPACK tests (requires LAPACK/BLAS)
 ctest -R lapack
 
-# Run a specific test executable
+# Run a specific test executable (from tests/build/ directory)
 ./test_vector
 
 # Run a single test case by tag
@@ -38,6 +40,8 @@ ctest -R lapack
 # Run with verbose output
 ./test_vector -s
 ```
+
+**Note:** The test executables are located in `tests/build/` and will not be found if you run from the repository root or tests/ directory.
 
 ### Legacy Testing (SCons)
 The `examples/` directory contains older tests using SCons build system.
