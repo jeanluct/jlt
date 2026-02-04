@@ -105,7 +105,7 @@ public:
   // Test for equality of two reciprocal polynomials.
   bool operator==(const reciprocal_polynomial<T,P>& p) const
   {
-    return (a == p.a);
+    return (n == p.n && a == p.a) ;
   }
 
   // Test for inequality of two reciprocal polynomials.

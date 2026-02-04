@@ -285,3 +285,59 @@ TEST_CASE("reciprocal_polynomial edge cases", "[reciprocal_polynomial]") {
         REQUIRE(p[2] == p[18]);
     }
 }
+
+TEST_CASE("reciprocal_polynomial equality comparison", "[reciprocal_polynomial]") {
+    SECTION("Same degree and coefficients are equal") {
+        reciprocal_polynomial<double> p1(4);
+        p1[1] = 2.0;
+        p1[2] = 3.0;
+
+        reciprocal_polynomial<double> p2(4);
+        p2[1] = 2.0;
+        p2[2] = 3.0;
+
+        REQUIRE(p1 == p2);
+        REQUIRE_FALSE(p1 != p2);
+    }
+
+    SECTION("Same degree but different coefficients are not equal") {
+        reciprocal_polynomial<double> p1(4);
+        p1[1] = 2.0;
+        p1[2] = 3.0;
+
+        reciprocal_polynomial<double> p2(4);
+        p2[1] = 5.0;  // Different
+        p2[2] = 3.0;
+
+        REQUIRE_FALSE(p1 == p2);
+        REQUIRE(p1 != p2);
+    }
+
+    SECTION("Different degree with same coefficients are not equal") {
+        // p1(x) = 1 (degree 0)
+        // a is empty for both, but degrees differ
+        reciprocal_polynomial<double> p1(0);  // P(x) = 1
+        reciprocal_polynomial<double> p2(1);  // P(x) = 1 + x
+
+        // Both have empty 'a' vector (only fixed coefficients)
+        REQUIRE_FALSE(p1 == p2);
+        REQUIRE(p1 != p2);
+    }
+
+    SECTION("Different degrees with same non-empty coefficients") {
+        // p1(x) = 1 + 2x + 2x^2 + x^3 (degree 3)
+        reciprocal_polynomial<double> p1(3);
+        p1[1] = 2.0;
+
+        // p2(x) = 1 + 2x + 2x^2 + x^3 + 2x^4 + 2x^5 + x^6 (degree 6)
+        reciprocal_polynomial<double> p2(6);
+        p2[1] = 2.0;
+        p2[2] = 2.0;
+        p2[3] = 2.0;
+        p2[4] = 2.0;
+
+        // Same coefficient at index 1, but different degrees
+        REQUIRE_FALSE(p1 == p2);
+        REQUIRE(p1 != p2);
+    }
+}
