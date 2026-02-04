@@ -91,6 +91,11 @@
     - Tests full differentiation functions (finitediff1, finitediff2, finitediff4)
     - Tests error estimation for 2nd and 4th order methods
     - Tests edge cases and different data types
+  - [x] Write test_matlab.cpp (42 assertions - all passing)
+    - Tests text mode output (no Matlab libraries required)
+    - Tests printMatlabForm for double, string, vector, and matrix types
+    - Tests description output and edge cases
+    - Tests chained output operations
   - [x] Write test_exceptions.cpp (43 assertions - all passing)
   - [x] Create CMakeLists.txt with ctest support
   - [x] Add README.md documenting test structure
@@ -108,8 +113,8 @@
   - Uses `find_package(LAPACK)` - tests only built if LAPACK found
   - Tests tagged with "lapack" label for filtering
 
-**Test Coverage: 921+ assertions across 16 test suites - ALL PASSING**
-- 14 core test suites: 861 assertions (no external dependencies)
+**Test Coverage: 963+ assertions across 17 test suites - ALL PASSING**
+- 15 core test suites: 903 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 
 ## In Progress
@@ -189,7 +194,12 @@ The following components in `jlt/` still need test coverage:
 ### External Dependency Tests (Optional)
 These tests would only be built if the respective libraries are found:
 
-- [ ] **matlab.hpp** - Matlab MAT-file format export
+- [x] **matlab.hpp** - Matlab output format (text mode) ✅ **COMPLETED** - 42 assertions
+  - Tests text mode output (default, no external libraries required)
+  - Note: Binary MAT-file mode requires Matlab libraries (`-leng -lmat -lmex -lut -lmx`)
+  - Compile flag: `JLT_MATLAB_LIB_SUPPORT` enables binary mode
+
+- [ ] **matlab.hpp** - Binary MAT-file export (requires Matlab libraries)
   - Requires: Matlab libraries (`-leng -lmat -lmex -lut -lmx`)
   - Compile flag: `JLT_MATLAB_LIB_SUPPORT`
   - Note: Requires Matlab installation
