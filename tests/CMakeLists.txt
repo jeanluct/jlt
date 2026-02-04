@@ -83,6 +83,11 @@ add_executable(test_reciprocal_polynomial test_reciprocal_polynomial.cpp)
 target_link_libraries(test_reciprocal_polynomial catch2)
 add_test(NAME test_reciprocal_polynomial COMMAND test_reciprocal_polynomial)
 
+# Finite difference tests
+add_executable(test_finitediff test_finitediff.cpp)
+target_link_libraries(test_finitediff catch2)
+add_test(NAME test_finitediff COMMAND test_finitediff)
+
 # LAPACK-dependent tests (only if LAPACK is found)
 if(LAPACK_FOUND)
     # Eigensystem tests (eigenvalue/eigenvector decomposition)
@@ -90,7 +95,7 @@ if(LAPACK_FOUND)
     target_link_libraries(test_eigensystem catch2 ${LAPACK_LIBRARIES})
     add_test(NAME test_eigensystem COMMAND test_eigensystem)
     set_tests_properties(test_eigensystem PROPERTIES LABELS "lapack")
-    
+
     # SVD tests (singular value decomposition)
     add_executable(test_svdecomp test_svdecomp.cpp)
     target_link_libraries(test_svdecomp catch2 ${LAPACK_LIBRARIES})
@@ -104,7 +109,7 @@ enable_testing()
 # Print summary
 message(STATUS "")
 message(STATUS "Test Summary:")
-message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command, vcs, display_task, stlio, reciprocal_polynomial")
+message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command, vcs, display_task, stlio, reciprocal_polynomial, finitediff")
 if(LAPACK_FOUND)
     message(STATUS "  LAPACK tests: eigensystem, svdecomp")
 else()

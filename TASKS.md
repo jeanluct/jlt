@@ -79,12 +79,18 @@
   - Tests formatted output with field width and separators
   - Tests scientific notation handling
   - Tests input operator for vectors
-- [x] Write test_reciprocal_polynomial.cpp (59 assertions - all passing)
-  - Tests reciprocal polynomial construction from degree and from polynomial
-  - Tests coefficient access and symmetry property
-  - Tests evaluation and conversion to regular polynomial
-  - Tests derivative calculation
-  - Tests reciprocal property: P(x) = x^n * P(1/x)
+  - [x] Write test_reciprocal_polynomial.cpp (59 assertions - all passing)
+    - Tests reciprocal polynomial construction from degree and from polynomial
+    - Tests coefficient access and symmetry property
+    - Tests evaluation and conversion to regular polynomial
+    - Tests derivative calculation
+    - Tests reciprocal property: P(x) = x^n * P(1/x)
+  - [x] Write test_finitediff.cpp (137 assertions - all passing)
+    - Tests finite difference stencils (1st-4th order, forward/backward/central)
+    - Tests equal and unequal spacing
+    - Tests full differentiation functions (finitediff1, finitediff2, finitediff4)
+    - Tests error estimation for 2nd and 4th order methods
+    - Tests edge cases and different data types
   - [x] Write test_exceptions.cpp (43 assertions - all passing)
   - [x] Create CMakeLists.txt with ctest support
   - [x] Add README.md documenting test structure
@@ -102,8 +108,8 @@
   - Uses `find_package(LAPACK)` - tests only built if LAPACK found
   - Tests tagged with "lapack" label for filtering
 
-**Test Coverage: 784+ assertions across 15 test suites - ALL PASSING**
-- 13 core test suites: 724 assertions (no external dependencies)
+**Test Coverage: 921+ assertions across 16 test suites - ALL PASSING**
+- 14 core test suites: 861 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 
 ## In Progress
@@ -178,7 +184,7 @@ The following components in `jlt/` still need test coverage:
 - [x] **stlio.hpp** - STL container I/O printing ✅ **COMPLETED** - 46 assertions
 - [x] **display_task.hpp** - Task display utilities ✅ **COMPLETED** - 43 assertions
 - [x] **vcs.hpp** - Version control system info extraction ✅ **COMPLETED** - 29 assertions
-- [ ] **finitediff.hpp** - Finite difference calculations
+- [x] **finitediff.hpp** - Finite difference calculations ✅ **COMPLETED** - 137 assertions
 
 ### External Dependency Tests (Optional)
 These tests would only be built if the respective libraries are found:
@@ -187,11 +193,11 @@ These tests would only be built if the respective libraries are found:
   - Requires: Matlab libraries (`-leng -lmat -lmex -lut -lmx`)
   - Compile flag: `JLT_MATLAB_LIB_SUPPORT`
   - Note: Requires Matlab installation
-  
+
 - [ ] **csparse.hpp** - CSparse sparse matrix library interface
   - Requires: CSparse library (`-lcsparse`)
   - Note: Wrapper for Timothy A. Davis's CSparse library
-  
+
 - [ ] **tictoc.hpp** - Timing utilities
   - Requires: Boost timer library (`-lboost_timer`)
   - Note: Uses `boost::timer::cpu_timer`
@@ -211,12 +217,12 @@ These may require verifying/fixing jlt code behavior:
   - Test `at()` with bounds checking enabled (`VECTOR_CHECK_BOUNDS`)
   - Test size mismatch operations (should they throw?)
   - Verify exception messages in `at()` out-of-range throws
-  
+
 - [ ] **test_mathvector.hpp improvements:**
   - Test zero division in `operator/=` (verify behavior)
   - Test operations with vectors of different sizes (should throw exception)
   - Add normalization/unit vector tests (verify `normalize()` exists and works)
-  
+
 - [ ] **test_mathmatrix.hpp improvements:**
   - Test matrix-vector multiplication
   - Test invalid operations (multiplying incompatible sizes - should throw)
@@ -237,7 +243,7 @@ These may require verifying/fixing jlt code behavior:
   - [ ] Test column access (if available in the API)
   - [ ] Test column iterators (if they exist)
   - [ ] Add more `at()` bounds checking tests for both dimensions
-  
+
 - [ ] **test_polynomial.hpp improvements:**
   - Test polynomial evaluation at specific points (`p(x)`)
   - Test `printFancy()` output format (verify format matches expected)
@@ -249,7 +255,7 @@ These may require verifying/fixing jlt code behavior:
   - Add tests for larger matrices (5x5, 10x10)
   - Add tests for ill-conditioned matrices
   - Test repeated eigenvalues
-  
+
 - [ ] **test_svdecomp.hpp improvements (LAPACK):**
   - Add tests for near-singular matrices
   - Test very large condition numbers
