@@ -22,3 +22,5 @@ matlab/interpline_helper.mex*
 *.snm
 *.synctex.gz
 *.toc
+# CTest generated files
+Testing/
