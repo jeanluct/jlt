@@ -145,12 +145,15 @@
 - [ ] Refactor code duplication in mathvector.hpp cross product
 - [ ] Optimize matrix multiplication algorithms
 - [ ] Set up automated linting/formatting (clang-format, clang-tidy)
+- [ ] Replace auto_ptr with unique_ptr in csparse.hpp (deprecated in C++11)
 
 ### Low Priority
 - [ ] Update to C++17 features (remove C++98 compatibility code)
 - [ ] Add comprehensive documentation
 - [ ] Consider header-only implementation
 - [ ] Set up CI/CD pipeline for automated testing
+- [ ] Implement expression templates for lazy matrix evaluation
+- [ ] Add proper header guards to lapack.h interface
 
 ## Known Issues (Documented)
 
@@ -171,7 +174,14 @@
 ### Performance
 - mathmatrix.hpp: Naïve O(n³) matrix multiplication
 - mathmatrix.hpp: Temporary matrix creation in arithmetic operations
-- matrixutil.hpp: Inefficient classical Gram-Schmidt
+- matrixutil.hpp: Inefficient classical Gram-Schmidt (should use modified algorithm)
+
+### Bug Fixes Needed
+- mathmatrix.hpp: Wrong matrix dimension checks in invert() (lines 367 - should check rows()/columns(), not private m/n)
+- csparse.hpp: Uses deprecated std::auto_ptr (C++98), should use std::unique_ptr
+- lapack.h: Missing C++ header guards
+- matrix.hpp: Constructor exception safety (lines 118-121, 150-153) - need try-catch for uninitialized_copy
+- mathmatrix.hpp: LAPACK calls without exception protection (lines 332-360)
 
 ## Future Improvements
 
@@ -182,7 +192,7 @@
 - Remove pre-C++11 compatibility code
 
 ### Testing
-- Increase code coverage to >90% (currently: 15 test suites, 784+ assertions)
+- Increase code coverage to >90% (currently: 18 test suites, 1040+ assertions)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
