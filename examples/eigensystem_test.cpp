@@ -87,7 +87,7 @@ int main()
   Uc(2,0) = std::complex<double>(1,-1);
   Uc(2,1) = -i;
   Uc(2,2) = 1;
- 
+
   cout << "\n\nComplex nonsymmetric matrix M =\n";
   Uc.printMatrixForm(cout);
 
