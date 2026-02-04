@@ -109,83 +109,30 @@ if(LAPACK_FOUND)
 endif()
 
 # Find Matlab (optional - tests will only be built if Matlab is found)
-# Search for Matlab in versioned directories under /usr/local/MATLAB or /opt/MATLAB
-
-# First, try to find any installed Matlab version by looking for version directories
-file(GLOB MATLAB_VERSION_DIRS
-    "/usr/local/MATLAB/R*"
-    "/opt/MATLAB/R*"
+# Uses wildcards to find any Matlab version under standard installation paths
+find_path(MATLAB_INCLUDE_DIR mat.h
+    PATHS /usr/local/MATLAB/*/extern/include
+          /opt/MATLAB/*/extern/include
+    DOC "Matlab include directory"
 )
 
-# Sort to get the latest version (e.g., R2025a, R2024b, etc.)
-list(SORT MATLAB_VERSION_DIRS)
-list(REVERSE MATLAB_VERSION_DIRS)
+find_library(MATLAB_MAT_LIBRARY mat
+    PATHS /usr/local/MATLAB/*/bin/glnxa64
+          /opt/MATLAB/*/bin/glnxa64
+    DOC "Matlab MAT library"
+)
 
-# Set default MATLAB_ROOT to the first (latest) found version, or empty if none found
-if(MATLAB_VERSION_DIRS)
-    list(GET MATLAB_VERSION_DIRS 0 MATLAB_ROOT_DEFAULT)
-else()
-    set(MATLAB_ROOT_DEFAULT "")
-endif()
+find_library(MATLAB_MX_LIBRARY mx
+    PATHS /usr/local/MATLAB/*/bin/glnxa64
+          /opt/MATLAB/*/bin/glnxa64
+    DOC "Matlab MX library"
+)
 
-set(MATLAB_ROOT ${MATLAB_ROOT_DEFAULT} CACHE PATH "Matlab installation directory")
-
-# If MATLAB_ROOT is set (either from cache or auto-detected), use it
-if(MATLAB_ROOT)
-    find_path(MATLAB_INCLUDE_DIR mat.h
-        PATHS ${MATLAB_ROOT}/extern/include
-        DOC "Matlab include directory"
-        NO_DEFAULT_PATH
-    )
-    find_library(MATLAB_MAT_LIBRARY mat
-        PATHS ${MATLAB_ROOT}/bin/glnxa64
-        DOC "Matlab MAT library"
-        NO_DEFAULT_PATH
-    )
-    find_library(MATLAB_MX_LIBRARY mx
-        PATHS ${MATLAB_ROOT}/bin/glnxa64
-        DOC "Matlab MX library"
-        NO_DEFAULT_PATH
-    )
-    find_library(MATLAB_ENG_LIBRARY eng
-        PATHS ${MATLAB_ROOT}/bin/glnxa64
-        DOC "Matlab ENG library"
-        NO_DEFAULT_PATH
-    )
-endif()
-
-# If not found with specific path, try wildcards as fallback
-if(NOT MATLAB_INCLUDE_DIR)
-    find_path(MATLAB_INCLUDE_DIR mat.h
-        PATHS /usr/local/MATLAB/*/extern/include
-              /opt/MATLAB/*/extern/include
-        DOC "Matlab include directory"
-    )
-endif()
-
-if(NOT MATLAB_MAT_LIBRARY)
-    find_library(MATLAB_MAT_LIBRARY mat
-        PATHS /usr/local/MATLAB/*/bin/glnxa64
-              /opt/MATLAB/*/bin/glnxa64
-        DOC "Matlab MAT library"
-    )
-endif()
-
-if(NOT MATLAB_MX_LIBRARY)
-    find_library(MATLAB_MX_LIBRARY mx
-        PATHS /usr/local/MATLAB/*/bin/glnxa64
-              /opt/MATLAB/*/bin/glnxa64
-        DOC "Matlab MX library"
-    )
-endif()
-
-if(NOT MATLAB_ENG_LIBRARY)
-    find_library(MATLAB_ENG_LIBRARY eng
-        PATHS /usr/local/MATLAB/*/bin/glnxa64
-              /opt/MATLAB/*/bin/glnxa64
-        DOC "Matlab ENG library"
-    )
-endif()
+find_library(MATLAB_ENG_LIBRARY eng
+    PATHS /usr/local/MATLAB/*/bin/glnxa64
+          /opt/MATLAB/*/bin/glnxa64
+    DOC "Matlab ENG library"
+)
 
 if(MATLAB_INCLUDE_DIR AND MATLAB_MAT_LIBRARY AND MATLAB_MX_LIBRARY)
     set(MATLAB_FOUND TRUE)
