@@ -79,12 +79,13 @@
   - Tests formatted output with field width and separators
   - Tests scientific notation handling
   - Tests input operator for vectors
-  - [x] Write test_reciprocal_polynomial.cpp (59 assertions - all passing)
+  - [x] Write test_reciprocal_polynomial.cpp (75 assertions - all passing)
     - Tests reciprocal polynomial construction from degree and from polynomial
     - Tests coefficient access and symmetry property
     - Tests evaluation and conversion to regular polynomial
     - Tests derivative calculation
     - Tests reciprocal property: P(x) = x^n * P(1/x)
+    - Tests equality operator with various degree/coefficient combinations
   - [x] Write test_finitediff.cpp (137 assertions - all passing)
     - Tests finite difference stencils (1st-4th order, forward/backward/central)
     - Tests equal and unequal spacing
@@ -127,8 +128,8 @@
   - Defines JLT_MATLAB_LIB_SUPPORT when building
   - Tests tagged with "matlab" label for filtering
 
-**Test Coverage: 1024+ assertions across 18 test suites - ALL PASSING**
-- 15 core test suites: 903 assertions (no external dependencies)
+**Test Coverage: 1040+ assertions across 18 test suites - ALL PASSING**
+- 15 core test suites: 919 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 - 1 Matlab test suite: 61 assertions (built conditionally if Matlab found)
 
@@ -198,7 +199,7 @@
 The following components in `jlt/` still need test coverage:
 
 ### Core Components (No External Dependencies)
-- [x] **reciprocal_polynomial.hpp** - Monic reciprocal polynomial operations ✅ **COMPLETED** - 59 assertions
+- [x] **reciprocal_polynomial.hpp** - Monic reciprocal polynomial operations ✅ **COMPLETED** - 75 assertions
 - [x] **command.hpp** - Unix command execution wrapper ✅ **COMPLETED** - 24 assertions
 - [x] **math.hpp** - Mathematical utility functions (Mod, Sign) ✅ **COMPLETED** - 53 assertions
 - [x] **stlio.hpp** - STL container I/O printing ✅ **COMPLETED** - 46 assertions
