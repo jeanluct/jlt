@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
@@ -87,7 +87,7 @@ int main()
   Uc(2,0) = std::complex<double>(1,-1);
   Uc(2,1) = -i;
   Uc(2,2) = 1;
- 
+
   cout << "\n\nComplex nonsymmetric matrix M =\n";
   Uc.printMatrixForm(cout);
 

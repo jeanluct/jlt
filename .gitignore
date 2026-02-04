@@ -3,3 +3,24 @@
 matlab/fft2udotgrad_helper.mex*
 matlab/interpk2.mex*
 matlab/interpline_helper.mex*
+# LaTeX debris files
+# Do not globally ignore PDF, since these are often figure files.
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.log
+*.nav
+*.nlo
+*.nls
+*Notes.bib
+*.out
+*.snm
+*.synctex.gz
+*.toc
+# CTest generated files
+Testing/

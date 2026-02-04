@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
@@ -98,8 +98,7 @@ public:
   using size_type = size_t;
 
 private:
-  pointer	start;
-  pointer	finish;
+  std::vector<T> storage;		// Storage for matrix elements
   size_type	m{0}, n{0};		// Number of rows, columns.
 
 public:
@@ -107,55 +106,37 @@ public:
   // Constructors
   //
 
-  matrix() : start(nullptr), finish(nullptr) {}
+  matrix() = default;
 
   // Matrix of size _m*_n filled with _x.
   explicit matrix(size_type _m, size_type _n, const_reference _x = T())
-    : m(_m), n(_n)
-    {
-      size_type mn = m*n;
+    : m(_m), n(_n), storage(_m * _n, _x) {}
 
-      start = new T[mn];
-      finish = start + mn;
-
-      for (iterator i = start; i != finish; ++i) *i = _x;
-    }
-
-  matrix(const matrix<T>& _M) : m(_M.m), n(_M.n)	// Copy constructor.
-    {
-      size_type mn = _M.size();
-
-      start = new T[mn];
-      finish = start + mn;
-
-      iterator j = start;
-      const_iterator i = _M.start;
-      while (j != finish) *j++ = *i++;
-    }
+  matrix(const matrix<T>& _M) = default;	// Copy constructor.
 
 #if __cplusplus > 199711L
   // C++11-style list initialization.
   // example: matrix(3,2,{1,2,3,4,5,6})
   matrix(size_type _m, size_type _n, std::initializer_list<T> _l)
-    : m(_m), n(_n)
+    : m(_m), n(_n), storage(_l)
     {
-      size_type mn = _l.size();
-
-      if (mn != m*n)
+      if (storage.size() != _m * _n)
 	{
 	  JLT_THROW
 	    (std::out_of_range("Out of range exception in jlt::matrix."));
 	}
+    }
 
-      start = new T[mn];
-      finish = start + mn;
-
-      std::uninitialized_copy(_l.begin(),_l.end(),start);
+  // Move constructor
+  matrix(matrix<T>&& _M) noexcept
+    : m(_M.m), n(_M.n), storage(std::move(_M.storage))
+    {
+      _M.m = 0;
+      _M.n = 0;
     }
 #endif
 
-  // Destructor
-  ~matrix() { if (start != nullptr) delete[] start; }
+  // Destructor - not needed, vector handles it
 
   //
   // Element access.
@@ -166,7 +147,7 @@ public:
 #ifdef MATRIX_CHECK_BOUNDS
       return at(i,j);
 #else
-      return *(start + n*i + j);
+      return storage[n*i + j];
 #endif
     }
 
@@ -175,7 +156,7 @@ public:
 #ifdef MATRIX_CHECK_BOUNDS
       return at(i,j);
 #else
-      return *(start + n*i + j);
+      return storage[n*i + j];
 #endif
     }
 
@@ -184,7 +165,7 @@ public:
       if (i >= m || j >= n)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 
-      return *(start + n*i + j);
+      return storage[n*i + j];
     }
 
   [[nodiscard]] const_reference at(size_type i, size_type j) const
@@ -192,7 +173,7 @@ public:
       if (i >= m || j >= n)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 
-      return *(start + n*i + j);
+      return storage[n*i + j];
     }
 
   // The followind methods return a pointer.  Could return a Vec, but
@@ -212,7 +193,7 @@ public:
       if (i >= m)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
-      return (start + n*i);
+      return &storage[n*i];
     }
 
   const_pointer operator[](size_type i) const
@@ -227,19 +208,19 @@ public:
       if (i >= m)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
-      return (start + n*i);
+      return &storage[n*i];
     }
 
   // data() returns a pointer to the beginning of the data.
   pointer data()
     {
-      return start;
+      return storage.data();
     }
 
   // data() const returns a const_pointer to the beginning of the data.
   [[nodiscard]] const_pointer data() const
     {
-      return start;
+      return storage.data();
     }
 
   [[nodiscard]] std::vector<T> row(size_type i) const
@@ -248,7 +229,7 @@ public:
       if (i >= m)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
-      return std::vector<T>(start + n*i,start + n*i + m);
+      return std::vector<T>(storage.begin() + n*i, storage.begin() + n*i + n);
     }
 
   // size() returns the total number of elements.
@@ -266,7 +247,7 @@ public:
   // Queries
   //
 
-  [[nodiscard]] bool empty() const { return (!start); }
+  [[nodiscard]] bool empty() const { return storage.empty(); }
 
   [[nodiscard]] bool isSquare() const { return (m == n); }
 
@@ -274,35 +255,40 @@ public:
   // Iterators
   //
 
-  iterator begin() { return iterator(start); }
-  [[nodiscard]] const_iterator begin() const { return iterator(start); }
-  [[nodiscard]] const_iterator cbegin() const { return iterator(start); }
-  iterator end() { return iterator(finish); }
-  [[nodiscard]] const_iterator end() const { return iterator(finish); }
-  [[nodiscard]] const_iterator cend() const { return iterator(finish); }
+  iterator begin() { return storage.data(); }
+  [[nodiscard]] const_iterator begin() const { return storage.data(); }
+  [[nodiscard]] const_iterator cbegin() const { return storage.data(); }
+  iterator end() { return storage.data() + storage.size(); }
+  [[nodiscard]] const_iterator end() const { return storage.data() + storage.size(); }
+  [[nodiscard]] const_iterator cend() const { return storage.data() + storage.size(); }
 
   // row/column iterators?  Diagonal iterator?
 
+  // Copy-and-swap assignment operator (exception-safe)
   matrix<T>& operator=(const matrix<T>& M)
     {
-      if (&M == this) return *this;
-
-      m = M.rows();
-      n = M.columns();
-      size_type mn = size();
-
-      // Free the matrix if not empty.
-      if (start != nullptr) delete[] start;
-
-      start = new T[mn];
-      finish = start + mn;
-
-      iterator j = start;
-      const_iterator i = M.start;
-      while (j != finish) *j++ = *i++;
-
+      if (&M != this) {
+        m = M.m;
+        n = M.n;
+        storage = M.storage;
+      }
       return *this;
     }
+
+#if __cplusplus > 199711L
+  // Move assignment operator
+  matrix<T>& operator=(matrix<T>&& M) noexcept
+    {
+      if (&M != this) {
+        m = M.m;
+        n = M.n;
+        storage = std::move(M.storage);
+        M.m = 0;
+        M.n = 0;
+      }
+      return *this;
+    }
+#endif
 
   //
   // Transpose
@@ -339,27 +325,27 @@ public:
   // The default printing style is on one line.
   std::ostream& printOn(std::ostream& strm) const
     {
-      if (start == nullptr) return strm;
+      if (storage.empty()) return strm;
 
-      for (const_iterator i = start; i != finish-1; ++i)
+      for (const_iterator i = storage.data(); i != storage.data() + storage.size() - 1; ++i)
 	{
 	  strm << *i << "\t";
 	}
-      strm << *(finish-1); 	// To avoid dangling tab.
+      strm << *(storage.data() + storage.size() - 1);	// To avoid dangling tab.
 
       return strm;
     }
 
   std::ostream& printMatrixForm(std::ostream& strm) const
     {
-      if (start == nullptr) return strm;
+      if (storage.empty()) return strm;
 
-      for (const_iterator i = start; i != finish; i += n) {
-	for (const_iterator j = i; j != i+n-1; ++j)
+      for (const_iterator i = storage.data(); i != storage.data() + storage.size(); i += n) {
+	for (const_iterator j = i; j != i + n - 1; ++j)
 	  {
 	    strm << *j << "\t";
 	  }
-	strm << *(i+n-1) << std::endl; 	// To avoid dangling tab.
+	strm << *(i + n - 1) << std::endl;	// To avoid dangling tab.
       }
 
       return strm;
@@ -369,7 +355,7 @@ public:
 				     const std::string name = "",
 				     const std::string comment = "") const
     {
-      if (start == 0) return strm;
+      if (storage.empty()) return strm;
 
       // Print comment if specified.
       if (!comment.empty()) strm << "(* " << comment << " *)" << std::endl;
@@ -378,16 +364,16 @@ public:
       if (!name.empty()) strm << name << " = ";
 
       strm << "{";
-      for (const_iterator i = start; i != finish; i += n) {
+      for (const_iterator i = storage.data(); i != storage.data() + storage.size(); i += n) {
 	strm << "{";
-	for (const_iterator j = i; j != i+n-1; ++j)
+	for (const_iterator j = i; j != i + n - 1; ++j)
 	  {
 	    strm << *j << ",";
 	  }
-	if (i != finish-n)
-	  strm << *(i+n-1) << "},";
+	if (i != storage.data() + storage.size() - n)
+	  strm << *(i + n - 1) << "},";
 	else
-	  strm << *(i+n-1) << "}";
+	  strm << *(i + n - 1) << "}";
       }
       // Don't append newline, since in Mathematica it is common to
       // write on same line.

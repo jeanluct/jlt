@@ -1,0 +1,52 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files that should always be normalized and converted
+# to native line endings on checkout.
+*.tex text
+*.bib text
+*.m text
+*.cpp text
+*.hpp text
+*.c text
+*.h text
+*.txt text
+*.text text
+*.md text
+
+# Declare files that will always have CRLF line endings on checkout.
+#*.sln text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tiff binary
+*.avi binary
+*.mp4 binary
+*.mpeg binary
+*.mpg binary
+*.pdf binary
+*.djvu binary
+*.xoj binary
+*.doc binary
+*.docx binary
+*.xls binary
+*.xlsx binary
+# LibreOffice
+*.odt binary
+*.ods binary
+*.odp binary
+*.odg binary
+# Old OpenOffice 1.x
+*.sxw binary
+*.stw binary
+*.sxg binary
+*.zip binary
+*.gz binary
+*.bz2 binary
+*.mat binary
+
+# Filter Mathematica notebooks to remove output and internal info.
+# https://github.com/JP-Ellis/mathematica-notebook-filter
+*.nb    filter=dropoutput_nb

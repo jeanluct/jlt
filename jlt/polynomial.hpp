@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
@@ -180,7 +180,7 @@ public:
   //
   // Elementary Polynomial Operations
   //
-  
+
   polynomial<T,P>&
   add_to_coeff(const_power_type n, const_coeff_reference c)
   {
@@ -278,7 +278,7 @@ public:
 
   // Add a polynomial * monomial.
   polynomial<T,P>&
-  add_polynomial_X_monomial(const polynomial<T,P>& p, 
+  add_polynomial_X_monomial(const polynomial<T,P>& p,
 			    const_power_type n,
 			    const_coeff_reference c)
   {

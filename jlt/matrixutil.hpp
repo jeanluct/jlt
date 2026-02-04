@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
@@ -10,6 +10,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 #ifndef MATRIX_ASSERT
 #  define MATRIX_ASSERT(x)
@@ -28,7 +29,7 @@ void LUdecomp(T_Matrix& A, int* row_index, int* perm)
 
   const T tiny = 1.e-20;
 
-  T* vv = new T[n];
+  std::vector<T> vv(n);
 
   *perm=1;
 
@@ -79,7 +80,6 @@ void LUdecomp(T_Matrix& A, int* row_index, int* perm)
       for (int i = j+1; i < n; ++i) A(i,j) *= dum;
     }
   }
-  delete[] vv;
 }
 
 template<class T, class T_Matrix>
@@ -119,23 +119,20 @@ T_Matrix inverse(T_Matrix& A)
   int n = A.dim();
   int perm;
 
-  int* row_index = new int[n];
+  std::vector<int> row_index(n);
 
-  LUdecomp<T,T_Matrix>(A, row_index, &perm);
+  LUdecomp<T,T_Matrix>(A, row_index.data(), &perm);
 
-  T* col = new T[n];
+  std::vector<T> col(n);
   T_Matrix Ainv(n,n);
 
   for (int j = 0; j < n; ++j)
     {
       for (int i = 0; i < n; ++i) col[i] = 0.;
       col[j] = 1.;
-      LUbacksub<T,T_Matrix>(A, row_index, col);
+      LUbacksub<T,T_Matrix>(A, row_index.data(), col.data());
       for (int i = 0; i < n; ++i) Ainv(i,j) = col[i];
     }
-
-  delete[] row_index;
-  delete[] col;
 
   return Ainv;
 }

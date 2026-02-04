@@ -10,7 +10,7 @@ function fr = refine(f,N,dim)
 %   See also REFINE2, REFINEK.
 
 %
-% Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+% Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 %
 % See the file LICENSE for copying permission.
 %
