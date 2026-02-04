@@ -139,7 +139,11 @@ public:
 
   // Configurable output strings
   struct strings {
+#if __cplusplus >= 201703L
     static inline std::string
+#else
+    static constexpr auto
+#endif
       task_suffix  = "...",
       task_done    = "ok",
       error_prefix = "Error: ",
@@ -194,7 +198,12 @@ public:
     // In case there are newlines, split into lines and remember
     // length of final line only.
     std::vector<std::string> lines = split_lines(mesg);
-    mesg_length = static_cast<int>(lines.back().length() + strings::task_suffix.length());
+    mesg_length = static_cast<int>(lines.back().length()
+#if __cplusplus >= 201703L
+				   + strings::task_suffix.length());
+#else
+				   + std::string(strings::task_suffix).length());
+#endif
 
     // Now enable tracking for subsequent output
     interrupted = false;
