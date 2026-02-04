@@ -90,7 +90,7 @@ sed -i 's/[[:space:]]*$//' filename
 Every file must include the standard copyright header:
 ```cpp
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
@@ -86,7 +86,7 @@ public:
     }
 
   // Bound-checked
-  reference at(size_type i) 
+  reference at(size_type i)
     {
       if (i >= size())
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::vector."));

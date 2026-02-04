@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
@@ -15,19 +15,19 @@ TEST_CASE("get_command_output - basic command execution", "[command]") {
         std::string output = get_command_output("echo hello");
         REQUIRE(output == "hello");
     }
-    
+
     SECTION("Execute echo with spaces") {
         std::string output = get_command_output("echo 'hello world'");
         REQUIRE(output == "hello world");
     }
-    
+
     SECTION("Execute pwd command") {
         std::string output = get_command_output("pwd");
         // pwd should return a non-empty string starting with /
         REQUIRE(!output.empty());
         REQUIRE(output[0] == '/');
     }
-    
+
     SECTION("Execute uname command") {
         std::string output = get_command_output("uname");
         // uname typically returns "Linux", "Darwin", etc.
@@ -43,14 +43,14 @@ TEST_CASE("get_command_output - output capturing", "[command]") {
         REQUIRE(output.find("line1") != std::string::npos);
         REQUIRE(output.find("line2") != std::string::npos);
     }
-    
+
     SECTION("Capture command with arguments") {
         std::string output = get_command_output("echo test output");
         // Should get both words
         REQUIRE(!output.empty());
         REQUIRE(output.find("test") != std::string::npos);
     }
-    
+
     SECTION("Execute command returning single word") {
         std::string output = get_command_output("echo test");
         REQUIRE(output == "test");
@@ -73,7 +73,7 @@ TEST_CASE("get_command_output - empty output", "[command]") {
         std::string output = get_command_output("true");
         REQUIRE(output.empty());
     }
-    
+
     SECTION("Echo empty string") {
         std::string output = get_command_output("echo -n ''");
         REQUIRE(output.empty());
@@ -90,13 +90,13 @@ TEST_CASE("get_command_output - long output", "[command]") {
         REQUIRE(output.find("50") != std::string::npos);
         REQUIRE(output.find("100") != std::string::npos);
     }
-    
+
     SECTION("Repeated command calls") {
         // Verify the function can be called multiple times
         std::string out1 = get_command_output("echo first");
         std::string out2 = get_command_output("echo second");
         std::string out3 = get_command_output("echo third");
-        
+
         REQUIRE(out1 == "first");
         REQUIRE(out2 == "second");
         REQUIRE(out3 == "third");
@@ -108,12 +108,12 @@ TEST_CASE("get_command_output - special characters", "[command]") {
         std::string output = get_command_output("echo 12345");
         REQUIRE(output == "12345");
     }
-    
+
     SECTION("Command with special characters") {
         std::string output = get_command_output("echo 'test@#$%'");
         REQUIRE(output == "test@#$%");
     }
-    
+
     SECTION("Command with tabs") {
         std::string output = get_command_output("echo -e 'col1\\tcol2'");
         // The function may or may not preserve the tab depending on shell

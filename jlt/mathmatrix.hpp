@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
@@ -502,7 +502,7 @@ public:
 	    }
 	  t0 = C.trace()/T(l+1);
 	  p[l+1] = -t0*p[0];
-	  if (l < n) 
+	  if (l < n)
 	    {
 	      for (size_type i = 0; i < n; ++i)
 		{

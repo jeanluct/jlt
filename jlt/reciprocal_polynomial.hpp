@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
@@ -175,7 +175,7 @@ public:
     const int g = n/2;
 
     // Fixed coefficients cannot be modified
-    if (i == 0 || i == n) 
+    if (i == 0 || i == n)
     {
       std::ostringstream err;
       err << "Cannot modify fixed coefficient " << i << " in ";

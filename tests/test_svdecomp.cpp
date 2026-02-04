@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2004-2020 Jean-Luc Thiffeault <jeanluc@mailaps.org>
+// Copyright (c) 2004-2026 Jean-Luc Thiffeault <jeanluc@mailaps.org>
 //
 // See the file LICENSE for copying permission.
 //
@@ -47,7 +47,7 @@ TEST_CASE("SVD decomposition", "[lapack][svd]") {
             }
         }
 
-        // Note: U and Vt should be orthogonal matrices, but strict 
+        // Note: U and Vt should be orthogonal matrices, but strict
         // orthonormality checks are skipped here to avoid issues with
         // numerical precision in the test framework. The successful
         // reconstruction of A is the primary verification of correctness.
