@@ -40,14 +40,14 @@ ctest -R lapack
 ```
 
 ### Legacy Testing (SCons)
-The `testsuite/` directory contains older tests using SCons build system.
+The `examples/` directory contains older tests using SCons build system.
 
 ```bash
-# Build all testsuite programs
-cd testsuite && scons
+# Build all examples programs
+cd examples && scons
 
 # Build specific program
-cd testsuite && scons polynomial_test
+cd examples && scons polynomial_test
 
 # Run a test
 ./polynomial_test
@@ -203,7 +203,7 @@ REQUIRE(result == Approx(expected_value));
 
 - **Core library**: Header-only, no dependencies
 - **tests/**: Catch2 v2.13.10 (included as `catch.hpp`)
-- **testsuite/**: May require LAPACK (`-lblas -llapack`), CSparse, or Matlab libraries
+- **examples/**: May require LAPACK (`-lblas -llapack`), CSparse, or Matlab libraries
 - **Optional**: Boost timer library for `tictoc.hpp`
 
 ## Compiler Requirements
@@ -221,7 +221,7 @@ tests/
   catch.hpp      # Catch2 testing framework
   test_*.cpp     # Unit tests
   CMakeLists.txt # CMake configuration
-testsuite/
+examples/
   *_test.cpp     # Legacy test programs
   SConstruct     # SCons build file
   SConscript     # SCons configuration
