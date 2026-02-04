@@ -67,6 +67,23 @@ No automated linter configured. Code must compile with:
 - `-O3` (optimization level 3)
 - `-ffast-math` (fast math operations)
 
+## Whitespace Guidelines
+
+**IMPORTANT:** Follow these whitespace rules for all files:
+
+- **No trailing whitespace** - Remove all trailing spaces and tabs at end of lines
+- **Files must end with a newline** - Last character of every file should be `\n`
+
+To check for trailing whitespace:
+```bash
+git diff --check
+```
+
+To automatically remove trailing whitespace from a file:
+```bash
+sed -i 's/[[:space:]]*$//' filename
+```
+
 ## Code Style Guidelines
 
 ### File Headers
