@@ -211,6 +211,11 @@
 - Replace C-style casts with `static_cast`
 - Add `[[nodiscard]]` attributes
 - [x] Remove pre-C++11 compatibility code - csparse.hpp auto_ptr fallback removed (2026-02-04)
+- Refactor matrix print functions (matrix.hpp lines 340-397) - similar formatting logic can be factored out
+- Refactor LAPACK interface patterns (eigensystem.hpp lines 48-184) - repeated patterns for different data types
+- Fix forward declaration conflicts (mathmatrix.hpp lines 24-30)
+- Add missing includes (`<memory>`, `<algorithm>`) to several files
+- Refactor duplicate logic in matlab.hpp (lines 376-385, 199-209)
 
 ### Testing
 - Increase code coverage to >90% (currently: 18 test suites, 1040+ assertions)
