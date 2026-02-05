@@ -149,11 +149,18 @@ endif()
 if(MATLAB_FOUND)
     add_executable(test_matlab_lib test_matlab_lib.cpp)
     target_include_directories(test_matlab_lib PRIVATE ${MATLAB_INCLUDE_DIR})
-    target_link_libraries(test_matlab_lib catch2 ${MATLAB_LIBRARIES})
+    target_link_libraries(test_matlab_lib catch2 ${LAPACK_LIBRARIES})
     target_compile_definitions(test_matlab_lib PRIVATE JLT_MATLAB_LIB_SUPPORT)
     add_test(NAME test_matlab_lib COMMAND test_matlab_lib)
     set_tests_properties(test_matlab_lib PROPERTIES LABELS "matlab")
 endif()
+
+# Bounds checking tests - compiled with bounds checking flags enabled
+add_executable(test_bounds_checking test_bounds_checking.cpp)
+target_link_libraries(test_bounds_checking catch2)
+target_compile_definitions(test_bounds_checking PRIVATE JLT_VECTOR_CHECK_BOUNDS JLT_MATRIX_CHECK_BOUNDS)
+add_test(NAME test_bounds_checking COMMAND test_bounds_checking)
+set_tests_properties(test_bounds_checking PROPERTIES LABELS "bounds")
 
 # Enable CTest
 enable_testing()
@@ -161,7 +168,7 @@ enable_testing()
 # Print summary
 message(STATUS "")
 message(STATUS "Test Summary:")
-message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command, vcs, display_task, stlio, reciprocal_polynomial, finitediff, matlab")
+message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command, vcs, display_task, stlio, reciprocal_polynomial, finitediff, matlab, bounds_checking")
 if(LAPACK_FOUND)
     message(STATUS "  LAPACK tests: eigensystem, svdecomp")
 else()

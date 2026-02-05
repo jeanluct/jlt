@@ -42,13 +42,13 @@ ctest -R lapack
 
 # Run with bounds checking enabled (catches out-of-range accesses)
 # This builds with extra runtime checks - slower but catches bugs
-cmake .. -DCMAKE_CXX_FLAGS="-DVECTOR_CHECK_BOUNDS -DMATRIX_CHECK_BOUNDS" && make
+cmake .. -DCMAKE_CXX_FLAGS="-DJLT_VECTOR_CHECK_BOUNDS -DJLT_MATRIX_CHECK_BOUNDS" && make
 ./test_bounds_checking
 ```
 
 **Note on Bounds Checking:** The library supports compile-time flags for bounds checking:
-- `VECTOR_CHECK_BOUNDS` - enables bounds checking in jlt::vector operator[]
-- `MATRIX_CHECK_BOUNDS` - enables bounds checking in jlt::matrix operator() and row()
+- `JLT_VECTOR_CHECK_BOUNDS` - enables bounds checking in jlt::vector operator[]
+- `JLT_MATRIX_CHECK_BOUNDS` - enables bounds checking in jlt::matrix operator() and row()
 - When enabled, out-of-range accesses throw `std::out_of_range`
 - By default (without these flags), no bounds checking is performed for maximum speed
 - The `test_bounds_checking` test executable verifies these checks work when enabled
@@ -250,5 +250,5 @@ matlab/
 - This is a **header-only library** - no compilation step needed for the library itself
 - The library is designed for **numerical/scientific computing**
 - Many classes are templates supporting multiple numeric types
-- Bounds checking can be enabled with compile-time flags (e.g., `VECTOR_CHECK_BOUNDS`)
+- Bounds checking can be enabled with compile-time flags (e.g., `JLT_VECTOR_CHECK_BOUNDS`)
 - Some features require external libraries (LAPACK, CSparse, Matlab) - check individual headers

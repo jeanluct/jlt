@@ -10,7 +10,7 @@
 
 using namespace jlt;
 
-#ifdef VECTOR_CHECK_BOUNDS
+#ifdef JLT_VECTOR_CHECK_BOUNDS
 TEST_CASE("Vector bounds checking", "[bounds]") {
     SECTION("in-bounds access works normally") {
         vector<int> v = {10, 20, 30, 40, 50};
@@ -43,7 +43,7 @@ TEST_CASE("Vector bounds checking", "[bounds]") {
 }
 #endif
 
-#ifdef MATRIX_CHECK_BOUNDS
+#ifdef JLT_MATRIX_CHECK_BOUNDS
 TEST_CASE("Matrix bounds checking", "[bounds]") {
     SECTION("in-bounds access works normally") {
         matrix<int> M(3, 4, {

@@ -112,7 +112,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Adds a*Identity to matrix.
   mathmatrix<T,S>& operator+=(const_scalar_reference a)
     {
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
 
       for (size_type i = 0; i < rows(); ++i)
 	{
@@ -135,7 +135,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Subtracts a*Identity from matrix.
   mathmatrix<T,S>& operator-=(const_scalar_reference a)
     {
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
 
       for (size_type i = 0; i < rows(); ++i)
 	{
@@ -148,7 +148,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Equate to a*identity
   mathmatrix<T,S>& operator=(const_scalar_reference a)
     {
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
 
       identity(a);
 
@@ -219,7 +219,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   size_type na = A.columns();
   size_type nb = B.columns();
 
-  MATRIX_ASSERT(na == B.rows());
+  JLT_MATRIX_ASSERT(na == B.rows());
 
   mathmatrix<T,S> res(ma,nb);
 
@@ -232,7 +232,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
     }
 #endif
 
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
       size_type n = rows();
 
       if (n == 0) return false;
@@ -321,7 +321,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Replace matrix *this by its inverse.
   void invert()
     {
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
       unsigned int n = rows();
 
       int perm;
@@ -351,7 +351,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // This should be the fastest method, with the least temporaries.
   void invert(mathmatrix<T,S>& Ainv)
     {
-      MATRIX_ASSERT(isSquare() && rows() == Ainv.rows());
+      JLT_MATRIX_ASSERT(isSquare() && rows() == Ainv.rows());
       unsigned int n = rows();
 
       int perm;
@@ -373,7 +373,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Does not alter matrix.
   [[nodiscard]] mathmatrix<T,S> inverse() const
     {
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
       unsigned int n = rows();
 
       int perm;
@@ -401,7 +401,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Ainv has to be the same size as *this.
   mathmatrix<T,S> inverse(mathmatrix<T,S>& Ainv) const
     {
-      MATRIX_ASSERT(m == Ainv.m && m == Ainv.n && isSquare());
+      JLT_MATRIX_ASSERT(m == Ainv.m && m == Ainv.n && isSquare());
       unsigned int n = rows();
 
       int perm;
@@ -430,7 +430,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
   [[nodiscard]] T det() const
     {
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
 
       T det = 1;
       int perm;
@@ -448,7 +448,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
   [[nodiscard]] T trace() const
     {
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
 
       T tr = 0;
 
@@ -462,7 +462,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
   [[nodiscard]] polynomial<T> charpoly() const
     {
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
       size_type n = rows();
       T t0;
       mathmatrix<T,S> B(n,n), C(n,n);
@@ -525,7 +525,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
   void identity(const S& a = 1)
     {
-      MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(isSquare());
 
       for (size_type i = 0; i < rows(); ++i)
 	{
@@ -624,7 +624,7 @@ inline mathvector<V,S_V> operator*(const mathmatrix<T,S_T>& A,
   auto m = A.rows();
   auto n = A.columns();
 
-  MATRIX_ASSERT(n == v.size());
+  JLT_MATRIX_ASSERT(n == v.size());
 
   mathvector<V,S_V> res(m);
 
@@ -679,7 +679,7 @@ inline mathmatrix<T,S> operator*(const mathmatrix<T,S>& A,
   auto na = A.columns();
   auto nb = B.columns();
 
-  MATRIX_ASSERT(na == B.rows());
+  JLT_MATRIX_ASSERT(na == B.rows());
 
   mathmatrix<T,S> res(ma,nb);
 

@@ -111,7 +111,7 @@ mathvector(std::initializer_list<T> _l) : vector<T>(_l) {}
 
   mathvector<T,S>& operator+=(const mathvector<T,S>& v)
     {
-      VECTOR_ASSERT(this->size() == v.size());
+      JLT_VECTOR_ASSERT(this->size() == v.size());
 
       auto k = begin();
       for (auto i = v.cbegin(); i != v.cend(); ++i, ++k)
@@ -124,7 +124,7 @@ mathvector(std::initializer_list<T> _l) : vector<T>(_l) {}
 
   mathvector<T,S>& operator-=(const mathvector<T,S>& v)
     {
-      VECTOR_ASSERT(this->size() == v.size());
+      JLT_VECTOR_ASSERT(this->size() == v.size());
 
       auto k = begin();
       for (auto i = v.cbegin(); i != v.cend(); ++i, ++k)
@@ -158,7 +158,7 @@ mathvector(std::initializer_list<T> _l) : vector<T>(_l) {}
   // Component-wise division.
   mathvector<T,S>& operator/=(const mathvector<T,S>& v)
     {
-      VECTOR_ASSERT(this->size() == v.size());
+      JLT_VECTOR_ASSERT(this->size() == v.size());
 
       auto k = begin();
       for (auto i = v.cbegin(); i != v.cend(); ++i, ++k)
@@ -250,7 +250,7 @@ inline mathvector<T,S> cross(const mathvector<T,S>& v,
 			     const mathvector<T,S>& w)
 {
   // Cross product only works on vectors of size 3.
-  VECTOR_ASSERT(v.size() == 3 && w.size() == 3);
+  JLT_VECTOR_ASSERT(v.size() == 3 && w.size() == 3);
 
   mathvector<T,S> res(3);
 
@@ -285,7 +285,7 @@ template<class T, class S>
 inline mathvector<T,S> operator+(const mathvector<T,S>& v,
 				 const mathvector<T,S>& w)
 {
-  VECTOR_ASSERT(v.size() == w.size());
+  JLT_VECTOR_ASSERT(v.size() == w.size());
 
   mathvector<T,S> res(v.size());
 
@@ -302,7 +302,7 @@ template<class T, class S>
 inline mathvector<T,S> operator-(const mathvector<T,S>& v,
 				 const mathvector<T,S>& w)
 {
-  VECTOR_ASSERT(v.size() == w.size());
+  JLT_VECTOR_ASSERT(v.size() == w.size());
 
   mathvector<T,S> res(v.size());
 
@@ -362,7 +362,7 @@ template<class T, class S>
 inline mathvector<T,S> operator/(const mathvector<T,S>& v,
 				 const mathvector<T,S>& w)
 {
-  VECTOR_ASSERT(v.size() == w.size());
+  JLT_VECTOR_ASSERT(v.size() == w.size());
 
   mathvector<T,S> res(v.size());
 
@@ -378,7 +378,7 @@ inline mathvector<T,S> operator/(const mathvector<T,S>& v,
 template<class T, class S>
 inline S dot(const mathvector<T,S>& v, const mathvector<T,S>& w)
 {
-  VECTOR_ASSERT(v.size() == w.size());
+  JLT_VECTOR_ASSERT(v.size() == w.size());
 
   S dotp = S();
 

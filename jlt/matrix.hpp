@@ -48,14 +48,14 @@
 #include <jlt/exceptions.hpp>
 
 #ifdef MATRIX_BOUNDS_CHECK
-#  define MATRIX_CHECK_BOUNDS
+#  define JLT_MATRIX_CHECK_BOUNDS
 #endif
 
-#if defined(MATRIX_CHECK_BOUNDS)
+#if defined(JLT_MATRIX_CHECK_BOUNDS)
 #  include <cassert>
-#  define MATRIX_ASSERT(x) assert(x)
+#  define JLT_MATRIX_ASSERT(x) assert(x)
 #else
-#  define MATRIX_ASSERT(x)
+#  define JLT_MATRIX_ASSERT(x)
 #endif
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
@@ -142,7 +142,7 @@ matrix(matrix<T>&& _M) noexcept
 
   reference operator()(size_type i, size_type j)
     {
-#ifdef MATRIX_CHECK_BOUNDS
+#ifdef JLT_MATRIX_CHECK_BOUNDS
       return at(i,j);
 #else
       return storage[n*i + j];
@@ -151,7 +151,7 @@ matrix(matrix<T>&& _M) noexcept
 
   const_reference operator()(size_type i, size_type j) const
     {
-#ifdef MATRIX_CHECK_BOUNDS
+#ifdef JLT_MATRIX_CHECK_BOUNDS
       return at(i,j);
 #else
       return storage[n*i + j];
@@ -176,13 +176,13 @@ matrix(matrix<T>&& _M) noexcept
 
   // The following methods return a pointer to the beginning of row i.
   // This allows efficient A[i][j] access but has an important limitation:
-  // When MATRIX_CHECK_BOUNDS is defined, only the first index (i) is checked.
+  // When JLT_MATRIX_CHECK_BOUNDS is defined, only the first index (i) is checked.
   // The second index (j) cannot be bounds-checked because operator[] returns
   // a raw pointer to the row, not an object with bounds checking.
 
   pointer operator[](size_type i)
     {
-#ifdef MATRIX_CHECK_BOUNDS
+#ifdef JLT_MATRIX_CHECK_BOUNDS
       if (i >= m)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
@@ -191,7 +191,7 @@ matrix(matrix<T>&& _M) noexcept
 
   const_pointer operator[](size_type i) const
     {
-#ifdef MATRIX_CHECK_BOUNDS
+#ifdef JLT_MATRIX_CHECK_BOUNDS
       if (i >= m)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
@@ -212,7 +212,7 @@ matrix(matrix<T>&& _M) noexcept
 
   [[nodiscard]] std::vector<T> row(size_type i) const
     {
-#ifdef MATRIX_CHECK_BOUNDS
+#ifdef JLT_MATRIX_CHECK_BOUNDS
       if (i >= m)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
@@ -225,7 +225,7 @@ matrix(matrix<T>&& _M) noexcept
   // dim() returns the number of columns.
   // Meant to be used with square matrices.
   [[nodiscard]] size_type dim() const { return n; }
-  // size_type dim() const { MATRIX_ASSERT(m=n); return n; }
+  // size_type dim() const { JLT_MATRIX_ASSERT(m=n); return n; }
 
   [[nodiscard]] size_type rows() const { return m; }		// Number of rows.
   [[nodiscard]] size_type columns() const { return n; }	// Number of columns.

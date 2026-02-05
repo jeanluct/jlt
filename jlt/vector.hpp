@@ -13,11 +13,11 @@
 
 // Bounds-checked version of std::vector.
 
-#if defined(VECTOR_CHECK_BOUNDS)
+#if defined(JLT_VECTOR_CHECK_BOUNDS)
 #  include <cassert>
-#  define VECTOR_ASSERT(x) assert(x)
+#  define JLT_VECTOR_ASSERT(x) assert(x)
 #else
-#  define VECTOR_ASSERT(x)
+#  define JLT_VECTOR_ASSERT(x)
 #endif
 
 #include <vector>
@@ -57,7 +57,7 @@ vector(std::initializer_list<T> _l) : std::vector<T>(_l) {}
 
   reference operator[](size_type i)
     {
-#     ifdef VECTOR_CHECK_BOUNDS
+#     ifdef JLT_VECTOR_CHECK_BOUNDS
         return at(i);
 #     else
         return std::vector<T>::operator[](i);
@@ -66,7 +66,7 @@ vector(std::initializer_list<T> _l) : std::vector<T>(_l) {}
 
   const_reference operator[](size_type i) const
     {
-#     ifdef VECTOR_CHECK_BOUNDS
+#     ifdef JLT_VECTOR_CHECK_BOUNDS
         return at(i);
 #     else
         return std::vector<T>::operator[](i);

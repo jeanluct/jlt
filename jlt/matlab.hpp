@@ -200,7 +200,7 @@ void printMatlabForm(MATFile *pmat,
     /* TODO: this should be a constructor; check all rows have same size. */
     for (int i = 0; i < Avv.size(); ++i)
       {
-	MATRIX_ASSERT(Avv[i].size() == Avv[0].size());
+        JLT_MATRIX_ASSERT(Avv[i].size() == Avv[0].size());
 	for (int j = 0; j < Avv[i].size(); ++j)
 	  {
 	    A(i,j) = Avv[i][j];
@@ -376,7 +376,7 @@ std::ostream& printMatlabForm(std::ostream& strm,
     /* TODO: this should be a constructor; check all rows have same size. */
     for (int i = 0; i < Avv.size(); ++i)
       {
-	MATRIX_ASSERT(Avv[i].size() == Avv[0].size());
+        JLT_MATRIX_ASSERT(Avv[i].size() == Avv[0].size());
 	for (int j = 0; j < Avv[i].size(); ++j)
 	  {
 	    A(i,j) = Avv[i][j];
