@@ -17,7 +17,7 @@ TEST_CASE("matrix basic construction", "[matrix]") {
         REQUIRE(M.rows() == 3);
         REQUIRE(M.columns() == 4);
         REQUIRE(M.size() == 12);
-        
+
         for (size_t i = 0; i < 3; ++i) {
             for (size_t j = 0; j < 4; ++j) {
                 REQUIRE(M(i, j) == 7);
@@ -80,12 +80,12 @@ TEST_CASE("matrix element access", "[matrix]") {
 }
 
 TEST_CASE("matrix properties", "[matrix]") {
-    SECTION("isSquare") {
+    SECTION("is_square") {
         matrix<int> M1(3, 3);
         matrix<int> M2(2, 3);
-        
-        REQUIRE(M1.isSquare());
-        REQUIRE_FALSE(M2.isSquare());
+
+        REQUIRE(M1.is_square());
+        REQUIRE_FALSE(M2.is_square());
     }
 
     SECTION("dim() for square matrix") {
@@ -96,7 +96,7 @@ TEST_CASE("matrix properties", "[matrix]") {
     SECTION("empty matrix") {
         matrix<int> M;
         REQUIRE(M.empty());
-        
+
         matrix<int> M2(1, 1);
         REQUIRE_FALSE(M2.empty());
     }
@@ -107,7 +107,7 @@ TEST_CASE("matrix assignment", "[matrix]") {
         matrix<int> M1(2, 2, {1, 2, 3, 4});
         matrix<int> M2;
         M2 = M1;
-        
+
         REQUIRE(M2.rows() == 2);
         REQUIRE(M2.columns() == 2);
         REQUIRE(M2(0, 0) == 1);
@@ -125,13 +125,13 @@ TEST_CASE("matrix assignment", "[matrix]") {
     SECTION("move constructor") {
         matrix<int> M1(2, 2, {1, 2, 3, 4});
         matrix<int> M2(std::move(M1));
-        
+
         // M2 should have the data
         REQUIRE(M2.rows() == 2);
         REQUIRE(M2.columns() == 2);
         REQUIRE(M2(0, 0) == 1);
         REQUIRE(M2(1, 1) == 4);
-        
+
         // M1 should be empty after move
         REQUIRE(M1.empty());
     }
@@ -140,13 +140,13 @@ TEST_CASE("matrix assignment", "[matrix]") {
         matrix<int> M1(2, 2, {1, 2, 3, 4});
         matrix<int> M2;
         M2 = std::move(M1);
-        
+
         // M2 should have the data
         REQUIRE(M2.rows() == 2);
         REQUIRE(M2.columns() == 2);
         REQUIRE(M2(0, 0) == 1);
         REQUIRE(M2(1, 1) == 4);
-        
+
         // M1 should be empty after move
         REQUIRE(M1.empty());
     }
@@ -155,13 +155,13 @@ TEST_CASE("matrix assignment", "[matrix]") {
         matrix<int> M1(2, 2, {1, 2, 3, 4});
         matrix<int> M2(3, 3, {5, 6, 7, 8, 9, 10, 11, 12, 13});
         M2 = std::move(M1);
-        
+
         // M2 should have M1's data
         REQUIRE(M2.rows() == 2);
         REQUIRE(M2.columns() == 2);
         REQUIRE(M2(0, 0) == 1);
         REQUIRE(M2(1, 1) == 4);
-        
+
         // M1 should be empty
         REQUIRE(M1.empty());
     }
@@ -218,11 +218,11 @@ TEST_CASE("matrix row access", "[matrix]") {
 
 TEST_CASE("matrix data pointer", "[matrix]") {
     matrix<double> M(2, 2, {1.0, 2.0, 3.0, 4.0});
-    
+
     double* ptr = M.data();
     REQUIRE(ptr[0] == 1.0);
     REQUIRE(ptr[3] == 4.0);
-    
+
     const double* cptr = static_cast<const matrix<double>&>(M).data();
     REQUIRE(cptr[0] == 1.0);
 }

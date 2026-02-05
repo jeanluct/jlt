@@ -235,7 +235,7 @@ matrix(matrix<T>&& _M) noexcept
 
   [[nodiscard]] bool empty() const noexcept { return storage.empty(); }
 
-  [[nodiscard]] constexpr bool isSquare() const noexcept { return (m == n); }
+  [[nodiscard]] constexpr bool is_square() const noexcept { return (m == n); }
 
   //
   // Iterators

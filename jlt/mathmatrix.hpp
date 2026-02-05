@@ -112,7 +112,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Adds a*Identity to matrix.
   mathmatrix<T,S>& operator+=(const_scalar_reference a)
     {
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
 
       for (size_type i = 0; i < rows(); ++i)
 	{
@@ -135,7 +135,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Subtracts a*Identity from matrix.
   mathmatrix<T,S>& operator-=(const_scalar_reference a)
     {
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
 
       for (size_type i = 0; i < rows(); ++i)
 	{
@@ -148,7 +148,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Equate to a*identity
   mathmatrix<T,S>& operator=(const_scalar_reference a)
     {
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
 
       identity(a);
 
@@ -212,7 +212,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
   // Reducible matrix: a high-enough power still contains zeros.
   /* Warning: this tests for primitivity, no reducibility.  See issue #1. */
-  [[nodiscard]] bool isReducible() const
+  [[nodiscard]] bool is_reducible() const
     {
 #if 0
   size_type ma = A.rows();
@@ -232,7 +232,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
     }
 #endif
 
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
       size_type n = rows();
 
       if (n == 0) return false;
@@ -321,7 +321,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Replace matrix *this by its inverse.
   void invert()
     {
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
       unsigned int n = rows();
 
       int perm;
@@ -351,7 +351,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // This should be the fastest method, with the least temporaries.
   void invert(mathmatrix<T,S>& Ainv)
     {
-      JLT_MATRIX_ASSERT(isSquare() && rows() == Ainv.rows());
+      JLT_MATRIX_ASSERT(is_square() && rows() == Ainv.rows());
       unsigned int n = rows();
 
       int perm;
@@ -373,7 +373,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Does not alter matrix.
   [[nodiscard]] mathmatrix<T,S> inverse() const
     {
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
       unsigned int n = rows();
 
       int perm;
@@ -401,7 +401,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // Ainv has to be the same size as *this.
   mathmatrix<T,S> inverse(mathmatrix<T,S>& Ainv) const
     {
-      JLT_MATRIX_ASSERT(m == Ainv.m && m == Ainv.n && isSquare());
+      JLT_MATRIX_ASSERT(m == Ainv.m && m == Ainv.n && is_square());
       unsigned int n = rows();
 
       int perm;
@@ -430,7 +430,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
   [[nodiscard]] T det() const
     {
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
 
       T det = 1;
       int perm;
@@ -448,7 +448,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
   [[nodiscard]] T trace() const
     {
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
 
       T tr = 0;
 
@@ -462,7 +462,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
   [[nodiscard]] polynomial<T> charpoly() const
     {
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
       size_type n = rows();
       T t0;
       mathmatrix<T,S> B(n,n), C(n,n);
@@ -525,7 +525,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
   void identity(const S& a = 1)
     {
-      JLT_MATRIX_ASSERT(isSquare());
+      JLT_MATRIX_ASSERT(is_square());
 
       for (size_type i = 0; i < rows(); ++i)
 	{

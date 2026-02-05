@@ -195,7 +195,7 @@ mathvector(std::initializer_list<T> _l) : vector<T>(_l) {}
   // Queries
   //
 
-  [[nodiscard]] bool isZero() const
+  [[nodiscard]] bool is_zero() const
     {
       for (auto i = this->cbegin(); i != this->cend(); ++i)
 	{
