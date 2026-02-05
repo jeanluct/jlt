@@ -98,8 +98,8 @@ public:
   using size_type = size_t;
 
 private:
-  std::vector<T> storage;		// Storage for matrix elements
   size_type	m{0}, n{0};		// Number of rows, columns.
+  std::vector<T> storage;		// Storage for matrix elements
 
 public:
   //
@@ -176,20 +176,15 @@ public:
       return storage[n*i + j];
     }
 
-  // The followind methods return a pointer.  Could return a Vec, but
-  // that would be slower and would force Mat to work with Vec.
-  // However, with pointers no bounds checking can be done on the
-  // second square bracket in A[i][j].
+  // The following methods return a pointer to the beginning of row i.
+  // This allows efficient A[i][j] access but has an important limitation:
+  // When MATRIX_CHECK_BOUNDS is defined, only the first index (i) is checked.
+  // The second index (j) cannot be bounds-checked because operator[] returns
+  // a raw pointer to the row, not an object with bounds checking.
 
   pointer operator[](size_type i)
     {
 #ifdef MATRIX_CHECK_BOUNDS
-      static bool only_once = true;
-      if (only_once) {
-	std::cerr << "Warning: no bounds checking done on second";
-	std::cerr << " argument of [][] in jlt::matrix.\n";
-	only_once = false;
-      }
       if (i >= m)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif
@@ -199,12 +194,6 @@ public:
   const_pointer operator[](size_type i) const
     {
 #ifdef MATRIX_CHECK_BOUNDS
-      static bool only_once = true;
-      if (only_once) {
-	std::cerr << "Warning: no bounds checking done on second";
-	std::cerr << " argument of [][] in jlt::matrix.\n";
-	only_once = false;
-      }
       if (i >= m)
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::matrix."));
 #endif

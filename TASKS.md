@@ -139,7 +139,11 @@
 - [ ] (No high priority code fixes remaining - see Future Improvements)
 
 ### Medium Priority
-- [ ] Fix static variable thread-safety issues
+- [x] Fix static variable thread-safety issues
+  - Removed `static bool only_once` from matrix.hpp operator[] methods
+  - These warned about lack of bounds checking on 2nd [] index
+  - Removed because: (1) not thread-safe, (2) users often miss once-only warnings, (3) if MATRIX_CHECK_BOUNDS is enabled, user explicitly requested bounds checking
+  - Added comments explaining why warnings were removed
 - [x] Add move semantics for performance (matrix.hpp - DONE)
 - [ ] Implement proper bounds checking throughout
 - [ ] Refactor code duplication in mathvector.hpp cross product
@@ -168,7 +172,7 @@
 - ✅ **FIXED** matrixutil.hpp: Complex algorithm without proper cleanup → Now uses std::vector, automatic cleanup
 
 ### Thread Safety
-- matrix.hpp: Static variables in operator[] methods (not thread-safe)
+- ✅ **FIXED** matrix.hpp: Static variables in operator[] methods (not thread-safe) → Warnings removed, now thread-safe
 - matrix.hpp: Mutable state without synchronization
 
 ### Performance
