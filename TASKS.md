@@ -145,7 +145,11 @@
   - Removed because: (1) not thread-safe, (2) users often miss once-only warnings, (3) if MATRIX_CHECK_BOUNDS is enabled, user explicitly requested bounds checking
   - Added comments explaining why warnings were removed
 - [x] Add move semantics for performance (matrix.hpp - DONE)
-- [ ] Implement proper bounds checking throughout
+- [x] Implement proper bounds checking throughout
+  - ✅ Bounds checking already implemented in vector.hpp (operator[] via at())
+  - ✅ Bounds checking already implemented in matrix.hpp (operator() via at(), row())
+  - ✅ Created test_bounds_checking.cpp to verify checks work when flags enabled
+  - Documented in AGENTS.md how to compile with bounds checking flags
 - [x] Refactor code duplication in mathvector.hpp cross product
   - Replaced three specializations (float, double, long double) with single template
   - Eliminated 48 lines of duplicate code

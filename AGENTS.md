@@ -39,7 +39,19 @@ ctest -R lapack
 
 # Run with verbose output
 ./test_vector -s
+
+# Run with bounds checking enabled (catches out-of-range accesses)
+# This builds with extra runtime checks - slower but catches bugs
+cmake .. -DCMAKE_CXX_FLAGS="-DVECTOR_CHECK_BOUNDS -DMATRIX_CHECK_BOUNDS" && make
+./test_bounds_checking
 ```
+
+**Note on Bounds Checking:** The library supports compile-time flags for bounds checking:
+- `VECTOR_CHECK_BOUNDS` - enables bounds checking in jlt::vector operator[]
+- `MATRIX_CHECK_BOUNDS` - enables bounds checking in jlt::matrix operator() and row()
+- When enabled, out-of-range accesses throw `std::out_of_range`
+- By default (without these flags), no bounds checking is performed for maximum speed
+- The `test_bounds_checking` test executable verifies these checks work when enabled
 
 **Note:** The test executables are located in `tests/build/` and will not be found if you run from the repository root or tests/ directory.
 
