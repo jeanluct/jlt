@@ -25,47 +25,57 @@ namespace jlt {
 template<class T, class S> class mathvector;
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator+(const mathvector<T,S>& v);
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator-(const mathvector<T,S>& v);
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator+(const mathvector<T,S>& v,
 				 const mathvector<T,S>& w);
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator-(const mathvector<T,S>& v,
 				 const mathvector<T,S>& w);
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator*(const S& a, const mathvector<T,S>& v);
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator*(const mathvector<T,S>& v, const S& a);
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator/(const mathvector<T,S>& v, const S& a);
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator/(const mathvector<T,S>& v,
 				 const mathvector<T,S>& w);
 
 template<class T, class S>
+[[nodiscard]]
 inline S operator*(const mathvector<T,S>& v, const mathvector<T,S>& w);
 
 template<class T, class S>
-inline S dot(const mathvector<T,S>& v, const mathvector<T,S>& w);
+[[nodiscard]] inline S dot(const mathvector<T,S>& v, const mathvector<T,S>& w);
 
 // Was called mag, but potentially confusing since it returns the
 // squared magnitude.
 template<class T, class S>
-inline S mag2(const mathvector<T,S>& v);
+[[nodiscard]] inline S mag2(const mathvector<T,S>& v);
 
 template<class T, class S>
-inline S abs(const mathvector<T,S>& v);
+[[nodiscard]] inline S abs(const mathvector<T,S>& v);
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> cross(const mathvector<T,S>& v,
 			     const mathvector<T,S>& w);
 
@@ -246,6 +256,7 @@ mathvector(std::initializer_list<T> _l) : vector<T>(_l) {}
 // Single template implementation replaces three specializations (float, double, long double)
 //
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> cross(const mathvector<T,S>& v,
 			     const mathvector<T,S>& w)
 {
@@ -262,12 +273,14 @@ inline mathvector<T,S> cross(const mathvector<T,S>& v,
 }
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator+(const mathvector<T,S>& v)
 {
   return v;
 }
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator-(const mathvector<T,S>& v)
 {
   mathvector<T,S> res(v.size());
@@ -282,6 +295,7 @@ inline mathvector<T,S> operator-(const mathvector<T,S>& v)
 }
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator+(const mathvector<T,S>& v,
 				 const mathvector<T,S>& w)
 {
@@ -299,6 +313,7 @@ inline mathvector<T,S> operator+(const mathvector<T,S>& v,
 }
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator-(const mathvector<T,S>& v,
 				 const mathvector<T,S>& w)
 {
@@ -316,6 +331,7 @@ inline mathvector<T,S> operator-(const mathvector<T,S>& v,
 }
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator*(const S& a, const mathvector<T,S>& v)
 {
   mathvector<T,S> res(v.size());
@@ -330,6 +346,7 @@ inline mathvector<T,S> operator*(const S& a, const mathvector<T,S>& v)
 }
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator*(const mathvector<T,S>& v, const S& a)
 {
   mathvector<T,S> res(v.size());
@@ -344,6 +361,7 @@ inline mathvector<T,S> operator*(const mathvector<T,S>& v, const S& a)
 }
 
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator/(const mathvector<T,S>& v, const S& a)
 {
   mathvector<T,S> res(v.size());
@@ -359,6 +377,7 @@ inline mathvector<T,S> operator/(const mathvector<T,S>& v, const S& a)
 
 // Component-wise division.
 template<class T, class S>
+[[nodiscard]]
 inline mathvector<T,S> operator/(const mathvector<T,S>& v,
 				 const mathvector<T,S>& w)
 {
@@ -376,7 +395,7 @@ inline mathvector<T,S> operator/(const mathvector<T,S>& v,
 }
 
 template<class T, class S>
-inline S dot(const mathvector<T,S>& v, const mathvector<T,S>& w)
+[[nodiscard]] inline S dot(const mathvector<T,S>& v, const mathvector<T,S>& w)
 {
   JLT_VECTOR_ASSERT(v.size() == w.size());
 
@@ -391,13 +410,14 @@ inline S dot(const mathvector<T,S>& v, const mathvector<T,S>& w)
 }
 
 template<class T, class S>
+[[nodiscard]]
 inline S operator*(const mathvector<T,S>& v, const mathvector<T,S>& w)
 {
   return dot(v,w);
 }
 
 template<class T, class S>
-inline S mag2(const mathvector<T,S>& v)
+[[nodiscard]] inline S mag2(const mathvector<T,S>& v)
 {
   S magn = S();
 
@@ -411,7 +431,7 @@ inline S mag2(const mathvector<T,S>& v)
 
 // Specializations of mag2 for complex types
 template<class T, class S>
-inline S mag2(const mathvector<std::complex<T>,S>& v)
+[[nodiscard]] inline S mag2(const mathvector<std::complex<T>,S>& v)
 {
   S magn = S();
 
@@ -425,7 +445,7 @@ inline S mag2(const mathvector<std::complex<T>,S>& v)
 }
 
 template<class T, class S>
-inline S abs(const mathvector<T,S>& v)
+[[nodiscard]] inline S abs(const mathvector<T,S>& v)
 {
   return std::sqrt(mag2((v)));
 }

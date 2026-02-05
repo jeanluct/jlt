@@ -74,7 +74,7 @@ vector(std::initializer_list<T> _l) : std::vector<T>(_l) {}
     }
 
   // Bound-checked
-  reference at(size_type i)
+  [[nodiscard]] reference at(size_type i)
     {
       if (i >= size())
 	JLT_THROW(std::out_of_range("Out of range exception in jlt::vector."));

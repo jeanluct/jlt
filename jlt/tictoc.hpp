@@ -63,8 +63,8 @@ public:
 
     const long long int onesecond = 1000000000LL;
 
-    ostr << (double)(tel - last_mark)/onesecond << "\t";
-    ostr << (double)tel/onesecond << std::endl;
+    ostr << static_cast<double>(tel - last_mark)/onesecond << "\t";
+    ostr << static_cast<double>(tel)/onesecond << std::endl;
 
     last_mark = tel;
     dangling = false;

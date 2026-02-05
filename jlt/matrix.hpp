@@ -220,23 +220,22 @@ matrix(matrix<T>&& _M) noexcept
     }
 
   // size() returns the total number of elements.
-  [[nodiscard]] size_type size() const { return m*n; }
+  [[nodiscard]] constexpr size_type size() const noexcept { return m*n; }
 
   // dim() returns the number of columns.
   // Meant to be used with square matrices.
-  [[nodiscard]] size_type dim() const { return n; }
-  // size_type dim() const { JLT_MATRIX_ASSERT(m=n); return n; }
+  [[nodiscard]] constexpr size_type dim() const noexcept { return n; }
 
-  [[nodiscard]] size_type rows() const { return m; }		// Number of rows.
-  [[nodiscard]] size_type columns() const { return n; }	// Number of columns.
+  [[nodiscard]] constexpr size_type rows() const noexcept { return m; }
+  [[nodiscard]] constexpr size_type columns() const noexcept { return n; }
 
   //
   // Queries
   //
 
-  [[nodiscard]] bool empty() const { return storage.empty(); }
+  [[nodiscard]] bool empty() const noexcept { return storage.empty(); }
 
-  [[nodiscard]] bool isSquare() const { return (m == n); }
+  [[nodiscard]] constexpr bool isSquare() const noexcept { return (m == n); }
 
   //
   // Iterators

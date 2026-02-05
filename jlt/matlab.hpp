@@ -124,7 +124,7 @@ void printMatlabForm(MATFile *pmat,
 	      }
 	  }
 	double *Ap = mxGetPr(A);
-	for (int i = 0; i < (int)v.size(); ++i) Ap[i] = v[i];
+	for (int i = 0; i < static_cast<int>(v.size()); ++i) Ap[i] = v[i];
       }
     matPutVariable(pmat,name.c_str(),A);
     mxDestroyArray(A);
@@ -165,9 +165,9 @@ void printMatlabForm_nodefaults(MATFile *pmat,
       {
 	mxA = mxCreateDoubleMatrix(A.rows(),A.columns(),mxREAL);
 	double *mxAp = mxGetPr(mxA);
-	for (int i = 0; i < (int)A.rows(); ++i)
+	for (int i = 0; i < static_cast<int>(A.rows()); ++i)
 	  {
-	    for (int j = 0; j < (int)A.columns(); ++j)
+	    for (int j = 0; j < static_cast<int>(A.columns()); ++j)
 	      {
 		mxAp[i + A.rows()*j] = A(i,j);
 	      }
@@ -349,8 +349,8 @@ std::ostream& printMatlabForm_nodefaults(std::ostream& strm,
     if (A.empty()) { strm << "[];\n"; return strm; }
 
     strm << "[\n";
-    for (int i = 0; i < (int)A.rows(); ++i) {
-      for (int j = 0; j < (int)A.columns()-1; ++j)
+    for (int i = 0; i < static_cast<int>(A.rows()); ++i) {
+      for (int j = 0; j < static_cast<int>(A.columns())-1; ++j)
 	{
 	  strm << A(i,j) << " ";
 	}

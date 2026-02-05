@@ -156,7 +156,7 @@ public:
   // Divide by a constant.
   polynomial<T,P>& operator/=(const T& a)
   {
-    return multiply_by_monomial(0,(T)1/a);
+    return multiply_by_monomial(0,static_cast<T>(1)/a);
   }
 
   // Test for equality of two polynomials.
@@ -382,8 +382,8 @@ public:
   {
     S c = 0;
     /* I don't have this conversion quite right.  Need to think about this. */
-    /* S xp = (S)std::pow((S)x,(S)pmin); */
-    S xp = (S)std::pow((T)x,(T)pmin);
+    /* S xp = static_cast<S>(std::pow(static_cast<S>(x),static_cast<S>(pmin))); */
+    S xp = static_cast<S>(std::pow(static_cast<T>(x),static_cast<T>(pmin)));
 
     for (P i = 0; i <= pmax-pmin; ++i) {
       c += coeff[i] * xp;
@@ -426,7 +426,7 @@ public:
   {
     S c = 0;
     /* I don't have this conversion quite right.  Need to think about this. */
-    S xp = (S)std::pow((S)x,(S)pmin-1);
+    S xp = static_cast<S>(std::pow(static_cast<S>(x),static_cast<S>(pmin)-1));
 
     for (P i = 0; i <= pmax-pmin; ++i) {
       c += (pmin+i)*coeff[i]*xp;
@@ -558,7 +558,7 @@ inline polynomial<T,P> operator*(const polynomial<T,P>& p, const T& a)
 template<class T, class P>
 inline polynomial<T,P> operator/(const polynomial<T,P>& p, const T& a)
 {
-  return ((T)1/a)*p;
+  return (static_cast<T>(1)/a)*p;
 }
 
 template<class T, class P>

@@ -35,7 +35,7 @@ int symmetric_matrix_eigensystem(matrix<T>& A,
   char uplo = 'L';	// 'L'ower or 'U'pper triangle stored (opposite)
   int N = A.rows();	// Dimensions of matrix.
 
-  assert(N == (int)A.columns() && N == (int)eigvals.size());
+  assert(N == static_cast<int>(A.columns()) && N == static_cast<int>(eigvals.size()));
 
   int info;
 
@@ -56,7 +56,7 @@ int symmetric_matrix_eigensystem(matrix<T>& A,
 # endif
 
   // Now allocate the memory for the workspace.
-  worksize = (int)tmpwork[0];
+  worksize = static_cast<int>(tmpwork[0]);
   std::vector<T> work(worksize);
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
@@ -90,7 +90,7 @@ int matrix_eigenvalues(matrix<T>& A,
   char jobVR = 'N';	// 'N'-eigenvalues only, 'V'-eigenvalues and vectors
   int N = A.rows();	// Dimensions of matrix.
 
-  assert(N == (int)A.columns() && N == (int)eigvals.size());
+  assert(N == static_cast<int>(A.columns()) && N == static_cast<int>(eigvals.size()));
 
   int info, ldVL = 1, ldVR = 1;
 
@@ -111,7 +111,7 @@ int matrix_eigenvalues(matrix<T>& A,
 # endif
 
   // Now allocate the memory for the workspace.
-  worksize = (int)tmpwork[0];
+  worksize = static_cast<int>(tmpwork[0]);
   std::vector<T> work(worksize);
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)
@@ -143,7 +143,7 @@ int matrix_eigenvalues(matrix<std::complex<T>>& A,
   int rworksize = 2 * A.rows();
   std::vector<T> rwork(rworksize);
 
-  assert(N == (int)A.columns() && N == (int)eigvals.size());
+  assert(N == static_cast<int>(A.columns()) && N == static_cast<int>(eigvals.size()));
 
   int info, ldVL = 1, ldVR = 1;
 
@@ -162,7 +162,7 @@ int matrix_eigenvalues(matrix<std::complex<T>>& A,
 # endif
 
   // Now allocate the memory for the workspace.
-  cworksize = (int)ctmpwork[0].real();
+  cworksize = static_cast<int>(ctmpwork[0].real());
   std::vector<std::complex<T>> cwork(cworksize);
 
 # if !defined(JLT_NO_VECTOR_DATA_METHOD)

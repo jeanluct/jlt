@@ -239,7 +239,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
       // See Ham and Song preprint (2006), p. 9.
       // Take log2 since we nest the multiplications.
-      auto pmax = (size_type)ceil(log2(n*n - 2*n + 2));
+      auto pmax = static_cast<size_type>(ceil(log2(n*n - 2*n + 2)));
 
       // Take powers of matrix.  Do this in place since we need to
       // renormalise to avoid blow-up.

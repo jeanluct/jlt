@@ -65,7 +65,7 @@ int SVdecomp(matrix<T>& A,
 		tmpwork, &worksize, &info);
 #endif
 
-  worksize = (int)tmpwork[0];
+  worksize = static_cast<int>(tmpwork[0]);
 
 #ifdef JLT_DEBUG
   std::cerr << "jlt::svdecomp:     worksize = " << worksize << std::endl;
@@ -118,7 +118,7 @@ int SVdecomp(matrix<T>& A, std::vector<T>& w)
 		0, &N, 0, &M, tmpwork, &worksize, &info);
 #endif
 
-  worksize = (int)tmpwork[0];
+  worksize = static_cast<int>(tmpwork[0]);
 
 #ifdef JLT_DEBUG
   std::cerr << "jlt::svdecomp:     worksize = " << worksize << std::endl;

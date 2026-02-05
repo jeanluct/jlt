@@ -207,9 +207,9 @@
 ## Future Improvements
 
 ### Code Quality
-- Use `constexpr` and `noexcept` where appropriate
-- Replace C-style casts with `static_cast`
-- Add `[[nodiscard]]` attributes
+- ✅ **COMPLETED** Use `constexpr` and `noexcept` where appropriate - added to matrix.hpp accessor functions (size(), rows(), columns(), isSquare(), empty())
+- ✅ **COMPLETED** Replace C-style casts with `static_cast` - updated polynomial.hpp, svdecomp.hpp, matlab.hpp, eigensystem.hpp, mathmatrix.hpp, tictoc.hpp
+- ✅ **COMPLETED** Add `[[nodiscard]]` attributes - already present on appropriate functions throughout codebase
 - [x] Remove pre-C++11 compatibility code - csparse.hpp auto_ptr fallback removed (2026-02-04)
 - Refactor matrix print functions (matrix.hpp lines 340-397) - similar formatting logic can be factored out
 - Refactor LAPACK interface patterns (eigensystem.hpp lines 48-184) - repeated patterns for different data types
