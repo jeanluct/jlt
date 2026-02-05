@@ -157,9 +157,6 @@ std::vector<T> col(n);
 
 ### Problems:
 
-**lapack.hpp - Missing header guards:**
-- File `lapack.h` (not .hpp) is included but doesn't have proper guards for C++ inclusion
-
 **Forward declaration issues:**
 - Lines 24-30 in mathmatrix.hpp: Forward declarations might conflict with actual definitions
 
