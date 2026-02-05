@@ -214,7 +214,11 @@
 - Refactor matrix print functions (matrix.hpp lines 340-397) - similar formatting logic can be factored out
 - Refactor LAPACK interface patterns (eigensystem.hpp lines 48-184) - repeated patterns for different data types
 - ✅ **VERIFIED** Forward declarations in mathmatrix.hpp, mathvector.hpp, polynomial.hpp, matrix.hpp are correct and working
-- Add missing includes (`<memory>`, `<algorithm>`) to several files
+- ✅ **COMPLETED** Add missing includes (`<algorithm>`) to several files
+  - Added to `polynomial.hpp` (uses std::max/min)
+  - Added to `svdecomp.hpp` (uses std::min/max)
+  - Note: `<memory>` was already present in `csparse.hpp`
+  - Note: `<algorithm>` already present in `eigensystem.hpp`, `matrixutil.hpp`
 - Refactor duplicate logic in matlab.hpp (lines 376-385, 199-209)
 
 ### Testing
