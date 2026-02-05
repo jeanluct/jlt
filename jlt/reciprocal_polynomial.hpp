@@ -12,11 +12,15 @@
 //
 
 //
-// Class to represent reciprocal polynomials that satisfy
+// Class to represent a monic reciprocal polynomial
+//
+
+//
+// These satisfy the reciprocal identity
 //
 //    P(x) == x^n P(1/x),
 //
-// where n is the degree.
+// where n is the degree, as well as P(0) == 1.
 //
 
 //

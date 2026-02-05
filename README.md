@@ -69,5 +69,3 @@ and J. A. C. Weideman.
 [8]: https://github.com/jeanluct/jlt/tree/master/matlab
 [9]: https://github.com/jeanluct/jlt/raw/master/LICENSE
 [10]: http://appliedmaths.sun.ac.za/~weideman/research/differ.html
-
-[![Analytics](https://ga-beacon.appspot.com/UA-58116885-1/jlt/readme)](https://github.com/igrigorik/ga-beacon)
