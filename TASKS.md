@@ -142,13 +142,14 @@
 - [x] Fix static variable thread-safety issues
   - Removed `static bool only_once` from matrix.hpp operator[] methods
   - These warned about lack of bounds checking on 2nd [] index
-  - Removed because: (1) not thread-safe, (2) users often miss once-only warnings, (3) if MATRIX_CHECK_BOUNDS is enabled, user explicitly requested bounds checking
+  - Removed because: (1) not thread-safe, (2) users often miss once-only warnings, (3) if JLT_MATRIX_CHECK_BOUNDS is enabled, user explicitly requested bounds checking
   - Added comments explaining why warnings were removed
 - [x] Add move semantics for performance (matrix.hpp - DONE)
 - [x] Implement proper bounds checking throughout
   - ✅ Bounds checking already implemented in vector.hpp (operator[] via at())
   - ✅ Bounds checking already implemented in matrix.hpp (operator() via at(), row())
   - ✅ Created test_bounds_checking.cpp to verify checks work when flags enabled
+  - ✅ Renamed macros to use JLT_ prefix (JLT_VECTOR_CHECK_BOUNDS, JLT_MATRIX_CHECK_BOUNDS)
   - Documented in AGENTS.md how to compile with bounds checking flags
 - [x] Refactor code duplication in mathvector.hpp cross product
   - Replaced three specializations (float, double, long double) with single template
@@ -270,7 +271,7 @@ The following improvements would strengthen existing test coverage:
 These may require verifying/fixing jlt code behavior:
 
 - [ ] **test_vector.hpp improvements:**
-  - Test `at()` with bounds checking enabled (`VECTOR_CHECK_BOUNDS`)
+  - Test `at()` with bounds checking enabled (`JLT_VECTOR_CHECK_BOUNDS`)
   - Test size mismatch operations (should they throw?)
   - Verify exception messages in `at()` out-of-range throws
 
@@ -326,7 +327,7 @@ These may require verifying/fixing jlt code behavior:
 Some test additions may require jlt code improvements:
 
 - [ ] Verify exception handling for invalid operations (add throws where missing)
-- [ ] Implement bounds checking for matrix operations (`MATRIX_CHECK_BOUNDS`)
+- [x] Implement bounds checking for matrix operations (`JLT_MATRIX_CHECK_BOUNDS`)
 - [ ] Add `normalize()` function to mathvector if missing
 - [ ] Improve QR decomposition to guarantee orthogonality of Q
 - [ ] Add input validation to `trace()` for non-square matrices
