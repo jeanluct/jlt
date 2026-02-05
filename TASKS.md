@@ -156,7 +156,12 @@
   - Date: 2026-02-04
 
 ### Low Priority
-- [ ] Update to C++17 features (remove C++98 compatibility code)
+- [ ] Update to C++17 features
+  - ✅ **COMPLETED** Removed pre-C++11 __cplusplus > 199711L checks from:
+    - jlt/vector.hpp
+    - jlt/mathvector.hpp
+    - jlt/mathmatrix.hpp
+    - jlt/matrix.hpp
 - [ ] Add comprehensive documentation
 - [ ] Consider header-only implementation
 - [ ] Set up CI/CD pipeline for automated testing

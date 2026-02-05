@@ -44,24 +44,12 @@ public:
   // Constructors
   //
 
-#if __cplusplus > 199711L
-  // Use C++11-style argument forwarding.
-  template<typename... Args>
-  vector(Args&&... _args) : std::vector<T>(std::forward<Args>(_args)...) {}
+// Use C++11-style argument forwarding.
+template<typename... Args>
+vector(Args&&... _args) : std::vector<T>(std::forward<Args>(_args)...) {}
 
-  // Forward initializer list as well.
-  vector(std::initializer_list<T> _l) : std::vector<T>(_l) {}
-#else
-  // Empty vector of size 0.
-  vector() : std::vector<T>() {}
-
-  // mathvector of size _n filled with _x.
-  explicit vector(size_type _n, const_reference _x = T())
-    : std::vector<T>(_n,_x) {}
-
-  // Copy constructor.
-  vector(const std::vector<T>& _v) : std::vector<T>(_v) {}
-#endif
+// Forward initializer list as well.
+vector(std::initializer_list<T> _l) : std::vector<T>(_l) {}
 
   //
   // Element access.

@@ -80,8 +80,9 @@ std::vector<T> col(n);
 ### Outdated Patterns:
 
 **Pre-C++11 code patterns:**
-- Lines 136-155 in matrix.hpp: C++11 feature detection with `#if __cplusplus > 199711L`
+- ✅ **FIXED** Lines 136-155 in matrix.hpp: Removed C++11 feature detection `#if __cplusplus > 199711L` blocks - now unconditional C++11 code
 - ✅ **FIXED** Lines 36-40 in csparse.hpp: Removed deprecated `std::auto_ptr` alias, now uses `std::unique_ptr` directly; also fixed destructor bugs (inverted null check logic)
+- ✅ **FIXED** Similar blocks removed from vector.hpp, mathvector.hpp, mathmatrix.hpp
 
 ### Modern C++ Improvements:
 

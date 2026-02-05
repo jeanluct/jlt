@@ -114,27 +114,25 @@ public:
 
   matrix(const matrix<T>& _M) = default;	// Copy constructor.
 
-#if __cplusplus > 199711L
-  // C++11-style list initialization.
-  // example: matrix(3,2,{1,2,3,4,5,6})
-  matrix(size_type _m, size_type _n, std::initializer_list<T> _l)
-    : m(_m), n(_n), storage(_l)
-    {
-      if (storage.size() != _m * _n)
-	{
-	  JLT_THROW
-	    (std::out_of_range("Out of range exception in jlt::matrix."));
-	}
-    }
+// C++11-style list initialization.
+// example: matrix(3,2,{1,2,3,4,5,6})
+matrix(size_type _m, size_type _n, std::initializer_list<T> _l)
+  : m(_m), n(_n), storage(_l)
+  {
+    if (storage.size() != _m * _n)
+      {
+	JLT_THROW
+	  (std::out_of_range("Out of range exception in jlt::matrix."));
+      }
+  }
 
-  // Move constructor
-  matrix(matrix<T>&& _M) noexcept
-    : m(_M.m), n(_M.n), storage(std::move(_M.storage))
-    {
-      _M.m = 0;
-      _M.n = 0;
-    }
-#endif
+// Move constructor
+matrix(matrix<T>&& _M) noexcept
+  : m(_M.m), n(_M.n), storage(std::move(_M.storage))
+  {
+    _M.m = 0;
+    _M.n = 0;
+  }
 
   // Destructor - not needed, vector handles it
 
@@ -264,20 +262,18 @@ public:
       return *this;
     }
 
-#if __cplusplus > 199711L
-  // Move assignment operator
-  matrix<T>& operator=(matrix<T>&& M) noexcept
-    {
-      if (&M != this) {
-        m = M.m;
-        n = M.n;
-        storage = std::move(M.storage);
-        M.m = 0;
-        M.n = 0;
-      }
-      return *this;
+// Move assignment operator
+matrix<T>& operator=(matrix<T>&& M) noexcept
+  {
+    if (&M != this) {
+      m = M.m;
+      n = M.n;
+      storage = std::move(M.storage);
+      M.m = 0;
+      M.n = 0;
     }
-#endif
+    return *this;
+  }
 
   //
   // Transpose
