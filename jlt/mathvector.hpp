@@ -242,48 +242,17 @@ mathvector(std::initializer_list<T> _l) : vector<T>(_l) {}
 //
 
 //
-// Specializations of cross product
+// Cross product for mathvector
+// Single template implementation replaces three specializations (float, double, long double)
 //
-template<>
-inline mathvector<long double> cross(const mathvector<long double>& v,
-				     const mathvector<long double>& w)
+template<class T, class S>
+inline mathvector<T,S> cross(const mathvector<T,S>& v,
+			     const mathvector<T,S>& w)
 {
   // Cross product only works on vectors of size 3.
   VECTOR_ASSERT(v.size() == 3 && w.size() == 3);
 
-  mathvector<long double> res(3);
-
-  res[0] = v[1] * w[2] - v[2] * w[1];
-  res[1] = v[2] * w[0] - v[0] * w[2];
-  res[2] = v[0] * w[1] - v[1] * w[0];
-
-  return res;
-}
-
-template<>
-inline mathvector<double> cross(const mathvector<double>& v,
-			     const mathvector<double>& w)
-{
-  // Cross product only works on vectors of size 3.
-  VECTOR_ASSERT(v.size() == 3 && w.size() == 3);
-
-  mathvector<double> res(3);
-
-  res[0] = v[1] * w[2] - v[2] * w[1];
-  res[1] = v[2] * w[0] - v[0] * w[2];
-  res[2] = v[0] * w[1] - v[1] * w[0];
-
-  return res;
-}
-
-template<>
-inline mathvector<float> cross(const mathvector<float>& v,
-			     const mathvector<float>& w)
-{
-  // Cross product only works on vectors of size 3.
-  VECTOR_ASSERT(v.size() == 3 && w.size() == 3);
-
-  mathvector<float> res(3);
+  mathvector<T,S> res(3);
 
   res[0] = v[1] * w[2] - v[2] * w[1];
   res[1] = v[2] * w[0] - v[0] * w[2];
