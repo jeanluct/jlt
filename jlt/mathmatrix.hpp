@@ -351,7 +351,7 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
   // This should be the fastest method, with the least temporaries.
   void invert(mathmatrix<T,S>& Ainv)
     {
-      MATRIX_ASSERT(m == Ainv.m && m == Ainv.n && isSquare());
+      MATRIX_ASSERT(isSquare() && rows() == Ainv.rows());
       unsigned int n = rows();
 
       int perm;

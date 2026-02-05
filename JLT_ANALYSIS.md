@@ -128,8 +128,7 @@ std::vector<T> col(n);
 - Line 77: `if (A(j,j) == 0.0) A(j,j) = tiny;` - modifies zero pivot without proper handling
 
 **mathmatrix.hpp - Wrong matrix dimensions in invert():**
-- Line 367: `MATRIX_ASSERT(m == Ainv.m && m == Ainv.n && isSquare());`
-- **Bug**: Should check `rows()` and `columns()`, not private members `m` and `n`
+- ✅ **FIXED** Line 354: Changed from `MATRIX_ASSERT(m == Ainv.m && m == Ainv.n && isSquare())` to `MATRIX_ASSERT(isSquare() && rows() == Ainv.rows())` - now uses public methods instead of private members
 
 ### Dangerous Practices:
 

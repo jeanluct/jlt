@@ -190,7 +190,7 @@
 - matrixutil.hpp: Inefficient classical Gram-Schmidt (should use modified algorithm)
 
 ### Bug Fixes Needed
-- mathmatrix.hpp: Wrong matrix dimension checks in invert() (lines 367 - should check rows()/columns(), not private m/n)
+- ✅ **FIXED** mathmatrix.hpp: Wrong matrix dimension checks in invert() (line 354 - was checking private members m/n, now uses rows()/columns() public methods)
 - ✅ **FIXED** csparse.hpp: Removed deprecated auto_ptr alias, now uses std::unique_ptr directly; also fixed destructor bugs (inverted logic: if (!get()) → if (get()))
 - lapack.h: Missing C++ header guards
 - matrix.hpp: Constructor exception safety (lines 118-121, 150-153) - need try-catch for uninitialized_copy
