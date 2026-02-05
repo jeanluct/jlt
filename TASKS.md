@@ -149,7 +149,11 @@
 - [ ] Refactor code duplication in mathvector.hpp cross product
 - [ ] Optimize matrix multiplication algorithms
 - [ ] Set up automated linting/formatting (clang-format, clang-tidy)
-- [ ] Replace auto_ptr with unique_ptr in csparse.hpp (deprecated in C++11)
+- [x] Replace auto_ptr with unique_ptr in csparse.hpp (deprecated in C++11)
+  - Removed pre-C++11 support block (auto_ptr fallback for C++98)
+  - Changed auto_ptr alias to std::unique_ptr directly
+  - Fixed destructor bugs: inverted logic `if (!get())` → `if (get())` in cs_cl_drop, cs_ci_drop, cs_cl_free, cs_ci_free
+  - Date: 2026-02-04
 
 ### Low Priority
 - [ ] Update to C++17 features (remove C++98 compatibility code)
@@ -182,7 +186,7 @@
 
 ### Bug Fixes Needed
 - mathmatrix.hpp: Wrong matrix dimension checks in invert() (lines 367 - should check rows()/columns(), not private m/n)
-- csparse.hpp: Uses deprecated std::auto_ptr (C++98), should use std::unique_ptr
+- ✅ **FIXED** csparse.hpp: Removed deprecated auto_ptr alias, now uses std::unique_ptr directly; also fixed destructor bugs (inverted logic: if (!get()) → if (get()))
 - lapack.h: Missing C++ header guards
 - matrix.hpp: Constructor exception safety (lines 118-121, 150-153) - need try-catch for uninitialized_copy
 - mathmatrix.hpp: LAPACK calls without exception protection (lines 332-360)
@@ -193,7 +197,7 @@
 - Use `constexpr` and `noexcept` where appropriate
 - Replace C-style casts with `static_cast`
 - Add `[[nodiscard]]` attributes
-- Remove pre-C++11 compatibility code
+- [x] Remove pre-C++11 compatibility code - csparse.hpp auto_ptr fallback removed (2026-02-04)
 
 ### Testing
 - Increase code coverage to >90% (currently: 18 test suites, 1040+ assertions)

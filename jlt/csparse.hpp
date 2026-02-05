@@ -30,27 +30,16 @@ extern "C"
 }
 } // namespace csparse
 
-namespace jlt
-{
-#if __cplusplus > 199711L
-  template<class T>
-  using auto_ptr = std::unique_ptr<T>;
-#else
-  using std::auto_ptr;
-#endif
-} // namespace jlt
-
-
 namespace jlt {
 
 // unique_ptr wrappers for csparse pointers that will take care of
 // freeing the memory when we're done with a matrix.
 
 // Derived wrapper for csparse::cs pointers.
-class cs_unique_ptr : public auto_ptr<csparse::cs>
+class cs_unique_ptr : public std::unique_ptr<csparse::cs>
 {
 public:
-  cs_unique_ptr(csparse::cs* p_ = nullptr) : auto_ptr<csparse::cs>(p_) {}
+  cs_unique_ptr(csparse::cs* p_ = nullptr) : std::unique_ptr<csparse::cs>(p_) {}
 
   // Conversion to normal dumb pointer.
   operator csparse::cs*() { return get(); }
@@ -66,7 +55,7 @@ public:
     //
     // We do not call this function directly, since we have to let the
     // base unique_ptr<> free the actual pointer.
-    if (!get())
+    if (get())
       {
 	csparse::cs_free(get()->p);
 	csparse::cs_free(get()->i);
@@ -76,10 +65,10 @@ public:
 };
 
 // Derived wrapper for csparse::csd pointers.
-class csd_unique_ptr : public auto_ptr<csparse::csd>
+class csd_unique_ptr : public std::unique_ptr<csparse::csd>
 {
 public:
-  csd_unique_ptr(csparse::csd* p_ = nullptr) : auto_ptr<csparse::csd>(p_) {}
+  csd_unique_ptr(csparse::csd* p_ = nullptr) : std::unique_ptr<csparse::csd>(p_) {}
 
   // Conversion to normal dumb pointer.
   operator csparse::csd*() { return get(); }
@@ -95,7 +84,7 @@ public:
     //
     // We do not call this function directly, since we have to let the
     // base unique_ptr<> free the actual pointer.
-    if (!get())
+    if (get())
       {
 	csparse::cs_free(get()->p);
 	csparse::cs_free(get()->q);

@@ -81,7 +81,7 @@ std::vector<T> col(n);
 
 **Pre-C++11 code patterns:**
 - Lines 136-155 in matrix.hpp: C++11 feature detection with `#if __cplusplus > 199711L`
-- Lines 36-40 in csparse.hpp: Using deprecated `std::auto_ptr` instead of `std::unique_ptr`
+- ✅ **FIXED** Lines 36-40 in csparse.hpp: Removed deprecated `std::auto_ptr` alias, now uses `std::unique_ptr` directly; also fixed destructor bugs (inverted null check logic)
 
 ### Modern C++ Improvements:
 
@@ -102,8 +102,8 @@ std::vector<T> col(n);
 ### Critical Problems:
 
 **matrix.hpp - Static variables in operators:**
-- Lines 206, 221: `static bool only_once = true` in `operator[]` methods
-- **Risk**: Not thread-safe, multiple threads could bypass warning
+- ✅ **FIXED** Lines 206, 221: Removed `static bool only_once` warning mechanism from `operator[]` methods
+- Was not thread-safe; replaced with improved comment explaining bounds checking limitation
 
 **matrix.hpp - Mutable state:**
 - All methods modify matrix state without synchronization
@@ -207,7 +207,7 @@ return std::vector<T>(start + n*i,start + n*i + n);
 
 ---
 
-**Analysis Date:** 2026-02-03  
-**Library:** jlt C++ and Matlab utility library  
-**Scope:** Core C++ components (jlt/ directory)  
+**Analysis Date:** 2026-02-03
+**Library:** jlt C++ and Matlab utility library
+**Scope:** Core C++ components (jlt/ directory)
 **Focus:** Memory safety, performance, modern C++ practices, thread safety
