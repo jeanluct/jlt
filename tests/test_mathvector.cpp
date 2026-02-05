@@ -238,16 +238,44 @@ TEST_CASE("mathvector with complex numbers", "[mathvector]") {
         REQUIRE(v[0] == cd(1.0, 2.0));
     }
 
-    SECTION("complex mag2") {
+    SECTION("complex vector default scalar type") {
+        // mathvector<std::complex<double>> should default to double as scalar type
+        mathvector<cd> v = {cd(3.0, 4.0)};
+        // Check that scalar_type is double (via mag2 return type)
+        double result = mag2(v);
+        REQUIRE(result == 25.0);  // |3+4i|² = 3² + 4² = 25
+    }
+
+    SECTION("complex mag2 with default scalar type") {
+        mathvector<cd> v = {cd(3.0, 4.0), cd(1.0, 1.0)};
+        // |3+4i|² + |1+i|² = 25 + 2 = 27
+        double result = mag2(v);
+        REQUIRE(result == 27.0);
+    }
+
+    SECTION("complex mag2 with explicit scalar type") {
         mathvector<cd, double> v = {cd(3.0, 4.0)};  // |3+4i|² = 3² + 4² = 25
         double result = mag2(v);
         REQUIRE(result == 25.0);
     }
 
-    SECTION("complex abs") {
-        mathvector<cd, double> v = {cd(3.0, 4.0)};
+    SECTION("complex abs with default scalar type") {
+        mathvector<cd> v = {cd(3.0, 4.0)};
         double result = abs(v);
         REQUIRE(result == Approx(5.0));  // |3+4i| = 5
+    }
+
+    SECTION("complex abs with explicit scalar type") {
+        mathvector<cd, double> v = {cd(3.0, 4.0)};
+        double result = abs(v);
+        REQUIRE(result == Approx(5.0));
+    }
+
+    SECTION("complex vector with multiple elements") {
+        mathvector<cd> v = {cd(1.0, 0.0), cd(0.0, 1.0), cd(1.0, 1.0)};
+        // |1|² + |i|² + |1+i|² = 1 + 1 + 2 = 4
+        REQUIRE(mag2(v) == 4.0);
+        REQUIRE(abs(v) == Approx(2.0));
     }
 }
 

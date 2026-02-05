@@ -19,6 +19,54 @@
 namespace jlt {
 
 //
+// Implementation details - not part of public API
+// These are internal helpers that may change without notice.
+//
+namespace detail {
+
+// Trait to extract the real scalar type from a value type.
+// For real types: scalar_type<T>::type = T
+// For complex types: scalar_type<std::complex<T>>::type = T
+template<class T>
+struct scalar_type
+{
+  using type = T;
+};
+
+template<class T>
+struct scalar_type<std::complex<T>>
+{
+  using type = T;
+};
+
+template<class T>
+using scalar_type_t = typename scalar_type<T>::type;
+
+// Trait to compute the squared magnitude of a single element.
+// For real types: computes val * val
+// For complex types: computes |val|² using std::norm
+template<class T>
+struct mag2_traits
+{
+  static T compute(const T& val)
+  {
+    return val * val;
+  }
+};
+
+template<class T>
+struct mag2_traits<std::complex<T>>
+{
+  static T compute(const std::complex<T>& val)
+  {
+    // std::norm returns |z|² = z * conj(z) for complex numbers
+    return std::norm(val);
+  }
+};
+
+} // namespace detail
+
+//
 // Declare class and function templates
 //
 
@@ -83,7 +131,7 @@ inline mathvector<T,S> cross(const mathvector<T,S>& v,
 // class mathvector
 //
 
-template<class T, class S = T>
+template<class T, class S = detail::scalar_type_t<T>>
 class mathvector : public vector<T> // note that this is jlt::vector
 {
 public:
@@ -423,22 +471,7 @@ template<class T, class S>
 
   for (auto i = v.cbegin(); i != v.cend(); ++i)
     {
-      magn += (*i)*(*i);
-    }
-
-  return magn;
-}
-
-// Specializations of mag2 for complex types
-template<class T, class S>
-[[nodiscard]] inline S mag2(const mathvector<std::complex<T>,S>& v)
-{
-  S magn = S();
-
-  for (auto i = v.cbegin(); i != v.cend(); ++i)
-    {
-      // Note that std::complex::norm returns the squared magnitude.
-      magn += norm(*i);
+      magn += detail::mag2_traits<T>::compute(*i);
     }
 
   return magn;
