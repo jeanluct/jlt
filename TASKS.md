@@ -271,9 +271,9 @@ The following improvements would strengthen existing test coverage:
 These may require verifying/fixing jlt code behavior:
 
 - [ ] **test_vector.hpp improvements:**
-  - Test `at()` with bounds checking enabled (`JLT_VECTOR_CHECK_BOUNDS`)
-  - Test size mismatch operations (should they throw?)
-  - Verify exception messages in `at()` out-of-range throws
+  - ✅ **COMPLETED** Test `at()` with bounds checking enabled (`JLT_VECTOR_CHECK_BOUNDS`) - covered in test_bounds_checking.cpp
+  - [ ] Test size mismatch operations (should they throw?)
+  - [ ] Verify exception messages in `at()` out-of-range throws
 
 - [ ] **test_mathvector.hpp improvements:**
   - Test zero division in `operator/=` (verify behavior)
@@ -299,7 +299,7 @@ These may require verifying/fixing jlt code behavior:
   - ✅ **COMPLETED** Test move constructor and move assignment (19 new assertions added)
   - [ ] Test column access (if available in the API)
   - [ ] Test column iterators (if they exist)
-  - [ ] Add more `at()` bounds checking tests for both dimensions
+  - ✅ **COMPLETED** Add more `at()` bounds checking tests for both dimensions - covered in test_bounds_checking.cpp
 
 - [ ] **test_polynomial.hpp improvements:**
   - Test polynomial evaluation at specific points (`p(x)`)
