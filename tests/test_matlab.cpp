@@ -260,7 +260,7 @@ TEST_CASE("printMatlabForm_nodefaults for matrix", "[matlab]") {
     matrix<double> m(2, 2);
     m(0, 0) = 1.0; m(0, 1) = 2.0;
     m(1, 0) = 3.0; m(1, 1) = 4.0;
-    printMatlabForm_nodefaults<double>(oss, m, "B", "");
+    jlt::detail::printMatlabForm_nodefaults<double>(oss, m, "B", "");
     std::string expected = "B = [\n1 2\n3 4\n];\n";
     REQUIRE(oss.str() == expected);
   }
@@ -269,7 +269,7 @@ TEST_CASE("printMatlabForm_nodefaults for matrix", "[matlab]") {
     matrix<double> m(2, 2);
     m(0, 0) = 5.0; m(0, 1) = 6.0;
     m(1, 0) = 7.0; m(1, 1) = 8.0;
-    printMatlabForm_nodefaults<double>(oss, m, "C", "Another matrix");
+    jlt::detail::printMatlabForm_nodefaults<double>(oss, m, "C", "Another matrix");
     std::string expected = "C_descr = 'Another matrix';\n"
                            "C = [\n5 6\n7 8\n];\n";
     REQUIRE(oss.str() == expected);
