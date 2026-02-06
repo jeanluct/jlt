@@ -202,8 +202,7 @@ std::ostream& operator<<(std::ostream& strm, const std::valarray<T>& vv)
 
 
 //
-//  A quick-and-dirty way to print lists (or vectors).
-//  Not using format info as with other methods yet.
+//  Print list with consistent formatting.
 //
 template<class T>
 [[nodiscard]]
@@ -211,7 +210,15 @@ std::ostream& operator<<(std::ostream& strm, const std::list<T>& ll)
 {
   if (ll.empty()) return strm;
 
-  std::copy(ll.begin(), ll.end(), std::ostream_iterator<T>(strm, "\t"));
+  auto it = ll.begin();
+  auto end = ll.end();
+  --end;
+
+  for (; it != end; ++it) {
+    strm << *it;
+    detail::print_field_sep<T>(strm);
+  }
+  strm << *end;
 
   return strm;
 }
@@ -223,14 +230,9 @@ std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
   {
     for (auto it = mm.cbegin(); it != mm.cend(); ++it)
       {
-	strm << it->first
-#ifdef JLT_FIELD_SEP_STRING
-	     << format_traits<T>::field_sep
-#else
-	     << std::string(format_traits<T>::field_sep,' ')
-#endif
-	     << it->second
-	     << '\n';
+	strm << it->first;
+	detail::print_field_sep<T>(strm);
+	strm << it->second << '\n';
       }
 
     return strm;
@@ -252,14 +254,9 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
 
     for (auto it = mm.cbegin(); it != mm.cend(); ++it)
       {
-	strm << std::setw(wid)
-	     << it->first
-#ifdef JLT_FIELD_SEP_STRING
-	     << format_traits<T>::field_sep
-#else
-	     << std::string(format_traits<T>::field_sep,' ')
-#endif
-	     << it->second << '\n';
+	strm << std::setw(wid) << it->first;
+	detail::print_field_sep<T>(strm);
+	strm << it->second << '\n';
       }
 
     return strm;
