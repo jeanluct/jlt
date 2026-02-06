@@ -34,11 +34,12 @@ Add `operator<<` support for additional STL containers:
 
 ---
 
-## Task 2: Input Validation in operator>>
+## Task 2: Input Validation in operator>> ✅ COMPLETED
 
 **Priority:** High
 **Effort:** ~15 minutes
-**Files:** `jlt/stlio.hpp`
+**Files:** `jlt/stlio.hpp`, `tests/test_stlio.cpp`
+**Completed:** 2026-02-05
 
 ### Description
 The current `operator>>` for `std::vector` doesn't validate stream state during reads:
@@ -56,17 +57,25 @@ std::istream& operator>>(std::istream& strm, std::vector<T>& vv)
 ```
 
 ### Implementation Notes
-- Check `strm.good()` after each extraction
-- Break out of loop on failure
-- Consider leaving container in valid state on partial failure
-- May need to add `operator>>` for other containers too
+- ✅ Check `strm.good()` after each extraction
+- ✅ Break out of loop on failure
+- ✅ Consider leaving container in valid state on partial failure
+- ✅ May need to add `operator>>` for other containers too
+
+### Changes Made
+- Added stream state validation to `vector` operator>> - stops on failure
+- Added `operator>>` for `std::valarray` with validation
+- Added `operator>>` for `std::list` (reads until EOF or failure)
+- Added comprehensive tests for input validation
+- Added tests for valarray and list input operators
+- Test error handling for bad input and EOF conditions
 
 ### Acceptance Criteria
-- [ ] Input validation added to vector operator>>
-- [ ] Stream state properly checked after each read
-- [ ] Early exit on stream failure
-- [ ] Tests added for error conditions
-- [ ] All tests pass
+- [x] Input validation added to vector operator>>
+- [x] Stream state properly checked after each read
+- [x] Early exit on stream failure
+- [x] Tests added for error conditions
+- [x] All tests pass
 
 ---
 
@@ -164,11 +173,12 @@ No `format_traits` specialization exists for complex numbers. This would be usef
 
 ---
 
-## Task 6: Clean Up Field Separator #ifdefs
+## Task 6: Clean Up Field Separator #ifdefs 🔄 PARTIALLY DONE
 
 **Priority:** Low
-**Effort:** ~30 minutes
+**Effort:** ~30 minutes (remaining)
 **Files:** `jlt/stlio.hpp`
+**Status:** Helper function created, needs propagation to all locations
 
 ### Description
 The `JLT_FIELD_SEP_STRING` macro appears 8+ times throughout the file, making the code verbose and harder to read.
@@ -183,10 +193,15 @@ The `JLT_FIELD_SEP_STRING` macro appears 8+ times throughout the file, making th
 ```
 
 ### Implementation Notes
-- Already partially addressed with `detail::print_field_sep<T>()` helper
-- Ensure all locations use the helper
+- ✅ Created `detail::print_field_sep<T>()` helper function
+- 🔄 Need to ensure all locations use the helper (currently only used in `detail::print_sequence`)
 - Consider if macro is still needed or can be simplified
 - May need to keep macro for compile-time string vs int selection
+
+### Remaining Work
+- Update `std::map` output operators to use `detail::print_field_sep<T>()`
+- Update `std::list` output operator to use consistent separator
+- Verify all `#ifdef JLT_FIELD_SEP_STRING` blocks are eliminated or centralized
 
 ### Acceptance Criteria
 - [ ] All #ifdef JLT_FIELD_SEP_STRING blocks use helper function
@@ -198,16 +213,20 @@ The `JLT_FIELD_SEP_STRING` macro appears 8+ times throughout the file, making th
 
 ## Summary
 
-| Task | Priority | Effort | Key Benefit |
-|------|----------|--------|-------------|
-| 1. Add container support | Medium | 30 min | More complete STL coverage |
-| 2. Input validation | High | 15 min | Robustness, error handling |
-| 3. Consistent list separator | Low | 10 min | Consistency |
-| 4. Refactor format_traits | Medium | 45 min | Maintainability |
-| 5. Complex number support | Medium | 20 min | Completeness |
-| 6. Clean up #ifdefs | Low | 30 min | Code clarity |
+| Task | Priority | Status | Effort | Key Benefit |
+|------|----------|--------|--------|-------------|
+| 1. Add container support | Medium | ⏳ Pending | 30 min | More complete STL coverage |
+| 2. Input validation | High | ✅ Done | 15 min | Robustness, error handling |
+| 3. Consistent list separator | Low | ⏳ Pending | 10 min | Consistency |
+| 4. Refactor format_traits | Medium | ⏳ Pending | 45 min | Maintainability |
+| 5. Complex number support | Medium | ⏳ Pending | 20 min | Completeness |
+| 6. Clean up #ifdefs | Low | 🔄 Partial | 30 min | Code clarity |
 
-**Recommended order:** 2 → 3 → 1 → 5 → 4 → 6
+**Completed:** Task 2
+**In Progress:** Task 6 (partial)
+**Pending:** Tasks 1, 3, 4, 5
+
+**Recommended order:** 2 ✅ → 3 → 1 → 5 → 4 → 6
 
 ---
 
