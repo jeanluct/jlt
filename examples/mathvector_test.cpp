@@ -27,7 +27,7 @@ int main()
 
   cout << a << endl << ma << endl;
 
-  cout << ma.isZero() << endl;
+  cout << ma.is_zero() << endl;
 
   a[0] = 1.;
   a[1] = -1.;
