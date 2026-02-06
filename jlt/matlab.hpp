@@ -20,12 +20,20 @@
 namespace jlt {
 
 
-  // Forward declarations.
+// Forward declarations.
 template<typename T> class matrix;
+
+//
+// Implementation details - not part of public API
+// These are internal helpers that may change without notice.
+//
+namespace detail {
 
 template<typename T> std::ostream&
 printMatlabForm_nodefaults(std::ostream&, const matrix<T>&,
 			   const std::string, const std::string);
+
+} // namespace detail
 
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
@@ -146,11 +154,11 @@ void printMatlabForm(MATFile *pmat,
 		     const std::string description = "")
   {
     // See matrix.hpp for explanation of the nodefautls version.
-    printMatlabForm_nodefaults<T>(pmat,A,name,description);
+    detail::printMatlabForm_nodefaults<T>(pmat,A,name,description);
   }
 
 template<typename T>
-void printMatlabForm_nodefaults(MATFile *pmat,
+void detail::printMatlabForm_nodefaults(MATFile *pmat,
 				const matrix<T>& A,
 				const std::string name,
 				const std::string description)
@@ -320,11 +328,11 @@ std::ostream& printMatlabForm(std::ostream& strm,
 			      const std::string description = "")
   {
     // See matrix.hpp for explanation of the nodefautls version.
-    return printMatlabForm_nodefaults<T>(strm,A,name,description);
+    return detail::printMatlabForm_nodefaults<T>(strm,A,name,description);
   }
 
 template<typename T>
-std::ostream& printMatlabForm_nodefaults(std::ostream& strm,
+std::ostream& detail::printMatlabForm_nodefaults(std::ostream& strm,
 					 const matrix<T>& A,
 					 const std::string name,
 					 const std::string description)

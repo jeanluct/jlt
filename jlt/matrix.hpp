@@ -67,6 +67,12 @@ namespace jlt {
 // Forward declarations.
 template<typename T> class matrix;
 
+//
+// Implementation details - not part of public API
+// These are internal helpers that may change without notice.
+//
+namespace detail {
+
 // Cannot use printMatlabForm from matlab.hpp, since the forward
 // declarations below takes precendence (for some reason) and GCC
 // complains about providing default arguments.  As a workaround,
@@ -82,6 +88,8 @@ template<typename T> void
 printMatlabForm_nodefaults(MATFile *, const matrix<T>&,
 			   const std::string, const std::string);
 #endif
+
+} // namespace detail
 
 
 template<class T>
@@ -114,25 +122,25 @@ public:
 
   matrix(const matrix<T>& _M) = default;	// Copy constructor.
 
-// C++11-style list initialization.
-// example: matrix(3,2,{1,2,3,4,5,6})
-matrix(size_type _m, size_type _n, std::initializer_list<T> _l)
-  : m(_m), n(_n), storage(_l)
-  {
-    if (storage.size() != _m * _n)
-      {
-	JLT_THROW
-	  (std::out_of_range("Out of range exception in jlt::matrix."));
-      }
-  }
+  // C++11-style list initialization.
+  // example: matrix(3,2,{1,2,3,4,5,6})
+  matrix(size_type _m, size_type _n, std::initializer_list<T> _l)
+    : m(_m), n(_n), storage(_l)
+    {
+      if (storage.size() != _m * _n)
+        {
+	  JLT_THROW
+	    (std::out_of_range("Out of range exception in jlt::matrix."));
+        }
+    }
 
-// Move constructor
-matrix(matrix<T>&& _M) noexcept
-  : m(_M.m), n(_M.n), storage(std::move(_M.storage))
-  {
-    _M.m = 0;
-    _M.n = 0;
-  }
+  // Move constructor
+  matrix(matrix<T>&& _M) noexcept
+    : m(_M.m), n(_M.n), storage(std::move(_M.storage))
+    {
+      _M.m = 0;
+      _M.n = 0;
+    }
 
   // Destructor - not needed, vector handles it
 
@@ -370,7 +378,7 @@ matrix<T>& operator=(matrix<T>&& M) noexcept
 				const std::string name = "",
 				const std::string description = "") const
     {
-      return printMatlabForm_nodefaults(strm,*this,name,description);
+      return detail::printMatlabForm_nodefaults(strm,*this,name,description);
     }
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
@@ -378,7 +386,7 @@ matrix<T>& operator=(matrix<T>&& M) noexcept
 		       const std::string name = "",
 		       const std::string description = "") const
   {
-    printMatlabForm_nodefaults(pmat,*this,name,description);
+    detail::printMatlabForm_nodefaults(pmat,*this,name,description);
   }
 #endif // JLT_MATLAB_LIB_SUPPORT
 

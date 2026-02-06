@@ -153,12 +153,12 @@ public:
   // Constructors
   //
 
-// Use C++11-style argument forwarding.
-template<typename... Args>
-mathvector(Args&&... _args) : vector<T>(std::forward<Args>(_args)...) {}
+  // Use C++11-style argument forwarding.
+  template<typename... Args>
+  mathvector(Args&&... _args) : vector<T>(std::forward<Args>(_args)...) {}
 
-// Forward initializer list as well.
-mathvector(std::initializer_list<T> _l) : vector<T>(_l) {}
+  // Forward initializer list as well.
+  mathvector(std::initializer_list<T> _l) : vector<T>(_l) {}
 
   //
   // Vector Operations
