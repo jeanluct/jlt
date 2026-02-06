@@ -119,74 +119,85 @@ struct format_traits<long double> {
 const char format_traits<long double>::field_sep[] = "  ";
 #endif
 
+//
+// Implementation details - not part of public API
+// These are internal helpers that may change without notice.
+//
+namespace detail {
+
+// RAII helper to save and restore stream flags
+class stream_flags_saver {
+  std::ios::fmtflags flags_;
+  std::streamsize precision_;
+  std::ostream& strm_;
+public:
+  explicit stream_flags_saver(std::ostream& strm)
+    : flags_(strm.flags()), precision_(strm.precision()), strm_(strm) {}
+
+  ~stream_flags_saver() {
+    strm_.flags(flags_);
+    strm_.precision(precision_);
+  }
+
+  // Disable copy and move
+  stream_flags_saver(const stream_flags_saver&) = delete;
+  stream_flags_saver& operator=(const stream_flags_saver&) = delete;
+  stream_flags_saver(stream_flags_saver&&) = delete;
+  stream_flags_saver& operator=(stream_flags_saver&&) = delete;
+};
+
+// Helper to print field separator
 template<class T>
-std::ostream& operator<<(std::ostream& strm, const std::vector<T>& vv)
-{
-  if (vv.size() == 0) return strm;
-
-  std::ios::fmtflags old_options = strm.flags();
-  const int prec = strm.precision();	// Precision (number of digits - 1).
-  int wid = format_traits<T>::field_width;	// Width of output field.
-
-  strm.setf(std::ios::showpoint);		// Print trailing zeros.
-  strm.setf(std::ios::right,std::ios::adjustfield);	// Adjust to the right.
-
-  // If the notation is scientific we can predict the width, so adjust
-  // accordingly.
-  if (strm.flags() & std::ios::scientific)
-      wid = prec + format_traits<T>::extra_width_scientific;
-
-  for (unsigned int i = 0; i < vv.size()-1; ++i)
-    {
-      strm << std::setw(wid) << vv[i]
+void print_field_sep(std::ostream& strm) {
 #ifdef JLT_FIELD_SEP_STRING
-	   << format_traits<T>::field_sep;
+  strm << format_traits<T>::field_sep;
 #else
-	   << std::string(format_traits<T>::field_sep,' ');
+  strm << std::string(format_traits<T>::field_sep, ' ');
 #endif
-    }
+}
 
-  strm << std::setw(wid) << vv[vv.size()-1];	// To avoid dangling tab.
+// Common logic for printing sequential containers (vector, valarray)
+template<class Container, class T>
+std::ostream& print_sequence(std::ostream& strm, const Container& c) {
+  if (c.size() == 0) return strm;
 
-  // Restore format flags.
-  strm.flags(old_options);
+  stream_flags_saver saver(strm);
+  const int prec = strm.precision();
+  int wid = format_traits<T>::field_width;
+
+  strm.setf(std::ios::showpoint);
+  strm.setf(std::ios::right, std::ios::adjustfield);
+
+  if (strm.flags() & std::ios::scientific)
+    wid = prec + format_traits<T>::extra_width_scientific;
+
+  auto it = std::begin(c);
+  auto end = std::end(c);
+  --end;  // Point to last element
+
+  for (; it != end; ++it) {
+    strm << std::setw(wid) << *it;
+    print_field_sep<T>(strm);
+  }
+  strm << std::setw(wid) << *end;
 
   return strm;
 }
 
+} // namespace detail
+
 template<class T>
+[[nodiscard]]
+std::ostream& operator<<(std::ostream& strm, const std::vector<T>& vv)
+{
+  return detail::print_sequence<std::vector<T>, T>(strm, vv);
+}
+
+template<class T>
+[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::valarray<T>& vv)
 {
-  if (vv.size() == 0) return strm;
-
-  std::ios::fmtflags old_options = strm.flags();
-  const int prec = strm.precision();	// Precision (number of digits - 1).
-  int wid = format_traits<T>::field_width;	// Width of output field.
-
-  strm.setf(std::ios::showpoint);		// Print trailing zeros.
-  strm.setf(std::ios::right,std::ios::adjustfield);	// Adjust to the right.
-
-  // If the notation is scientific we can predict the width, so adjust
-  // accordingly.
-  if (strm.flags() & std::ios::scientific)
-      wid = prec + format_traits<T>::extra_width_scientific;
-
-  for (unsigned int i = 0; i < vv.size()-1; ++i)
-    {
-      strm << std::setw(wid) << vv[i]
-#ifdef JLT_FIELD_SEP_STRING
-	   << format_traits<T>::field_sep;
-#else
-	   << std::string(format_traits<T>::field_sep,' ');
-#endif
-    }
-
-  strm << std::setw(wid) << vv[vv.size()-1];	// To avoid dangling tab.
-
-  // Restore format flags.
-  strm.flags(old_options);
-
-  return strm;
+  return detail::print_sequence<std::valarray<T>, T>(strm, vv);
 }
 
 
@@ -195,17 +206,19 @@ std::ostream& operator<<(std::ostream& strm, const std::valarray<T>& vv)
 //  Not using format info as with other methods yet.
 //
 template<class T>
+[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::list<T>& ll)
 {
   if (ll.empty()) return strm;
 
-  copy(ll.begin(), ll.end(), std::ostream_iterator<T>(strm, "\t"));
+  std::copy(ll.begin(), ll.end(), std::ostream_iterator<T>(strm, "\t"));
 
   return strm;
 }
 
 
 template<class K, class T>
+[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
   {
     for (auto it = mm.cbegin(); it != mm.cend(); ++it)
@@ -217,7 +230,7 @@ std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
 	     << std::string(format_traits<T>::field_sep,' ')
 #endif
 	     << it->second
-	     << std::endl;
+	     << '\n';
       }
 
     return strm;
@@ -226,17 +239,19 @@ std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
 // Specialization: if the independent variable is of type double,
 // print in scientific notation at fixed width and precision.
 template<class T>
+[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
   {
+    detail::stream_flags_saver saver(strm);
+
     const int prec = 5;		// Precision (number of digits - 1).
     const int wid = prec + 7;	// Extra characters in scientific notation.
 
+    strm.precision(prec);
+    strm.setf(std::ios::scientific);
+
     for (auto it = mm.cbegin(); it != mm.cend(); ++it)
       {
-	// Should save ios flags and restore them at the end.
-	strm.precision(prec);
-	strm.setf(std::ios::scientific);
-
 	strm << std::setw(wid)
 	     << it->first
 #ifdef JLT_FIELD_SEP_STRING
@@ -244,7 +259,7 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
 #else
 	     << std::string(format_traits<T>::field_sep,' ')
 #endif
-	     << it->second << std::endl;
+	     << it->second << '\n';
       }
 
     return strm;
@@ -257,6 +272,7 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
 
 // Read vv.size() elements from strm, overwriting content of vv.
 template<class T>
+[[nodiscard]]
 std::istream& operator>>(std::istream& strm, std::vector<T>& vv)
 {
   for (auto i = vv.begin(); i != vv.end(); ++i)
