@@ -15,6 +15,7 @@
 #include <valarray>
 #include <list>
 #include <map>
+#include <complex>
 
 
 namespace jlt {
@@ -71,6 +72,15 @@ template<>
 struct format_traits<long double> : format_traits_base {
   static const int extra_width_scientific = 7;
   static const int field_width = 22;  // ~20 digits plus sign and decimal
+};
+
+// Specialization for complex numbers
+// Field width accounts for both real and imaginary parts plus formatting
+template<class T>
+struct format_traits<std::complex<T>> : format_traits_base {
+  static const int extra_width_scientific = format_traits<T>::extra_width_scientific;
+  // Complex needs space for: (real,imag) = 2*field_width + 3 for parentheses and comma
+  static const int field_width = 2 * format_traits<T>::field_width + 3;
 };
 
 //
@@ -215,6 +225,16 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
 
     return strm;
   }
+
+// Output operator for complex numbers
+// Format: (real, imag)
+template<class T>
+[[nodiscard]]
+std::ostream& operator<<(std::ostream& strm, const std::complex<T>& c)
+{
+  strm << '(' << c.real() << ',' << c.imag() << ')';
+  return strm;
+}
 
 
 //

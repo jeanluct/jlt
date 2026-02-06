@@ -170,27 +170,45 @@ struct format_traits<int> : format_traits_base {
 
 ---
 
-## Task 5: Add format_traits for std::complex<T>
+## Task 5: Add format_traits for std::complex<T> ✅ COMPLETED
 
 **Priority:** Medium
 **Effort:** ~20 minutes
 **Files:** `jlt/stlio.hpp`, `tests/test_stlio.cpp`
+**Completed:** 2026-02-05
 
 ### Description
 No `format_traits` specialization exists for complex numbers. This would be useful for consistent formatting of complex values in containers.
 
-### Implementation Notes
-- Add `format_traits<std::complex<T>>` specialization
-- Field width should account for both real and imaginary parts
-- Consider how to format: `(real, imag)` or `real+imagi`
-- May need to specialize output operator for complex
+### Changes Made
+- ✅ Added `#include <complex>` header
+- ✅ Created `format_traits<std::complex<T>>` specialization
+- ✅ Field width calculated as `2 * field_width<T> + 3` (accounts for both parts + formatting)
+- ✅ Added output operator for complex numbers: `(real, imag)` format
+- ✅ Added comprehensive tests for complex number output
+
+**Format:** `(real, imag)` - Standard mathematical notation
+
+**Example:**
+```cpp
+std::complex<double> c(3.0, 4.0);
+std::cout << c;  // Outputs: (3,4)
+
+std::vector<std::complex<double>> vv = {{1,2}, {3,4}};
+std::cout << vv;  // Outputs: (1.0,2.0)  (3.0,4.0)
+```
+
+### Benefits
+- Complex numbers can now be printed in containers
+- Consistent formatting across all types
+- Proper field width calculation for alignment
 
 ### Acceptance Criteria
-- [ ] format_traits<std::complex<T>> defined
-- [ ] Appropriate field_width for complex numbers
-- [ ] Output format defined and documented
-- [ ] Tests added for complex container output
-- [ ] All tests pass
+- [x] format_traits<std::complex<T>> defined
+- [x] Appropriate field_width for complex numbers
+- [x] Output format defined and documented
+- [x] Tests added for complex container output
+- [x] All tests pass
 
 ---
 
@@ -242,15 +260,15 @@ The `JLT_FIELD_SEP_STRING` macro appears 8+ times throughout the file, making th
 | 2. Input validation | High | ✅ Done | 15 min | Robustness, error handling |
 | 3. Consistent list separator | Low | ✅ Done* | 10 min | Consistency |
 | 4. Refactor format_traits | Medium | ✅ Done | 45 min | Maintainability |
-| 5. Complex number support | Medium | ⏳ Pending | 20 min | Completeness |
+| 5. Complex number support | Medium | ✅ Done | 20 min | Completeness |
 | 6. Clean up #ifdefs | Low | ✅ Done | 30 min | Code clarity |
 
 \* Task 3 (consistent list separator) completed as part of Task 6
 
-**Completed:** Tasks 2, 3, 4, 6
-**Pending:** Tasks 1, 5
+**Completed:** Tasks 2, 3, 4, 5, 6 (5/6 done!)
+**Pending:** Task 1 only
 
-**Recommended order:** 2 ✅ → 6 ✅ → 4 ✅ → 1 → 5
+**Recommended order:** 2 ✅ → 6 ✅ → 4 ✅ → 5 ✅ → 1
 
 ---
 

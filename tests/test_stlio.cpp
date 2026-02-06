@@ -409,3 +409,64 @@ TEST_CASE("stlio mixed numeric types", "[stlio][numeric]") {
         REQUIRE(output.find("e+10") != std::string::npos);
     }
 }
+
+TEST_CASE("stlio complex number support", "[stlio][complex]") {
+    using cd = std::complex<double>;
+    using cf = std::complex<float>;
+
+    SECTION("Single complex number output") {
+        cd c(3.0, 4.0);
+        std::ostringstream oss;
+        oss << c;
+        std::string output = oss.str();
+        REQUIRE(output.find("(3") != std::string::npos);
+        REQUIRE(output.find(",4") != std::string::npos);
+        REQUIRE(output.find(")") != std::string::npos);
+    }
+
+    SECTION("Complex number with negative imaginary") {
+        cd c(1.5, -2.5);
+        std::ostringstream oss;
+        oss << c;
+        std::string output = oss.str();
+        REQUIRE(output.find("(1.5,-2.5)") != std::string::npos);
+    }
+
+    SECTION("Pure real complex number") {
+        cd c(5.0, 0.0);
+        std::ostringstream oss;
+        oss << c;
+        std::string output = oss.str();
+        REQUIRE(output.find("(5,0)") != std::string::npos);
+    }
+
+    SECTION("Vector of complex numbers") {
+        std::vector<cd> vv = {cd(1.0, 2.0), cd(3.0, 4.0), cd(5.0, 6.0)};
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(1);
+        oss << vv;
+        std::string output = oss.str();
+        // Check format (real,imag) appears for each element
+        REQUIRE(output.find("(1.0,2.0)") != std::string::npos);
+        REQUIRE(output.find("(3.0,4.0)") != std::string::npos);
+        REQUIRE(output.find("(5.0,6.0)") != std::string::npos);
+    }
+
+    SECTION("Complex float numbers") {
+        cf c(1.5f, 2.5f);
+        std::ostringstream oss;
+        oss << c;
+        std::string output = oss.str();
+        REQUIRE(output.find("(1.5,2.5)") != std::string::npos);
+    }
+
+    SECTION("Complex numbers with scientific notation") {
+        std::vector<cd> vv = {cd(1e-10, 2e10), cd(3e-5, 4e5)};
+        std::ostringstream oss;
+        oss << std::scientific << std::setprecision(2);
+        oss << vv;
+        std::string output = oss.str();
+        // Should contain scientific notation markers
+        REQUIRE(output.find('e') != std::string::npos);
+    }
+}
