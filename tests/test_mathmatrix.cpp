@@ -179,7 +179,7 @@ TEST_CASE("mathmatrix matrix multiplication", "[mathmatrix]") {
         mathmatrix<double> A(2, 2, {1.0, 2.0, 3.0, 4.0});
         mathmatrix<double> B(2, 2, {5.0, 6.0, 7.0, 8.0});
         auto C = A * B;
-        
+
         // C(0,0) = 1*5 + 2*7 = 19
         // C(0,1) = 1*6 + 2*8 = 22
         // C(1,0) = 3*5 + 4*7 = 43
@@ -194,7 +194,7 @@ TEST_CASE("mathmatrix matrix multiplication", "[mathmatrix]") {
         mathmatrix<double> A(2, 3, {1.0, 2.0, 3.0, 4.0, 5.0, 6.0});
         mathmatrix<double> B(3, 2, {7.0, 8.0, 9.0, 10.0, 11.0, 12.0});
         auto C = A * B;
-        
+
         REQUIRE(C.rows() == 2);
         REQUIRE(C.columns() == 2);
         // C(0,0) = 1*7 + 2*9 + 3*11 = 58
@@ -205,7 +205,7 @@ TEST_CASE("mathmatrix matrix multiplication", "[mathmatrix]") {
         mathmatrix<double> A(2, 2, {1.0, 2.0, 3.0, 4.0});
         mathmatrix<double> I(2, 2, {1.0, 0.0, 0.0, 1.0});
         auto C = A * I;
-        
+
         REQUIRE(C == A);
     }
 }
@@ -213,9 +213,9 @@ TEST_CASE("mathmatrix matrix multiplication", "[mathmatrix]") {
 TEST_CASE("mathmatrix matrix-vector multiplication", "[mathmatrix]") {
     mathmatrix<double> A(2, 3, {1.0, 2.0, 3.0, 4.0, 5.0, 6.0});
     mathvector<double> v = {7.0, 8.0, 9.0};
-    
+
     auto result = A * v;
-    
+
     // result[0] = 1*7 + 2*8 + 3*9 = 7 + 16 + 27 = 50
     // result[1] = 4*7 + 5*8 + 6*9 = 28 + 40 + 54 = 122
     REQUIRE(result.size() == 2);
@@ -227,7 +227,7 @@ TEST_CASE("mathmatrix identity operations", "[mathmatrix]") {
     SECTION("identity method") {
         mathmatrix<double> M(3, 3);
         M.identity();
-        
+
         for (size_t i = 0; i < 3; ++i) {
             for (size_t j = 0; j < 3; ++j) {
                 if (i == j) {
@@ -242,7 +242,7 @@ TEST_CASE("mathmatrix identity operations", "[mathmatrix]") {
     SECTION("identity with custom value") {
         mathmatrix<double> M(2, 2);
         M.identity(5.0);
-        
+
         REQUIRE(M(0, 0) == 5.0);
         REQUIRE(M(1, 1) == 5.0);
         REQUIRE(M(0, 1) == 0.0);
@@ -283,6 +283,42 @@ TEST_CASE("mathmatrix determinant and trace", "[mathmatrix]") {
         });
         REQUIRE(M.trace() == 6.0);  // 1 + 2 + 3
     }
+
+    SECTION("frobenius norm of 2x2") {
+        mathmatrix<double> M(2, 2, {3.0, 4.0, 0.0, 0.0});
+        // ||M||_F = sqrt(3² + 4²) = sqrt(9 + 16) = 5
+        REQUIRE(M.frobenius_norm() == Approx(5.0));
+    }
+
+    SECTION("frobenius norm of identity") {
+        auto I = identity_matrix<double>(3);
+        // ||I||_F = sqrt(1² + 1² + 1²) = sqrt(3)
+        REQUIRE(I.frobenius_norm() == Approx(std::sqrt(3.0)));
+    }
+
+    SECTION("frobenius norm of zero matrix") {
+        mathmatrix<double> M(2, 2, {0.0, 0.0, 0.0, 0.0});
+        REQUIRE(M.frobenius_norm() == Approx(0.0));
+    }
+}
+
+TEST_CASE("mathmatrix frobenius norm with complex numbers", "[mathmatrix]") {
+    using cd = std::complex<double>;
+
+    SECTION("frobenius norm of complex matrix") {
+        mathmatrix<cd> M(2, 2, {cd(3.0, 4.0), cd(0.0, 0.0), cd(0.0, 0.0), cd(0.0, 0.0)});
+        // ||M||_F = sqrt(|3+4i|²) = sqrt(25) = 5
+        double norm = M.frobenius_norm();
+        REQUIRE(norm == Approx(5.0));
+    }
+
+    SECTION("frobenius norm of complex matrix with multiple elements") {
+        mathmatrix<cd> M(2, 2, {cd(1.0, 0.0), cd(0.0, 1.0), cd(1.0, 1.0), cd(0.0, 0.0)});
+        // |1|² + |i|² + |1+i|² + |0|² = 1 + 1 + 2 + 0 = 4
+        // ||M||_F = sqrt(4) = 2
+        double norm = M.frobenius_norm();
+        REQUIRE(norm == Approx(2.0));
+    }
 }
 
 TEST_CASE("mathmatrix inverse operations", "[mathmatrix]") {
@@ -290,7 +326,7 @@ TEST_CASE("mathmatrix inverse operations", "[mathmatrix]") {
         mathmatrix<double> A(2, 2, {4.0, 7.0, 2.0, 6.0});
         auto A_inv = A.inverse();
         auto I = A * A_inv;
-        
+
         // Should be approximately identity
         REQUIRE(I(0, 0) == Approx(1.0).margin(1e-10));
         REQUIRE(I(1, 1) == Approx(1.0).margin(1e-10));
@@ -308,7 +344,7 @@ TEST_CASE("mathmatrix inverse operations", "[mathmatrix]") {
         mathmatrix<double> A(2, 2, {4.0, 7.0, 2.0, 6.0});
         mathmatrix<double> A_original = A;
         A.invert();
-        
+
         auto I = A_original * A;
         REQUIRE(I(0, 0) == Approx(1.0).margin(1e-10));
     }
@@ -320,9 +356,9 @@ TEST_CASE("mathmatrix transpose", "[mathmatrix]") {
             1.0, 2.0,
             3.0, 4.0
         });
-        
+
         M.transpose();
-        
+
         REQUIRE(M.rows() == 2);
         REQUIRE(M.columns() == 2);
         REQUIRE(M(0, 0) == 1.0);
@@ -330,13 +366,13 @@ TEST_CASE("mathmatrix transpose", "[mathmatrix]") {
         REQUIRE(M(1, 0) == 2.0);
         REQUIRE(M(1, 1) == 4.0);
     }
-    
+
     SECTION("transpose of non-square (not implemented - prints warning)") {
         mathmatrix<double> M(2, 3, {
             1.0, 2.0, 3.0,
             4.0, 5.0, 6.0
         });
-        
+
         // transpose() prints warning to stderr for non-square matrices
         // but doesn't throw - dimensions remain unchanged
         // This test just verifies it doesn't crash
@@ -349,7 +385,7 @@ TEST_CASE("mathmatrix transpose", "[mathmatrix]") {
 TEST_CASE("mathmatrix ones_and_zeros", "[mathmatrix]") {
     mathmatrix<double> M(2, 2, {0.0, 2.5, -3.0, 0.0});
     M.ones_and_zeros();
-    
+
     REQUIRE(M(0, 0) == 0.0);
     REQUIRE(M(0, 1) == 1.0);
     REQUIRE(M(1, 0) == 1.0);
@@ -359,7 +395,7 @@ TEST_CASE("mathmatrix ones_and_zeros", "[mathmatrix]") {
 TEST_CASE("mathmatrix diagonal_matrix helper", "[mathmatrix]") {
     mathvector<double> v = {2.0, 3.0, 4.0};
     auto M = diagonal_matrix(v);
-    
+
     REQUIRE(M.rows() == 3);
     REQUIRE(M.columns() == 3);
     REQUIRE(M(0, 0) == 2.0);
@@ -371,7 +407,7 @@ TEST_CASE("mathmatrix diagonal_matrix helper", "[mathmatrix]") {
 TEST_CASE("mathmatrix scalar assignment", "[mathmatrix]") {
     mathmatrix<double> M(2, 2);
     M = 5.0;  // Sets to 5 * Identity
-    
+
     REQUIRE(M(0, 0) == 5.0);
     REQUIRE(M(1, 1) == 5.0);
     REQUIRE(M(0, 1) == 0.0);

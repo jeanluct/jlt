@@ -60,7 +60,7 @@ inline mathmatrix<T,S> operator*(const mathmatrix<T,S>& A,
 // class mathmatrix
 //
 
-template<class T, class S = T>
+template<class T, class S = detail::scalar_type_t<T>>
 class mathmatrix : public matrix<T>
 {
 public:
@@ -458,6 +458,20 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 	}
 
       return tr;
+    }
+
+  // Frobenius norm: sqrt(sum of |a_ij|^2)
+  // Returns real scalar type S, even for complex matrices
+  [[nodiscard]] S frobenius_norm() const
+    {
+      S norm_sq = S();
+
+      for (auto i = this->cbegin(); i != this->cend(); ++i)
+	{
+	  norm_sq += detail::mag2_traits<T>::compute(*i);
+	}
+
+      return std::sqrt(norm_sq);
     }
 
   [[nodiscard]] polynomial<T> charpoly() const
