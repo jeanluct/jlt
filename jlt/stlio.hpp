@@ -168,14 +168,12 @@ std::ostream& print_sequence(std::ostream& strm, const Container& c) {
 } // namespace detail
 
 template<class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::vector<T>& vv)
 {
   return detail::print_sequence<std::vector<T>, T>(strm, vv);
 }
 
 template<class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::valarray<T>& vv)
 {
   return detail::print_sequence<std::valarray<T>, T>(strm, vv);
@@ -183,7 +181,6 @@ std::ostream& operator<<(std::ostream& strm, const std::valarray<T>& vv)
 
 // std::array output
 template<class T, std::size_t N>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::array<T, N>& aa)
 {
   return detail::print_sequence<std::array<T, N>, T>(strm, aa);
@@ -191,7 +188,6 @@ std::ostream& operator<<(std::ostream& strm, const std::array<T, N>& aa)
 
 // std::deque output
 template<class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::deque<T>& dd)
 {
   return detail::print_sequence<std::deque<T>, T>(strm, dd);
@@ -199,7 +195,6 @@ std::ostream& operator<<(std::ostream& strm, const std::deque<T>& dd)
 
 // std::set output
 template<class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::set<T>& ss)
 {
   return detail::print_sequence<std::set<T>, T>(strm, ss);
@@ -207,7 +202,6 @@ std::ostream& operator<<(std::ostream& strm, const std::set<T>& ss)
 
 // std::unordered_set output
 template<class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::unordered_set<T>& ss)
 {
   return detail::print_sequence<std::unordered_set<T>, T>(strm, ss);
@@ -215,7 +209,6 @@ std::ostream& operator<<(std::ostream& strm, const std::unordered_set<T>& ss)
 
 // std::pair output
 template<class T1, class T2>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::pair<T1, T2>& pp)
 {
   strm << '(' << pp.first << ',' << pp.second << ')';
@@ -226,7 +219,6 @@ std::ostream& operator<<(std::ostream& strm, const std::pair<T1, T2>& pp)
 #if __cplusplus >= 201703L
 
 template<class... Args>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::tuple<Args...>& tt)
 {
   strm << '(';
@@ -268,7 +260,6 @@ namespace detail {
 
 // std::tuple output (C++11) - only for non-empty tuples
 template<class... Args>
-[[nodiscard]]
 typename std::enable_if<detail::tuple_has_elements<Args...>::value, std::ostream&>::type
 operator<<(std::ostream& strm, const std::tuple<Args...>& tt)
 {
@@ -280,7 +271,6 @@ operator<<(std::ostream& strm, const std::tuple<Args...>& tt)
 
 // Empty tuple output
 template<class... Args>
-[[nodiscard]]
 typename std::enable_if<!detail::tuple_has_elements<Args...>::value, std::ostream&>::type
 operator<<(std::ostream& strm, const std::tuple<Args...>&)
 {
@@ -293,7 +283,6 @@ operator<<(std::ostream& strm, const std::tuple<Args...>&)
 // C++17: std::optional output
 #if __cplusplus >= 201703L
 template<class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::optional<T>& opt)
 {
   if (opt.has_value()) {
@@ -309,7 +298,6 @@ std::ostream& operator<<(std::ostream& strm, const std::optional<T>& opt)
 //  Print list with consistent formatting.
 //
 template<class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::list<T>& ll)
 {
   if (ll.empty()) return strm;
@@ -329,7 +317,6 @@ std::ostream& operator<<(std::ostream& strm, const std::list<T>& ll)
 
 
 template<class K, class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
   {
     for (auto it = mm.cbegin(); it != mm.cend(); ++it)
@@ -345,7 +332,6 @@ std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
 // Specialization: if the independent variable is of type double,
 // print in scientific notation at fixed width and precision.
 template<class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
   {
     detail::stream_flags_saver saver(strm);
@@ -369,7 +355,6 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
 // Output operator for complex numbers
 // Format: (real, imag)
 template<class T>
-[[nodiscard]]
 std::ostream& operator<<(std::ostream& strm, const std::complex<T>& c)
 {
   strm << '(' << c.real() << ',' << c.imag() << ')';
@@ -384,7 +369,6 @@ std::ostream& operator<<(std::ostream& strm, const std::complex<T>& c)
 // Read vv.size() elements from strm, overwriting content of vv.
 // Stops reading on first failure and leaves remaining elements unchanged.
 template<class T>
-[[nodiscard]]
 std::istream& operator>>(std::istream& strm, std::vector<T>& vv)
 {
   for (auto i = vv.begin(); i != vv.end() && strm.good(); ++i)
@@ -398,7 +382,6 @@ std::istream& operator>>(std::istream& strm, std::vector<T>& vv)
 // Read elements into valarray from strm.
 // Stops reading on first failure and leaves remaining elements unchanged.
 template<class T>
-[[nodiscard]]
 std::istream& operator>>(std::istream& strm, std::valarray<T>& vv)
 {
   for (std::size_t i = 0; i < vv.size() && strm.good(); ++i)
@@ -412,7 +395,6 @@ std::istream& operator>>(std::istream& strm, std::valarray<T>& vv)
 // Read elements into list from strm until stream fails or list is full.
 // Note: list doesn't have fixed size, so this reads until EOF or failure.
 template<class T>
-[[nodiscard]]
 std::istream& operator>>(std::istream& strm, std::list<T>& ll)
 {
   T value;
