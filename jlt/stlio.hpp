@@ -29,6 +29,7 @@
 
 // C++17 features
 #if __cplusplus >= 201703L
+#include <string_view>
 #include <optional>
 #endif
 
@@ -40,19 +41,17 @@ namespace jlt {
 //
 
 // Base class for field separator (avoids repetition in specializations)
+// C++17+: Use string_view for efficiency and flexibility
+// C++11/14: Use constexpr function (can't use string_view or inline variables)
 struct format_traits_base {
-#ifdef JLT_FIELD_SEP_STRING
-  // String to separate vector entries.
-  static const char field_sep[];
+#if __cplusplus >= 201703L
+  // C++17: string_view - efficient, no allocations, supports any string
+  static constexpr std::string_view field_sep = "  ";
 #else
-  // Number of spaces between entries.
-  static const int field_sep = 2;
+  // C++11/14: constexpr function - works without inline variables
+  static constexpr const char* field_sep() { return "  "; }
 #endif
 };
-
-#ifdef JLT_FIELD_SEP_STRING
-const char format_traits_base::field_sep[] = "  ";
-#endif
 
 // Default format traits for type T
 template<class T>
@@ -126,12 +125,13 @@ public:
 };
 
 // Helper to print field separator
+// C++17: field_sep is a string_view, C++11/14: field_sep() returns const char*
 template<class T>
 void print_field_sep(std::ostream& strm) {
-#ifdef JLT_FIELD_SEP_STRING
+#if __cplusplus >= 201703L
   strm << format_traits<T>::field_sep;
 #else
-  strm << std::string(format_traits<T>::field_sep, ' ');
+  strm << format_traits<T>::field_sep();
 #endif
 }
 
