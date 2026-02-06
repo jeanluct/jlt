@@ -11,11 +11,26 @@
 #include <iomanip>
 #include <string>
 #include <iterator>
+
+//
+// Supported containers for output operator<<
+//
 #include <vector>
 #include <valarray>
 #include <list>
+#include <array>
+#include <deque>
+#include <set>
+#include <unordered_set>
 #include <map>
+#include <utility>   // For std::pair
+#include <tuple>
 #include <complex>
+
+// C++17 features
+#if __cplusplus >= 201703L
+#include <optional>
+#endif
 
 
 namespace jlt {
@@ -120,7 +135,7 @@ void print_field_sep(std::ostream& strm) {
 #endif
 }
 
-// Common logic for printing sequential containers (vector, valarray)
+// Common logic for printing sequential containers (vector, valarray, array, deque)
 template<class Container, class T>
 std::ostream& print_sequence(std::ostream& strm, const Container& c) {
   if (c.size() == 0) return strm;
@@ -137,13 +152,15 @@ std::ostream& print_sequence(std::ostream& strm, const Container& c) {
 
   auto it = std::begin(c);
   auto end = std::end(c);
-  --end;  // Point to last element
+
+  // Handle first element specially to avoid trailing separator
+  strm << std::setw(wid) << *it;
+  ++it;
 
   for (; it != end; ++it) {
-    strm << std::setw(wid) << *it;
     print_field_sep<T>(strm);
+    strm << std::setw(wid) << *it;
   }
-  strm << std::setw(wid) << *end;
 
   return strm;
 }
@@ -164,6 +181,129 @@ std::ostream& operator<<(std::ostream& strm, const std::valarray<T>& vv)
   return detail::print_sequence<std::valarray<T>, T>(strm, vv);
 }
 
+// std::array output
+template<class T, std::size_t N>
+[[nodiscard]]
+std::ostream& operator<<(std::ostream& strm, const std::array<T, N>& aa)
+{
+  return detail::print_sequence<std::array<T, N>, T>(strm, aa);
+}
+
+// std::deque output
+template<class T>
+[[nodiscard]]
+std::ostream& operator<<(std::ostream& strm, const std::deque<T>& dd)
+{
+  return detail::print_sequence<std::deque<T>, T>(strm, dd);
+}
+
+// std::set output
+template<class T>
+[[nodiscard]]
+std::ostream& operator<<(std::ostream& strm, const std::set<T>& ss)
+{
+  return detail::print_sequence<std::set<T>, T>(strm, ss);
+}
+
+// std::unordered_set output
+template<class T>
+[[nodiscard]]
+std::ostream& operator<<(std::ostream& strm, const std::unordered_set<T>& ss)
+{
+  return detail::print_sequence<std::unordered_set<T>, T>(strm, ss);
+}
+
+// std::pair output
+template<class T1, class T2>
+[[nodiscard]]
+std::ostream& operator<<(std::ostream& strm, const std::pair<T1, T2>& pp)
+{
+  strm << '(' << pp.first << ',' << pp.second << ')';
+  return strm;
+}
+
+// C++17: Simplified tuple output using fold expressions and std::apply
+#if __cplusplus >= 201703L
+
+template<class... Args>
+[[nodiscard]]
+std::ostream& operator<<(std::ostream& strm, const std::tuple<Args...>& tt)
+{
+  strm << '(';
+  if constexpr (sizeof...(Args) > 0) {
+    // Use std::apply to unpack tuple into lambda with fold expression
+    std::apply([&strm](const auto&... args) {
+      std::size_t n = 0;
+      // Fold expression: (condition ? separator : "") << element
+      ((strm << (n++ ? "," : "") << args), ...);
+    }, tt);
+  }
+  strm << ')';
+  return strm;
+}
+
+#else
+
+// C++11: Recursive template approach (fallback)
+namespace detail {
+  template<std::size_t I, class... Args>
+  struct tuple_printer {
+    static void print(std::ostream& strm, const std::tuple<Args...>& tt) {
+      tuple_printer<I - 1, Args...>::print(strm, tt);
+      strm << ',' << std::get<I>(tt);
+    }
+  };
+
+  template<class... Args>
+  struct tuple_printer<0, Args...> {
+    static void print(std::ostream& strm, const std::tuple<Args...>& tt) {
+      strm << std::get<0>(tt);
+    }
+  };
+
+  // Helper to check if tuple has elements
+  template<class... Args>
+  struct tuple_has_elements : std::integral_constant<bool, (sizeof...(Args) > 0)> {};
+}  // namespace detail
+
+// std::tuple output (C++11) - only for non-empty tuples
+template<class... Args>
+[[nodiscard]]
+typename std::enable_if<detail::tuple_has_elements<Args...>::value, std::ostream&>::type
+operator<<(std::ostream& strm, const std::tuple<Args...>& tt)
+{
+  strm << '(';
+  detail::tuple_printer<sizeof...(Args) - 1, Args...>::print(strm, tt);
+  strm << ')';
+  return strm;
+}
+
+// Empty tuple output
+template<class... Args>
+[[nodiscard]]
+typename std::enable_if<!detail::tuple_has_elements<Args...>::value, std::ostream&>::type
+operator<<(std::ostream& strm, const std::tuple<Args...>&)
+{
+  strm << "()";
+  return strm;
+}
+
+#endif  // __cplusplus >= 201703L
+
+// C++17: std::optional output
+#if __cplusplus >= 201703L
+template<class T>
+[[nodiscard]]
+std::ostream& operator<<(std::ostream& strm, const std::optional<T>& opt)
+{
+  if (opt.has_value()) {
+    strm << *opt;
+  } else {
+    strm << "null";
+  }
+  return strm;
+}
+#endif
 
 //
 //  Print list with consistent formatting.

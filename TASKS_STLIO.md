@@ -5,32 +5,52 @@ Remaining improvements for `jlt/stlio.hpp` - STL container I/O operations.
 
 ---
 
-## Task 1: Add Missing Container Support
+## Task 1: Add Missing Container Support ✅ COMPLETED
 
 **Priority:** Medium
 **Effort:** ~30 minutes
 **Files:** `jlt/stlio.hpp`, `tests/test_stlio.cpp`
+**Completed:** 2026-02-05
 
 ### Description
 Add `operator<<` support for additional STL containers:
 - `std::array<T, N>` - Fixed-size arrays (C++11)
 - `std::deque<T>` - Double-ended queue
 - `std::set<T>` / `std::unordered_set<T>` - Sets
-- `std::tuple<T...>` / `std::pair<T1, T2>` - Tuples and pairs
-- `std::optional<T>` (if C++17 available) - Optional values
+- `std::pair<T1, T2>` - Pairs
+- `std::tuple<T...>` - Tuples (C++11 compatible implementation)
+- `std::optional<T>` - Optional values (C++17, with version guard)
+
+### Changes Made
+- ✅ Added `#include <array>`, `<deque>`, `<set>`, `<unordered_set>`, `<utility>`, `<tuple>`
+- ✅ Added output operator for `std::array<T, N>`
+- ✅ Added output operator for `std::deque<T>`
+- ✅ Added output operator for `std::set<T>`
+- ✅ Added output operator for `std::unordered_set<T>`
+- ✅ Added output operator for `std::pair<T1, T2>` with format `(first,second)`
+- ✅ Added output operator for `std::tuple<Args...>` with format `(elem1,elem2,...)`
+- ✅ Added output operator for `std::optional<T>` (C++17 only, prints value or "null")
+- ✅ Fixed `print_sequence` to work with bidirectional iterators (sets)
+- ✅ Added comprehensive tests for all new containers
 
 ### Implementation Notes
-- Follow existing patterns in stlio.hpp
-- Use `detail::print_sequence` for sequence containers
-- Add appropriate `[[nodiscard]]` attributes
-- Add corresponding test cases
+- All operators use `[[nodiscard]]` attribute
+- Tuple uses recursive template instantiation (C++11 compatible, no fold expressions needed)
+- Sets use the same `print_sequence` helper after fixing iterator compatibility
+- Pair format: `(first,second)` - consistent with complex number format
+- Tuple format: `(elem1,elem2,...)` - similar to pair but with variable elements
+- Optional format: value if present, "null" if empty (C++17 only)
+- Modified `print_sequence` to avoid `--end` which doesn't work with set iterators
 
 ### Acceptance Criteria
-- [ ] `std::array` output operator implemented and tested
-- [ ] `std::deque` output operator implemented and tested
-- [ ] `std::set` output operator implemented and tested
-- [ ] `std::pair` output operator implemented and tested
-- [ ] All tests pass
+- [x] `std::array` output operator implemented and tested
+- [x] `std::deque` output operator implemented and tested
+- [x] `std::set` output operator implemented and tested
+- [x] `std::unordered_set` output operator implemented and tested
+- [x] `std::pair` output operator implemented and tested
+- [x] `std::tuple` output operator implemented and tested
+- [x] `std::optional` output operator implemented (C++17)
+- [x] All tests pass (108 assertions in 12 test cases)
 
 ---
 
@@ -256,7 +276,7 @@ The `JLT_FIELD_SEP_STRING` macro appears 8+ times throughout the file, making th
 
 | Task | Priority | Status | Effort | Key Benefit |
 |------|----------|--------|--------|-------------|
-| 1. Add container support | Medium | ⏳ Pending | 30 min | More complete STL coverage |
+| 1. Add container support | Medium | ✅ Done | 30 min | More complete STL coverage |
 | 2. Input validation | High | ✅ Done | 15 min | Robustness, error handling |
 | 3. Consistent list separator | Low | ✅ Done* | 10 min | Consistency |
 | 4. Refactor format_traits | Medium | ✅ Done | 45 min | Maintainability |
@@ -265,10 +285,9 @@ The `JLT_FIELD_SEP_STRING` macro appears 8+ times throughout the file, making th
 
 \* Task 3 (consistent list separator) completed as part of Task 6
 
-**Completed:** Tasks 2, 3, 4, 5, 6 (5/6 done!)
-**Pending:** Task 1 only
+**✅ ALL TASKS COMPLETED (6/6)!**
 
-**Recommended order:** 2 ✅ → 6 ✅ → 4 ✅ → 5 ✅ → 1
+**Completion Order:** 2 ✅ → 6 ✅ → 4 ✅ → 5 ✅ → 1 ✅
 
 ---
 

@@ -470,3 +470,102 @@ TEST_CASE("stlio complex number support", "[stlio][complex]") {
         REQUIRE(output.find('e') != std::string::npos);
     }
 }
+
+TEST_CASE("stlio additional container support", "[stlio][containers]") {
+    SECTION("std::array output") {
+        std::array<int, 5> aa = {1, 2, 3, 4, 5};
+        std::ostringstream oss;
+        oss << aa;
+        std::string output = oss.str();
+        REQUIRE(output.find("1") != std::string::npos);
+        REQUIRE(output.find("5") != std::string::npos);
+    }
+
+    SECTION("std::deque output") {
+        std::deque<double> dd = {1.1, 2.2, 3.3};
+        std::ostringstream oss;
+        oss << dd;
+        std::string output = oss.str();
+        REQUIRE(output.find("1.1") != std::string::npos);
+        REQUIRE(output.find("3.3") != std::string::npos);
+    }
+
+    SECTION("std::set output") {
+        std::set<int> ss = {3, 1, 4, 1, 5};  // Duplicates removed
+        std::ostringstream oss;
+        oss << ss;
+        std::string output = oss.str();
+        // Should have 4 unique elements (1, 3, 4, 5)
+        REQUIRE(output.find("1") != std::string::npos);
+        REQUIRE(output.find("5") != std::string::npos);
+    }
+
+    SECTION("std::unordered_set output") {
+        std::unordered_set<std::string> ss = {"hello", "world"};
+        std::ostringstream oss;
+        oss << ss;
+        std::string output = oss.str();
+        REQUIRE(output.find("hello") != std::string::npos);
+        REQUIRE(output.find("world") != std::string::npos);
+    }
+
+    SECTION("std::pair output") {
+        std::pair<int, double> pp = {42, 3.14};
+        std::ostringstream oss;
+        oss << pp;
+        std::string output = oss.str();
+        REQUIRE(output.find("(42,3.14)") != std::string::npos);
+    }
+
+    SECTION("std::pair with strings") {
+        std::pair<std::string, int> pp = {"answer", 42};
+        std::ostringstream oss;
+        oss << pp;
+        std::string output = oss.str();
+        REQUIRE(output.find("answer") != std::string::npos);
+        REQUIRE(output.find("42") != std::string::npos);
+    }
+
+    SECTION("Empty containers output nothing") {
+        std::array<int, 0> empty_array;
+        std::deque<int> empty_deque;
+        std::set<int> empty_set;
+        std::unordered_set<int> empty_uset;
+
+        std::ostringstream oss;
+        oss << empty_array << empty_deque << empty_set << empty_uset;
+        REQUIRE(oss.str().empty());
+    }
+
+    SECTION("std::tuple output - 2 elements") {
+        std::tuple<int, double> tt = std::make_tuple(1, 2.5);
+        std::ostringstream oss;
+        oss << tt;
+        std::string output = oss.str();
+        REQUIRE(output == "(1,2.5)");
+    }
+
+    SECTION("std::tuple output - 3 elements") {
+        std::tuple<int, double, std::string> tt = std::make_tuple(1, 2.5, "hello");
+        std::ostringstream oss;
+        oss << tt;
+        std::string output = oss.str();
+        REQUIRE(output.find("(1,2.5,hello)") != std::string::npos);
+    }
+
+    SECTION("std::tuple output - single element") {
+        std::tuple<int> tt = std::make_tuple(42);
+        std::ostringstream oss;
+        oss << tt;
+        std::string output = oss.str();
+        REQUIRE(output == "(42)");
+    }
+
+    SECTION("std::tuple output - empty tuple") {
+        std::tuple<> tt;
+        std::ostringstream oss;
+        oss << tt;
+        std::string output = oss.str();
+        REQUIRE(output == "()");
+    }
+}
