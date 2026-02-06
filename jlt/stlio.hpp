@@ -22,9 +22,9 @@ namespace jlt {
 //
 // Formatting specifications.
 //
-template<class T>
-struct format_traits {
 
+// Base class for field separator (avoids repetition in specializations)
+struct format_traits_base {
 #ifdef JLT_FIELD_SEP_STRING
   // String to separate vector entries.
   static const char field_sep[];
@@ -32,92 +32,46 @@ struct format_traits {
   // Number of spaces between entries.
   static const int field_sep = 2;
 #endif
+};
 
+#ifdef JLT_FIELD_SEP_STRING
+const char format_traits_base::field_sep[] = "  ";
+#endif
+
+// Default format traits for type T
+template<class T>
+struct format_traits : format_traits_base {
   // Scientific notation takes seven extra characters:
   // sign = 1, decimal point = 1, e = 1, exponent sign = 1, exponent = 2,
   // plus one because the precision does not include the leading digit.
-  // (This will be wrong if the exponent has three digits,
-  // but then things probably need to be rescaled anyways...)
   static const int extra_width_scientific = 7;
 
   // For unformatted and fixed notation, use a fixed field width.
   // This is the default for double precision, assuming about 13
-  // digits of accuracy plus sign and decimal point.  Okay to be
-  // conservative, since large numbers will just overflow field, not
-  // be truncated.
+  // digits of accuracy plus sign and decimal point.
   static const int field_width = 15;
 };
 
-#ifdef JLT_FIELD_SEP_STRING
-template<class T>
-const char format_traits<T>::field_sep[] = "  ";
-#endif
-
+// Specialization for int
 template<>
-struct format_traits<int> {
-
-#ifdef JLT_FIELD_SEP_STRING
-  // String to separate vector entries.
-  static const char field_sep[];
-#else
-  // Number of spaces between entries.
-  static const int field_sep = 2;
-#endif
-
+struct format_traits<int> : format_traits_base {
   static const int extra_width_scientific = 0;
-
-  // For short ints, assuming 5 digits plus sign.
-  static const int field_width = 6;
+  static const int field_width = 6;  // 5 digits plus sign
 };
 
-#ifdef JLT_FIELD_SEP_STRING
-const char format_traits<int>::field_sep[] = "  ";
-#endif
-
+// Specialization for float
 template<>
-struct format_traits<float> {
-
-#ifdef JLT_FIELD_SEP_STRING
-  // String to separate vector entries.
-  static const char field_sep[];
-#else
-  // Number of spaces between entries.
-  static const int field_sep = 2;
-#endif
-
+struct format_traits<float> : format_traits_base {
   static const int extra_width_scientific = 7;
-
-  // For single precision, assuming about 11 digits (being overly
-  // generous, but this minimmum width is necessary if scientific
-  // notation is needed) plus sign and decimal point.
-  static const int field_width = 13;
+  static const int field_width = 13;  // ~11 digits plus sign and decimal
 };
 
-#ifdef JLT_FIELD_SEP_STRING
-const char format_traits<float>::field_sep[] = "  ";
-#endif
-
+// Specialization for long double
 template<>
-struct format_traits<long double> {
-
-#ifdef JLT_FIELD_SEP_STRING
-  // String to separate vector entries.
-  static const char field_sep[];
-#else
-  // Number of spaces between entries.
-  static const int field_sep = 2;
-#endif
-
+struct format_traits<long double> : format_traits_base {
   static const int extra_width_scientific = 7;
-
-  // For long doubles, assuming about 20 digits of accuracy plus sign
-  // and decimal point.
-  static const int field_width = 22;
+  static const int field_width = 22;  // ~20 digits plus sign and decimal
 };
-
-#ifdef JLT_FIELD_SEP_STRING
-const char format_traits<long double>::field_sep[] = "  ";
-#endif
 
 //
 // Implementation details - not part of public API

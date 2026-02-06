@@ -111,16 +111,17 @@ std::ostream& operator<<(std::ostream& strm, const std::list<T>& ll)
 
 ---
 
-## Task 4: Refactor format_traits to Reduce Duplication
+## Task 4: Refactor format_traits to Reduce Duplication ✅ COMPLETED
 
 **Priority:** Medium
 **Effort:** ~45 minutes
 **Files:** `jlt/stlio.hpp`
+**Completed:** 2026-02-05
 
 ### Description
 The `format_traits` specializations for `int`, `float`, `long double` (lines 56-120) have lots of duplicated code. Each specialization repeats the same `field_sep` handling.
 
-**Current pattern:**
+**Previous pattern (duplicated):**
 ```cpp
 template<>
 struct format_traits<int> {
@@ -135,17 +136,37 @@ struct format_traits<int> {
 // Repeated for float, long double...
 ```
 
-### Implementation Notes
-- Create a base `format_traits_base` template with common defaults
-- Use inheritance or composition to reduce duplication
-- Keep specializations only for values that differ
-- Maintain backward compatibility
+### Changes Made
+- Created `format_traits_base` base class containing only `field_sep`
+- Changed specializations to inherit from `format_traits_base`
+- Reduced code from ~65 lines to ~35 lines
+- Eliminated 4 redundant `#ifdef JLT_FIELD_SEP_STRING` blocks
+- Specializations now only define fields that differ from defaults
+
+**New pattern (clean):**
+```cpp
+struct format_traits_base {
+  static const int field_sep = 2;  // or char[] depending on macro
+};
+
+template<>
+struct format_traits<int> : format_traits_base {
+  static const int extra_width_scientific = 0;
+  static const int field_width = 6;
+};
+```
+
+### Benefits
+- 47% reduction in format_traits code (65 → 35 lines)
+- No duplication of field_sep handling
+- Easier to add new type specializations
+- Backward compatible - same public interface
 
 ### Acceptance Criteria
-- [ ] Base template created with common defaults
-- [ ] Specializations simplified
-- [ ] No change in behavior (backward compatible)
-- [ ] All tests pass
+- [x] Base template created with common defaults
+- [x] Specializations simplified
+- [x] No change in behavior (backward compatible)
+- [x] All tests pass
 
 ---
 
@@ -220,16 +241,16 @@ The `JLT_FIELD_SEP_STRING` macro appears 8+ times throughout the file, making th
 | 1. Add container support | Medium | ⏳ Pending | 30 min | More complete STL coverage |
 | 2. Input validation | High | ✅ Done | 15 min | Robustness, error handling |
 | 3. Consistent list separator | Low | ✅ Done* | 10 min | Consistency |
-| 4. Refactor format_traits | Medium | ⏳ Pending | 45 min | Maintainability |
+| 4. Refactor format_traits | Medium | ✅ Done | 45 min | Maintainability |
 | 5. Complex number support | Medium | ⏳ Pending | 20 min | Completeness |
 | 6. Clean up #ifdefs | Low | ✅ Done | 30 min | Code clarity |
 
 \* Task 3 (consistent list separator) completed as part of Task 6
 
-**Completed:** Tasks 2, 3, 6
-**Pending:** Tasks 1, 4, 5
+**Completed:** Tasks 2, 3, 4, 6
+**Pending:** Tasks 1, 5
 
-**Recommended order:** 2 ✅ → 6 ✅ → 1 → 5 → 4
+**Recommended order:** 2 ✅ → 6 ✅ → 4 ✅ → 1 → 5
 
 ---
 
