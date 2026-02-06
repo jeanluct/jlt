@@ -8,7 +8,7 @@ SConscript('SConscript')
 Import(['env','matlabenv','lapackenv','csparseenv','boost_timerenv'])
 
 progs = ['display_task_test','finitediff_test','math_test','mathvector_test',
-         'qrdecomp_test','polynomial_test','vcs_test']
+         'qrdecomp_test','polynomial_test','stlio_demo','vcs_test']
 
 # These require linking against LAPACK.
 lapackprogs = ['eigensystem_test','svdecomp_test']
