@@ -11,6 +11,8 @@
 #include <iomanip>
 #include <string>
 #include <iterator>
+#include <sstream>
+#include <algorithm>
 
 //
 // Supported containers for output operator<<
@@ -61,35 +63,92 @@ struct format_traits : format_traits_base {
   // plus one because the precision does not include the leading digit.
   static const int extra_width_scientific = 7;
 
-  // For unformatted and fixed notation, use a fixed field width.
-  // This is the default for double precision, assuming about 13
-  // digits of accuracy plus sign and decimal point.
+  // Default field width for floating-point (double-ish)
   static const int field_width = 15;
 };
 
-// Specialization for int
+//
+// Integer types (signed)
+//
+template<>
+struct format_traits<short> : format_traits_base {
+  static const int extra_width_scientific = 0;
+  static const int field_width = 6;
+};
+
 template<>
 struct format_traits<int> : format_traits_base {
   static const int extra_width_scientific = 0;
   static const int field_width = 6;  // 5 digits plus sign
 };
 
-// Specialization for float
+template<>
+struct format_traits<long> : format_traits_base {
+  static const int extra_width_scientific = 0;
+  static const int field_width = 12;
+};
+
+template<>
+struct format_traits<long long> : format_traits_base {
+  static const int extra_width_scientific = 0;
+  static const int field_width = 20;  // 19 digits + sign
+};
+
+//
+// Integer types (unsigned)
+//
+template<>
+struct format_traits<unsigned short> : format_traits_base {
+  static const int extra_width_scientific = 0;
+  static const int field_width = 5;
+};
+
+template<>
+struct format_traits<unsigned int> : format_traits_base {
+  static const int extra_width_scientific = 0;
+  static const int field_width = 10;  // No sign needed
+};
+
+template<>
+struct format_traits<unsigned long> : format_traits_base {
+  static const int extra_width_scientific = 0;
+  static const int field_width = 11;
+};
+
+template<>
+struct format_traits<unsigned long long> : format_traits_base {
+  static const int extra_width_scientific = 0;
+  static const int field_width = 20;
+};
+
+//
+// Floating-point types
+//
 template<>
 struct format_traits<float> : format_traits_base {
   static const int extra_width_scientific = 7;
   static const int field_width = 13;  // ~11 digits plus sign and decimal
 };
 
-// Specialization for long double
 template<>
 struct format_traits<long double> : format_traits_base {
   static const int extra_width_scientific = 7;
   static const int field_width = 22;  // ~20 digits plus sign and decimal
 };
 
-// Specialization for complex numbers
-// Field width accounts for both real and imaginary parts plus formatting
+//
+// bool
+//
+template<>
+struct format_traits<bool> : format_traits_base {
+  static const int extra_width_scientific = 0;
+  // Print booleans in a single column; textual form may be used when boolalpha
+  static const int field_width = 1;
+};
+
+//
+// complex numbers
+//
 template<class T>
 struct format_traits<std::complex<T>> : format_traits_base {
   static const int extra_width_scientific = format_traits<T>::extra_width_scientific;
@@ -97,11 +156,49 @@ struct format_traits<std::complex<T>> : format_traits_base {
   static const int field_width = 2 * format_traits<T>::field_width + 3;
 };
 
+// std::pair operator<<
+//
+// Implementation note: provide operator<< for std::pair so streaming of pairs
+// uses the library's preferred formatting. This must be visible before the
+// internal helpers that call operator<< on temporaries below.
+template<class T1, class T2>
+std::ostream& operator<<(std::ostream& strm, const std::pair<T1, T2>& pp)
+{
+  strm << '(' << pp.first << ',' << pp.second << ')';
+  return strm;
+}
+
 //
 // Implementation details - not part of public API
 // These are internal helpers that may change without notice.
 //
 namespace detail {
+
+// print_element: stream the value into a temporary using operator<< so that
+// both built-in and user-provided operator<< representations are supported,
+// then emit with setw.
+template<class U>
+void print_element(std::ostream& strm, const U& val, int wid)
+{
+  std::ostringstream tmp;
+  tmp << val;
+  strm << std::setw(wid) << tmp.str();
+}
+
+inline void print_element(std::ostream& strm, bool val, int wid)
+{
+  // Adaptive boolean width: use a larger width when std::boolalpha is enabled
+  // (so textual "true"/"false" remain readable), otherwise keep the
+  // compact width for numeric 0/1.
+  int wid_used = wid;
+  if (strm.flags() & std::ios::boolalpha) {
+    // Reserve at least 5 characters for textual booleans ("false" length = 5)
+    wid_used = std::max(wid, 5);
+    strm << std::setw(wid_used) << std::boolalpha << val;
+  } else {
+    strm << std::setw(wid_used) << static_cast<int>(val);
+  }
+}
 
 // RAII helper to save and restore stream flags
 class stream_flags_saver {
@@ -154,12 +251,12 @@ std::ostream& print_sequence(std::ostream& strm, const Container& c) {
   auto end = std::end(c);
 
   // Handle first element specially to avoid trailing separator
-  strm << std::setw(wid) << *it;
+  detail::print_element(strm, *it, wid);
   ++it;
 
   for (; it != end; ++it) {
     print_field_sep<T>(strm);
-    strm << std::setw(wid) << *it;
+    detail::print_element(strm, *it, wid);
   }
 
   return strm;
@@ -207,13 +304,7 @@ std::ostream& operator<<(std::ostream& strm, const std::unordered_set<T>& ss)
   return detail::print_sequence<std::unordered_set<T>, T>(strm, ss);
 }
 
-// std::pair output
-template<class T1, class T2>
-std::ostream& operator<<(std::ostream& strm, const std::pair<T1, T2>& pp)
-{
-  strm << '(' << pp.first << ',' << pp.second << ')';
-  return strm;
-}
+// (std::pair output implemented earlier)
 
 // C++17: Simplified tuple output using fold expressions and std::apply
 #if __cplusplus >= 201703L
@@ -329,28 +420,6 @@ std::ostream& operator<<(std::ostream& strm, const std::map<K,T>& mm)
     return strm;
   }
 
-// Specialization: if the independent variable is of type double,
-// print in scientific notation at fixed width and precision.
-template<class T>
-std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
-  {
-    detail::stream_flags_saver saver(strm);
-
-    const int prec = 5;		// Precision (number of digits - 1).
-    const int wid = prec + 7;	// Extra characters in scientific notation.
-
-    strm.precision(prec);
-    strm.setf(std::ios::scientific);
-
-    for (auto it = mm.cbegin(); it != mm.cend(); ++it)
-      {
-	strm << std::setw(wid) << it->first;
-	detail::print_field_sep<T>(strm);
-	strm << it->second << '\n';
-      }
-
-    return strm;
-  }
 
 // Output operator for complex numbers
 // Format: (real, imag)
