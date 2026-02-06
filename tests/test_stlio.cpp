@@ -220,6 +220,114 @@ TEST_CASE("stlio vector input", "[stlio][vector][input]") {
         REQUIRE(vv[0] == Approx(1.5));
         REQUIRE(vv[2] == Approx(3.5));
     }
+
+    SECTION("Input validation - stops on bad input") {
+        std::vector<int> vv(5, -1);  // Initialize with -1
+        std::istringstream iss("1 2 abc 4 5");
+        iss >> vv;
+        // First two elements should be read
+        REQUIRE(vv[0] == 1);
+        REQUIRE(vv[1] == 2);
+        // Stream should be in bad state
+        REQUIRE_FALSE(iss.good());
+        // Element where failure occurred may be modified (implementation-defined)
+        // but subsequent elements should be unchanged
+        REQUIRE(vv[3] == -1);
+        REQUIRE(vv[4] == -1);
+    }
+
+    SECTION("Input validation - stops on EOF") {
+        std::vector<int> vv(5, -1);
+        std::istringstream iss("1 2 3");  // Only 3 values, but vector wants 5
+        iss >> vv;
+        // First three elements should be read
+        REQUIRE(vv[0] == 1);
+        REQUIRE(vv[1] == 2);
+        REQUIRE(vv[2] == 3);
+        // Stream should be at EOF
+        REQUIRE(iss.eof());
+        // Remaining elements should be unchanged
+        REQUIRE(vv[3] == -1);
+        REQUIRE(vv[4] == -1);
+    }
+}
+
+TEST_CASE("stlio valarray input", "[stlio][valarray][input]") {
+    SECTION("Read into valarray") {
+        std::valarray<int> vv(5);
+        std::istringstream iss("10 20 30 40 50");
+        iss >> vv;
+        REQUIRE(vv[0] == 10);
+        REQUIRE(vv[4] == 50);
+    }
+
+    SECTION("Read doubles into valarray") {
+        std::valarray<double> vv(3);
+        std::istringstream iss("1.1 2.2 3.3");
+        iss >> vv;
+        REQUIRE(vv[0] == Approx(1.1));
+        REQUIRE(vv[2] == Approx(3.3));
+    }
+
+    SECTION("Input validation - stops on bad input") {
+        std::valarray<int> vv(5);
+        for (int i = 0; i < 5; ++i) vv[i] = -1;
+        std::istringstream iss("1 2 xyz");
+        iss >> vv;
+        REQUIRE(vv[0] == 1);
+        REQUIRE(vv[1] == 2);
+        REQUIRE_FALSE(iss.good());
+        // Element where failure occurred may be modified (implementation-defined)
+        // but subsequent elements should be unchanged
+        REQUIRE(vv[3] == -1);
+        REQUIRE(vv[4] == -1);
+    }
+}
+
+TEST_CASE("stlio list input", "[stlio][list][input]") {
+    SECTION("Read into empty list") {
+        std::list<int> ll;
+        std::istringstream iss("1 2 3 4 5");
+        iss >> ll;
+        REQUIRE(ll.size() == 5);
+        auto it = ll.begin();
+        REQUIRE(*it++ == 1);
+        REQUIRE(*it++ == 2);
+        REQUIRE(*it++ == 3);
+        REQUIRE(*it++ == 4);
+        REQUIRE(*it++ == 5);
+    }
+
+    SECTION("Read doubles into list") {
+        std::list<double> ll;
+        std::istringstream iss("1.5 2.5 3.5");
+        iss >> ll;
+        REQUIRE(ll.size() == 3);
+        auto it = ll.begin();
+        REQUIRE(*it++ == Approx(1.5));
+        REQUIRE(*it++ == Approx(2.5));
+        REQUIRE(*it++ == Approx(3.5));
+    }
+
+    SECTION("Read strings into list") {
+        std::list<std::string> ll;
+        std::istringstream iss("hello world test");
+        iss >> ll;
+        REQUIRE(ll.size() == 3);
+        auto it = ll.begin();
+        REQUIRE(*it++ == "hello");
+        REQUIRE(*it++ == "world");
+        REQUIRE(*it++ == "test");
+    }
+
+    SECTION("Input stops on bad input") {
+        std::list<int> ll;
+        std::istringstream iss("1 2 abc 4 5");
+        iss >> ll;
+        // Should have read 1 and 2, then stopped at "abc"
+        REQUIRE(ll.size() == 2);
+        REQUIRE_FALSE(iss.good());
+    }
 }
 
 TEST_CASE("stlio format traits", "[stlio][format_traits]") {

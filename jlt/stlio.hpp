@@ -271,13 +271,43 @@ std::ostream& operator<<(std::ostream& strm, const std::map<double,T>& mm)
 //
 
 // Read vv.size() elements from strm, overwriting content of vv.
+// Stops reading on first failure and leaves remaining elements unchanged.
 template<class T>
 [[nodiscard]]
 std::istream& operator>>(std::istream& strm, std::vector<T>& vv)
 {
-  for (auto i = vv.begin(); i != vv.end(); ++i)
+  for (auto i = vv.begin(); i != vv.end() && strm.good(); ++i)
     {
       strm >> *i;
+    }
+
+  return strm;
+}
+
+// Read elements into valarray from strm.
+// Stops reading on first failure and leaves remaining elements unchanged.
+template<class T>
+[[nodiscard]]
+std::istream& operator>>(std::istream& strm, std::valarray<T>& vv)
+{
+  for (std::size_t i = 0; i < vv.size() && strm.good(); ++i)
+    {
+      strm >> vv[i];
+    }
+
+  return strm;
+}
+
+// Read elements into list from strm until stream fails or list is full.
+// Note: list doesn't have fixed size, so this reads until EOF or failure.
+template<class T>
+[[nodiscard]]
+std::istream& operator>>(std::istream& strm, std::list<T>& ll)
+{
+  T value;
+  while (strm >> value)
+    {
+      ll.push_back(value);
     }
 
   return strm;
