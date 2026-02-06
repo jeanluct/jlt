@@ -197,6 +197,9 @@ TEST_CASE("stlio map output", "[stlio][map]") {
         mm[0.002] = 2;
         mm[0.003] = 3;
         std::ostringstream oss;
+        // Formatting is the caller's responsibility; request scientific
+        // notation and an explicit precision for consistent output.
+        oss << std::scientific << std::setprecision(3);
         oss << mm;
         std::string output = oss.str();
         // Double keys should be in scientific notation
@@ -348,6 +351,8 @@ TEST_CASE("stlio format traits", "[stlio][format_traits]") {
     SECTION("Double field width applied in formatting") {
         std::vector<double> vv = {1.0, 2.5, 3.14159};
         std::ostringstream oss;
+        // Ensure a fixed decimal presentation with five fractional digits
+        oss << std::fixed << std::setprecision(5);
         oss << vv;
         std::string output = oss.str();
         REQUIRE(output.find("1.00000") != std::string::npos);
@@ -372,6 +377,7 @@ TEST_CASE("stlio format preservation", "[stlio][format]") {
     SECTION("Trailing zeros shown") {
         std::vector<double> vv = {1.5, 2.0, 3.0};
         std::ostringstream oss;
+        // Ensure caller sets fixed format and precision
         oss << std::fixed << std::setprecision(2);
         oss << vv;
         std::string output = oss.str();
@@ -384,6 +390,7 @@ TEST_CASE("stlio mixed numeric types", "[stlio][numeric]") {
     SECTION("Vector with mixed precision") {
         std::vector<float> vv = {1.5f, 2.5f, 3.5f};
         std::ostringstream oss;
+        // Ensure caller requests fixed format and precision
         oss << std::fixed << std::setprecision(2);
         oss << vv;
         std::string output = oss.str();
@@ -443,6 +450,7 @@ TEST_CASE("stlio complex number support", "[stlio][complex]") {
     SECTION("Vector of complex numbers") {
         std::vector<cd> vv = {cd(1.0, 2.0), cd(3.0, 4.0), cd(5.0, 6.0)};
         std::ostringstream oss;
+        // Request fixed format for complex components
         oss << std::fixed << std::setprecision(1);
         oss << vv;
         std::string output = oss.str();

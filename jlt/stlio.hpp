@@ -181,6 +181,16 @@ template<class U>
 void print_element(std::ostream& strm, const U& val, int wid)
 {
   std::ostringstream tmp;
+  // Mirror the caller stream's formatting so temporary formatting matches
+  // (precision, flags such as fixed/scientific, boolalpha, etc.). This
+  // preserves the appearance that callers expect when they set stream
+  // formatting before streaming containers.
+  tmp.flags(strm.flags());
+  tmp.precision(strm.precision());
+  // Match fill character and locale so tmp produces the same textual
+  // representation as the caller stream for all types (including complex).
+  tmp.fill(strm.fill());
+  tmp.imbue(strm.getloc());
   tmp << val;
   strm << std::setw(wid) << tmp.str();
 }
@@ -241,8 +251,9 @@ std::ostream& print_sequence(std::ostream& strm, const Container& c) {
   const int prec = strm.precision();
   int wid = format_traits<T>::field_width;
 
-  strm.setf(std::ios::showpoint);
-  strm.setf(std::ios::right, std::ios::adjustfield);
+  // Removed strm.setf() calls - preserve caller's formatting flags
+  // The temporary ostringstream in print_element will mirror the caller's
+  // flags exactly (fixed, scientific, showpoint, precision, etc.)
 
   if (strm.flags() & std::ios::scientific)
     wid = prec + format_traits<T>::extra_width_scientific;
