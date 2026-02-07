@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **svdecomp.hpp**: Added complex matrix SVD support with overloaded SVdecomp() functions
+  for matrix<std::complex<T>>; singular values are real (type T) while matrices U/Vt
+  are complex; implements both full decomposition (U, w, Vt) and singular-values-only
+  modes using LAPACK cgesvd/zgesvd routines (2026-02-07)
+- **Tests**: Added comprehensive complex matrix SVD tests (test_svdecomp.cpp now has
+  97 assertions, +52 from previous) - tests complex<float> and complex<double> for
+  2x2, 3x2 rectangular, identity, zero, and pure imaginary matrices; verifies singular
+  value ordering, reconstruction accuracy, and values-only computation (2026-02-07)
 - **internal/lapack_fortran.hpp**: Added complex SVD support (cgesvd, zgesvd, cgesdd, zgesdd)
   for computing singular value decomposition of complex matrices; renamed from lapack.h
   and moved to jlt/internal/ to indicate it's not for direct user access (2026-02-07)

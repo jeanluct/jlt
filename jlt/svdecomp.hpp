@@ -11,6 +11,7 @@
 #include <jlt/lapack.hpp>
 #include <cassert>
 #include <algorithm>
+#include <complex>
 
 // No data() method in std::vector prior to GCC 4.1.
 #if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 1))
@@ -135,6 +136,122 @@ int SVdecomp(matrix<T>& A, std::vector<T>& w)
 # else
   lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
 		0, &N, 0, &M, &(*work.begin()), &worksize, &info);
+# endif
+
+  return info;
+}
+
+
+//
+// Complex matrix SVD overloads
+//
+// For complex matrices, the singular values are real, but the matrix A
+// and singular vectors U, Vt are complex. An additional real workspace
+// (rwork) is required.
+//
+
+template<class T>
+int SVdecomp(matrix<std::complex<T>>& A,
+	     matrix<std::complex<T>>& U,
+	     matrix<std::complex<T>>& Vt,
+	     std::vector<T>& w)
+{
+  using std::min;
+  using std::max;
+
+  char jobu = 'A';			// 'A' - all M columns of U
+					// are returned in the matrix U.
+  char jobvt = 'A';			// 'A' - all M columns of V
+					// are returned in the matrix Vt.
+
+  int M = A.rows(), N = A.columns();	// Dimensions of matrix.
+  int info;
+
+  // Real workspace for complex SVD
+  int rworksize = 5 * min(M, N);
+  std::vector<T> rwork(rworksize);
+
+  // Call the routine with cworksize = -1, to get the ideal size of workspace.
+  int cworksize = -1;
+  std::complex<T> ctmpwork[1];
+
+# if !defined(JLT_NO_VECTOR_DATA_METHOD)
+  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(),
+		Vt.data(), &N, U.data(), &M, ctmpwork, &cworksize,
+		rwork.data(), &info);
+# else
+  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+		&(*Vt.begin()), &N, &(*U.begin()), &M,
+		ctmpwork, &cworksize, &(*rwork.begin()), &info);
+#endif
+
+  cworksize = static_cast<int>(ctmpwork[0].real());
+
+#ifdef JLT_DEBUG
+  std::cerr << "jlt::svdecomp (complex):     cworksize = " << cworksize << std::endl;
+  std::cerr << "jlt::svdecomp (complex):     rworksize = " << rworksize << std::endl;
+#endif
+
+  std::vector<std::complex<T>> cwork(cworksize);
+
+# if !defined(JLT_NO_VECTOR_DATA_METHOD)
+  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), Vt.data(), &N,
+		U.data(), &M, cwork.data(), &cworksize, rwork.data(), &info);
+# else
+  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+		&(*Vt.begin()), &N, &(*U.begin()), &M,
+		&(*cwork.begin()), &cworksize, &(*rwork.begin()), &info);
+# endif
+
+  return info;
+}
+
+
+template<class T>
+int SVdecomp(matrix<std::complex<T>>& A, std::vector<T>& w)
+{
+  using std::min;
+  using std::max;
+
+  char jobu = 'N', jobvt = 'N';		// 'N' - only singular values
+					// are computed.
+
+  int M = A.rows(), N = A.columns();	// Dimensions of matrix.
+  int info;
+
+  // Real workspace for complex SVD
+  int rworksize = 5 * min(M, N);
+  std::vector<T> rwork(rworksize);
+
+  // Call the routine with cworksize = -1, to get the ideal size of workspace.
+  int cworksize = -1;
+  std::complex<T> ctmpwork[1];
+
+# if !defined(JLT_NO_VECTOR_DATA_METHOD)
+  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(),
+		nullptr, &N, nullptr, &M, ctmpwork, &cworksize,
+		rwork.data(), &info);
+# else
+  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+		0, &N, 0, &M, ctmpwork, &cworksize, &(*rwork.begin()), &info);
+#endif
+
+  cworksize = static_cast<int>(ctmpwork[0].real());
+
+#ifdef JLT_DEBUG
+  std::cerr << "jlt::svdecomp (complex):     cworksize = " << cworksize << std::endl;
+  std::cerr << "jlt::svdecomp (complex):     rworksize = " << rworksize << std::endl;
+#endif
+
+  std::vector<std::complex<T>> cwork(cworksize);
+
+# if !defined(JLT_NO_VECTOR_DATA_METHOD)
+  lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), nullptr, &N,
+		nullptr, &M, cwork.data(), &cworksize, rwork.data(), &info);
+# else
+  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
+		0, &N, 0, &M, &(*cwork.begin()), &cworksize,
+		&(*rwork.begin()), &info);
 # endif
 
   return info;

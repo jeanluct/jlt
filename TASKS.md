@@ -171,9 +171,12 @@
   - Defines JLT_MATLAB_LIB_SUPPORT when building
   - Tests tagged with "matlab" label for filtering
 
-**Test Coverage: 1555 assertions across 23 test suites - ALL PASSING**
+**Test Coverage: 1607 assertions across 23 test suites - ALL PASSING**
 - 16 core test suites: 1280 assertions (no external dependencies)
-- 3 LAPACK test suites: 105 assertions (built conditionally if LAPACK found)
+- 3 LAPACK test suites: 162 assertions (built conditionally if LAPACK found)
+  - test_lapack: 45 assertions (LAPACK wrapper overload resolution)
+  - test_eigensystem: 20 assertions (eigenvalue/eigenvector decomposition)
+  - test_svdecomp: 97 assertions (SVD for real and complex matrices)
 - 1 Matlab test suite: 61 assertions (built conditionally if Matlab found)
 - 1 CSparse test suite: 65 assertions (built conditionally if CSparse found)
 - 1 Boost test suite: 44 assertions (built conditionally if Boost timer found)
@@ -327,7 +330,7 @@ These tests would only be built if the respective libraries are found:
   - Date: 2026-02-06
 
 ### Wrapper/Interface Files (Low Priority)
-- [ ] **lapack.hpp** - LAPACK wrapper functions
+- [x] **lapack.hpp** - LAPACK wrapper functions
   - Note: Already tested indirectly via eigensystem.hpp and svdecomp.hpp tests
 
 ## Test Improvements for Existing Components
@@ -380,10 +383,13 @@ These may require verifying/fixing jlt code behavior:
   - Add tests for ill-conditioned matrices
   - Test repeated eigenvalues
 
-- [ ] **test_svdecomp.hpp improvements (LAPACK):**
-  - Add tests for near-singular matrices
-  - Test very large condition numbers
-  - Add rectangular matrix stress tests
+- [x] **test_svdecomp.cpp improvements (LAPACK):** - COMPLETED 2026-02-07
+  - ✅ Added complex matrix SVD tests (complex<float> and complex<double>)
+  - ✅ Added rectangular complex matrix tests (3x2)
+  - ✅ Added tests for zero matrices, identity matrices, and pure imaginary matrices
+  - ✅ Verifies reconstruction accuracy for complex matrices
+  - [ ] Future: Add tests for near-singular matrices
+  - [ ] Future: Test very large condition numbers
 
 - [ ] **Output format tests:**
   - Test `printMatlabForm()` output format for vector and matrix

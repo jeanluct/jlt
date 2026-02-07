@@ -39,7 +39,7 @@ detailed build instructions.
 
 ## Testing
 
-Comprehensive test suite with **1555 assertions across 23 test suites** using Catch2:
+Comprehensive test suite with **1607 assertions across 23 test suites** using Catch2:
 
 ```bash
 cd tests && mkdir -p build && cd build
@@ -52,7 +52,8 @@ ctest -R lapack          # Run only LAPACK tests
 Test coverage includes:
 - **Core library** (1233 assertions): vector, matrix, mathvector,
   mathmatrix, polynomial, etc.
-- **LAPACK integration** (60 assertions): eigensystems, SVD decomposition
+- **LAPACK integration** (162 assertions): LAPACK wrappers (45), eigensystems (20),
+  SVD decomposition for real and complex matrices (97)
 - **Optional libraries**: Matlab MAT-file I/O (61 assertions), CSparse
   (65 assertions), Boost timer (44 assertions)
 
@@ -80,7 +81,7 @@ See `tests/README.md` for detailed testing documentation.
 - Integration with LAPACK for advanced operations
 - Specialized support for eigenvalues/eigenvectors (`jlt/eigensystem.hpp`)
 - LU and QR decomposition (`jlt/matrixutil.hpp`)
-- Singular Value Decomposition (`jlt/svdecomp.hpp`)
+- Singular Value Decomposition for real and complex matrices (`jlt/svdecomp.hpp`)
 - **Requires**: `-lblas -llapack` for linear algebra operations
 - Examples: `examples/mathvector_test.cpp`, `examples/eigensystem_test.cpp`
 
@@ -182,7 +183,7 @@ See `AGENTS.md` for:
 - **2014**: Migration from Subversion to Mercurial
 - **2018**: Migration to Git
 - **2020s**: Modernization (C++11, RAII, comprehensive test suite)
-- **2026**: 1463+ test assertions, bounds checking, improved error handling
+- **2026**: 1607 test assertions, complex matrix SVD, bounds checking, improved error handling
 
 See `CHANGELOG.md` for detailed version history.
 
