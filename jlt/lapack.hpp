@@ -73,6 +73,49 @@ namespace lapack {
     dsyev_(jobz,uplo,N,A,ldA,W,work,lwork,info);
   }
 
+  // Hermitian complex matrix
+  template<class T>
+  void heev(char* jobz,
+	    char* uplo,
+	    int* N,
+	    std::complex<T>* A,
+	    int* ldA,
+	    T* W,
+	    std::complex<T>* work,
+	    int* lwork,
+	    T* rwork,
+	    int* info);
+
+  inline
+  void heev(char* jobz,
+	    char* uplo,
+	    int* N,
+	    std::complex<float>* A,
+	    int* ldA,
+	    float* W,
+	    std::complex<float>* work,
+	    int* lwork,
+	    float* rwork,
+	    int* info)
+  {
+    cheev_(jobz,uplo,N,A,ldA,W,work,lwork,rwork,info);
+  }
+
+  inline
+  void heev(char* jobz,
+	    char* uplo,
+	    int* N,
+	    std::complex<double>* A,
+	    int* ldA,
+	    double* W,
+	    std::complex<double>* work,
+	    int* lwork,
+	    double* rwork,
+	    int* info)
+  {
+    zheev_(jobz,uplo,N,A,ldA,W,work,lwork,rwork,info);
+  }
+
   // Nonsymmetric real matrix
   template<class T>
   void geev(char* jobVL,

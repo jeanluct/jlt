@@ -49,6 +49,34 @@ void dsyev_(char* jobz,
 	    int* lwork,
 	    int* info);
 
+// CHEEV - compute all eigenvalues and, optionally, eigenvectors of a complex
+//    Hermitian matrix A.
+// (single precision)
+void cheev_(char* jobz,
+	    char* uplo,
+	    int* N,
+	    std::complex<float>* A,
+	    int* ldA,
+	    float* W,
+	    std::complex<float>* work,
+	    int* lwork,
+	    float* rwork,
+	    int* info);
+
+// ZHEEV - compute all eigenvalues and, optionally, eigenvectors of a complex
+//    Hermitian matrix A.
+// (double precision)
+void zheev_(char* jobz,
+	    char* uplo,
+	    int* N,
+	    std::complex<double>* A,
+	    int* ldA,
+	    double* W,
+	    std::complex<double>* work,
+	    int* lwork,
+	    double* rwork,
+	    int* info);
+
 // SGEEV - compute for an N-by-N real nonsymmetric matrix A, the eigenvalues
 //    and, optionally, the left and/or right eigenvectors.
 // (single precision)

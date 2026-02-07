@@ -153,3 +153,80 @@ TEST_CASE("complex matrix eigenvalues", "[lapack][eigensystem]") {
         REQUIRE(eigvals.size() == 3);
     }
 }
+
+TEST_CASE("hermitian matrix eigensystem", "[lapack][eigensystem][hermitian]") {
+    SECTION("3x3 hermitian matrix (complex<double>) eigenvalues") {
+        int n = 3;
+        mathmatrix<std::complex<double>> U(n, n);
+        mathvector<double> w(n);
+
+        const std::complex<double> i(0, 1);
+
+        // Create hermitian matrix: H = H^H (conjugate transpose)
+        // Diagonal must be real, off-diagonals satisfy H(i,j) = conj(H(j,i))
+        U(0, 0) = 2;
+        U(0, 1) = std::complex<double>(1, 1);
+        U(0, 2) = std::complex<double>(0, -2);
+        U(1, 0) = std::complex<double>(1, -1);  // conj(U(0,1))
+        U(1, 1) = 3;
+        U(1, 2) = std::complex<double>(1, 1);
+        U(2, 0) = std::complex<double>(0, 2);   // conj(U(0,2))
+        U(2, 1) = std::complex<double>(1, -1);  // conj(U(1,2))
+        U(2, 2) = 1;
+
+        int info = hermitian_matrix_eigensystem(U, w);
+        REQUIRE(info == 0);
+
+        // Eigenvalues should be real and sorted descending
+        REQUIRE(w[0] >= w[1]);
+        REQUIRE(w[1] >= w[2]);
+
+        // All eigenvalues should be real (no imaginary part)
+        // Already enforced by w being std::vector<double>
+    }
+
+    SECTION("2x2 hermitian matrix (complex<float>) eigenvalues") {
+        int n = 2;
+        mathmatrix<std::complex<float>> U(n, n);
+        mathvector<float> w(n);
+
+        const std::complex<float> i(0, 1);
+
+        // Simple hermitian matrix
+        U(0, 0) = 1;
+        U(0, 1) = i;
+        U(1, 0) = -i;  // conj(U(0,1))
+        U(1, 1) = 1;
+
+        int info = hermitian_matrix_eigensystem(U, w);
+        REQUIRE(info == 0);
+
+        // Should have 2 real eigenvalues
+        REQUIRE(w.size() == 2);
+
+        // Eigenvalues for this matrix are 0 and 2
+        REQUIRE(w[0] == Approx(2.0f).margin(1e-6f));
+        REQUIRE(w[1] == Approx(0.0f).margin(1e-6f));
+    }
+
+    SECTION("4x4 hermitian identity matrix") {
+        int n = 4;
+        mathmatrix<std::complex<double>> U(n, n);
+        mathvector<double> w(n);
+
+        // Identity matrix is hermitian
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                U(i, j) = (i == j) ? 1.0 : 0.0;
+            }
+        }
+
+        int info = hermitian_matrix_eigensystem(U, w);
+        REQUIRE(info == 0);
+
+        // All eigenvalues should be 1
+        for (int i = 0; i < n; ++i) {
+            REQUIRE(w[i] == Approx(1.0).margin(1e-10));
+        }
+    }
+}

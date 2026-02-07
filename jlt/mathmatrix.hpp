@@ -12,12 +12,42 @@
 //
 
 #include <cassert>
+#include <complex>
+#include <limits>
 #include <jlt/mathvector.hpp>
 #include <jlt/matrix.hpp>
 #include <jlt/matrixutil.hpp>
 #include <jlt/polynomial.hpp>
 
 namespace jlt {
+
+//
+// Implementation details - not part of public API
+//
+namespace detail {
+
+// Trait to compute complex conjugate of an element
+// For real types: conjugate is identity
+// For complex types: use std::conj
+template<class T>
+struct conj_traits
+{
+  static T compute(const T& val)
+  {
+    return val;
+  }
+};
+
+template<class T>
+struct conj_traits<std::complex<T>>
+{
+  static std::complex<T> compute(const std::complex<T>& val)
+  {
+    return std::conj(val);
+  }
+};
+
+} // namespace detail
 
 //
 // Declare class and function templates
@@ -533,6 +563,90 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
       return *this;
     }
 
+  // Adjoint (conjugate transpose) - in-place operation
+  const mathmatrix<T,S>& adjoint()
+    {
+      // First transpose
+      transpose();
+
+      // Then conjugate each element
+      for (auto i = begin(); i != end(); ++i)
+	{
+	  *i = detail::conj_traits<T>::compute(*i);
+	}
+
+      return *this;
+    }
+
+  // Aliases for adjoint
+  const mathmatrix<T,S>& hermitian_transpose()
+    {
+      return adjoint();
+    }
+
+  const mathmatrix<T,S>& hermitian_conjugate()
+    {
+      return adjoint();
+    }
+
+  // Check if matrix is symmetric (A == A^T)
+  // tolerance: absolute tolerance for element comparisons
+  [[nodiscard]] bool is_symmetric(S tolerance = S()) const
+    {
+      JLT_MATRIX_ASSERT(is_square());
+
+      // Use default tolerance based on Frobenius norm if not specified
+      if (tolerance == S())
+	{
+	  tolerance = std::numeric_limits<S>::epsilon() * frobenius_norm();
+	}
+
+      for (size_type i = 0; i < rows(); ++i)
+	{
+	  for (size_type j = i+1; j < columns(); ++j)
+	    {
+	      // For real matrices: check A(i,j) == A(j,i)
+	      // For complex matrices: this checks without conjugation
+	      T diff = (*this)(i,j) - (*this)(j,i);
+	      if (detail::mag2_traits<T>::compute(diff) > tolerance*tolerance)
+		{
+		  return false;
+		}
+	    }
+	}
+
+      return true;
+    }
+
+  // Check if matrix is Hermitian (A == A^H, where A^H is conjugate transpose)
+  // For real matrices, this is the same as is_symmetric
+  // tolerance: absolute tolerance for element comparisons
+  [[nodiscard]] bool is_hermitian(S tolerance = S()) const
+    {
+      JLT_MATRIX_ASSERT(is_square());
+
+      // Use default tolerance based on Frobenius norm if not specified
+      if (tolerance == S())
+	{
+	  tolerance = std::numeric_limits<S>::epsilon() * frobenius_norm();
+	}
+
+      for (size_type i = 0; i < rows(); ++i)
+	{
+	  for (size_type j = i+1; j < columns(); ++j)
+	    {
+	      // Check A(i,j) == conj(A(j,i))
+	      T diff = (*this)(i,j) - detail::conj_traits<T>::compute((*this)(j,i));
+	      if (detail::mag2_traits<T>::compute(diff) > tolerance*tolerance)
+		{
+		  return false;
+		}
+	    }
+	}
+
+      return true;
+    }
+
   //
   // Some common matrices
   //
@@ -761,6 +875,47 @@ inline mathmatrix<T,S> transpose(const mathmatrix<T,S>& M)
   mathmatrix<T,S> result(M);
   result.transpose();
   return result;
+}
+
+// Standalone adjoint function - returns conjugate transpose of the matrix
+template<class T, class S>
+[[nodiscard]]
+inline mathmatrix<T,S> adjoint(const mathmatrix<T,S>& M)
+{
+  mathmatrix<T,S> result(M);
+  result.adjoint();
+  return result;
+}
+
+// Aliases for adjoint
+template<class T, class S>
+[[nodiscard]]
+inline mathmatrix<T,S> hermitian_transpose(const mathmatrix<T,S>& M)
+{
+  return adjoint(M);
+}
+
+template<class T, class S>
+[[nodiscard]]
+inline mathmatrix<T,S> hermitian_conjugate(const mathmatrix<T,S>& M)
+{
+  return adjoint(M);
+}
+
+// Check if matrix is symmetric
+template<class T, class S>
+[[nodiscard]]
+inline bool is_symmetric(const mathmatrix<T,S>& M, S tolerance = S())
+{
+  return M.is_symmetric(tolerance);
+}
+
+// Check if matrix is hermitian
+template<class T, class S>
+[[nodiscard]]
+inline bool is_hermitian(const mathmatrix<T,S>& M, S tolerance = S())
+{
+  return M.is_hermitian(tolerance);
 }
 
 } // namespace jlt

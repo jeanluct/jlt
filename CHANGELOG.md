@@ -18,6 +18,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   std::vector::data() for cleaner, simpler code (2026-02-07)
 
 ### Added
+- **eigensystem.hpp**: Added hermitian matrix eigensystem support with
+  hermitian_matrix_eigensystem() function for matrix<std::complex<T>>; computes
+  real eigenvalues (type T) and eigenvectors; returns eigenvalues in descending order;
+  supports JLT_MIN_WORKSIZE macro for minimal workspace (max(1, 2*N-1)); uses LAPACK
+  cheev/zheev routines (2026-02-07)
+- **mathmatrix.hpp**: Added adjoint/hermitian operations - adjoint() member function
+  (in-place conjugate transpose), hermitian_transpose() and hermitian_conjugate() aliases,
+  and standalone versions that return new matrices; for real matrices, adjoint equals
+  transpose (2026-02-07)
+- **mathmatrix.hpp**: Added matrix symmetry predicates - is_symmetric() and is_hermitian()
+  member functions with optional tolerance parameter (default: epsilon * frobenius_norm);
+  standalone versions also provided; for real matrices, is_hermitian == is_symmetric (2026-02-07)
+- **internal/lapack_fortran.hpp**: Added Fortran declarations for complex hermitian eigenvalue
+  solvers (cheev, zheev) (2026-02-07)
+- **lapack.hpp**: Added overloaded heev() wrappers for std::complex<float> and
+  std::complex<double> to compute hermitian matrix eigenvalues (2026-02-07)
+- **Tests**: Added hermitian eigensystem tests (test_eigensystem.cpp now has 32 assertions,
+  +12 from previous) - tests complex<float> and complex<double> for 3x3 hermitian matrix,
+  2x2 with known eigenvalues, and 4x4 identity; verifies real eigenvalues and descending
+  order (2026-02-07)
+- **Tests**: Added adjoint/hermitian operation tests (test_mathmatrix.cpp now has 255
+  assertions, +43 from previous) - tests adjoint for real and complex matrices, standalone
+  functions, hermitian_transpose/hermitian_conjugate aliases, is_symmetric/is_hermitian
+  predicates with tolerance parameters (2026-02-07)
 - **svdecomp.hpp**: Added complex matrix SVD support with overloaded SVdecomp() functions
   for matrix<std::complex<T>>; singular values are real (type T) while matrices U/Vt
   are complex; implements both full decomposition (U, w, Vt) and singular-values-only

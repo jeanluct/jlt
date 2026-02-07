@@ -741,3 +741,179 @@ TEST_CASE("mathmatrix mathematical identities", "[mathmatrix]") {
         }
     }
 }
+
+TEST_CASE("mathmatrix adjoint/hermitian operations", "[mathmatrix][adjoint]") {
+    SECTION("adjoint of real matrix is same as transpose") {
+        mathmatrix<double> M(2, 2, {
+            1.0, 2.0,
+            3.0, 4.0
+        });
+
+        mathmatrix<double> M_transpose(M);
+        M_transpose.transpose();
+
+        mathmatrix<double> M_adjoint(M);
+        M_adjoint.adjoint();
+
+        // For real matrices, adjoint == transpose
+        for (auto i = 0u; i < M.rows(); ++i) {
+            for (auto j = 0u; j < M.columns(); ++j) {
+                REQUIRE(M_adjoint(i, j) == M_transpose(i, j));
+            }
+        }
+    }
+
+    SECTION("adjoint of complex matrix") {
+        const std::complex<double> i(0, 1);
+        mathmatrix<std::complex<double>> M(2, 2, {
+            std::complex<double>(1, 2), std::complex<double>(3, 4),
+            std::complex<double>(5, 6), std::complex<double>(7, 8)
+        });
+
+        mathmatrix<std::complex<double>> M_adj(M);
+        M_adj.adjoint();
+
+        // M_adj should be conjugate transpose
+        // M_adj(0,0) = conj(M(0,0)) = 1-2i
+        REQUIRE(M_adj(0, 0).real() == Approx(1.0));
+        REQUIRE(M_adj(0, 0).imag() == Approx(-2.0));
+        // M_adj(0,1) = conj(M(1,0)) = 5-6i
+        REQUIRE(M_adj(0, 1).real() == Approx(5.0));
+        REQUIRE(M_adj(0, 1).imag() == Approx(-6.0));
+        // M_adj(1,0) = conj(M(0,1)) = 3-4i
+        REQUIRE(M_adj(1, 0).real() == Approx(3.0));
+        REQUIRE(M_adj(1, 0).imag() == Approx(-4.0));
+        // M_adj(1,1) = conj(M(1,1)) = 7-8i
+        REQUIRE(M_adj(1, 1).real() == Approx(7.0));
+        REQUIRE(M_adj(1, 1).imag() == Approx(-8.0));
+    }
+
+    SECTION("standalone adjoint function") {
+        const std::complex<double> i(0, 1);
+        mathmatrix<std::complex<double>> M(2, 2, {
+            1.0 + 2.0*i, 3.0 + 4.0*i,
+            5.0 + 6.0*i, 7.0 + 8.0*i
+        });
+
+        auto M_adj = adjoint(M);
+
+        // Original should be unchanged
+        REQUIRE(M(0, 0).real() == Approx(1.0));
+        REQUIRE(M(0, 0).imag() == Approx(2.0));
+
+        // M_adj should be conjugate transpose
+        REQUIRE(M_adj(0, 0).real() == Approx(1.0));
+        REQUIRE(M_adj(0, 0).imag() == Approx(-2.0));
+        REQUIRE(M_adj(0, 1).real() == Approx(5.0));
+        REQUIRE(M_adj(0, 1).imag() == Approx(-6.0));
+    }
+
+    SECTION("hermitian_transpose and hermitian_conjugate aliases") {
+        const std::complex<double> i(0, 1);
+        mathmatrix<std::complex<double>> M(2, 2, {
+            1.0 + i, 2.0,
+            3.0, 4.0 - i
+        });
+
+        auto M_ht = hermitian_transpose(M);
+        auto M_hc = hermitian_conjugate(M);
+        auto M_adj = adjoint(M);
+
+        // All three should be identical
+        for (auto r = 0u; r < M.rows(); ++r) {
+            for (auto c = 0u; c < M.columns(); ++c) {
+                REQUIRE(M_ht(r, c) == M_adj(r, c));
+                REQUIRE(M_hc(r, c) == M_adj(r, c));
+            }
+        }
+    }
+}
+
+TEST_CASE("mathmatrix symmetry tests", "[mathmatrix][symmetric][hermitian]") {
+    SECTION("symmetric real matrix") {
+        mathmatrix<double> M(3, 3, {
+            1.0, 2.0, 3.0,
+            2.0, 4.0, 5.0,
+            3.0, 5.0, 6.0
+        });
+
+        REQUIRE(M.is_symmetric());
+        REQUIRE(is_symmetric(M));
+
+        // Hermitian check should also pass for real symmetric matrices
+        REQUIRE(M.is_hermitian());
+        REQUIRE(is_hermitian(M));
+    }
+
+    SECTION("non-symmetric real matrix") {
+        mathmatrix<double> M(3, 3, {
+            1.0, 2.0, 3.0,
+            4.0, 5.0, 6.0,
+            7.0, 8.0, 9.0
+        });
+
+        REQUIRE_FALSE(M.is_symmetric());
+        REQUIRE_FALSE(is_symmetric(M));
+        REQUIRE_FALSE(M.is_hermitian());
+        REQUIRE_FALSE(is_hermitian(M));
+    }
+
+    SECTION("hermitian complex matrix") {
+        const std::complex<double> i(0, 1);
+        mathmatrix<std::complex<double>> M(3, 3);
+
+        // Create hermitian matrix: diagonal real, off-diagonal conjugate pairs
+        M(0, 0) = 1.0;
+        M(0, 1) = 1.0 + i;
+        M(0, 2) = 2.0 - i;
+        M(1, 0) = 1.0 - i;  // conj(M(0,1))
+        M(1, 1) = 2.0;
+        M(1, 2) = 0.5 + 0.5*i;
+        M(2, 0) = 2.0 + i;  // conj(M(0,2))
+        M(2, 1) = 0.5 - 0.5*i;  // conj(M(1,2))
+        M(2, 2) = 3.0;
+
+        REQUIRE(M.is_hermitian());
+        REQUIRE(is_hermitian(M));
+
+        // Complex hermitian is NOT symmetric (unless all entries are real)
+        REQUIRE_FALSE(M.is_symmetric());
+    }
+
+    SECTION("non-hermitian complex matrix") {
+        const std::complex<double> i(0, 1);
+        mathmatrix<std::complex<double>> M(2, 2, {
+            1.0 + i, 2.0,
+            3.0, 4.0
+        });
+
+        // Diagonal has imaginary part, so not hermitian
+        REQUIRE_FALSE(M.is_hermitian());
+        REQUIRE_FALSE(is_hermitian(M));
+    }
+
+    SECTION("identity is both symmetric and hermitian") {
+        mathmatrix<std::complex<double>> I(3, 3);
+        for (auto i = 0u; i < 3; ++i) {
+            for (auto j = 0u; j < 3; ++j) {
+                I(i, j) = (i == j) ? 1.0 : 0.0;
+            }
+        }
+
+        REQUIRE(I.is_symmetric());
+        REQUIRE(I.is_hermitian());
+    }
+
+    SECTION("tolerance parameter for is_symmetric") {
+        mathmatrix<double> M(2, 2, {
+            1.0, 2.0 + 1e-8,
+            2.0, 3.0
+        });
+
+        // Should fail with default (tight) tolerance
+        REQUIRE_FALSE(M.is_symmetric());
+
+        // Should pass with looser tolerance
+        REQUIRE(M.is_symmetric(1e-6));
+    }
+}
