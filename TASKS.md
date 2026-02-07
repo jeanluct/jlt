@@ -165,10 +165,11 @@
   - Defines JLT_MATLAB_LIB_SUPPORT when building
   - Tests tagged with "matlab" label for filtering
 
-**Test Coverage: 1040+ assertions across 18 test suites - ALL PASSING**
+**Test Coverage: 1105+ assertions across 20 test suites - ALL PASSING**
 - 15 core test suites: 919 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 - 1 Matlab test suite: 61 assertions (built conditionally if Matlab found)
+- 1 CSparse test suite: 65 assertions (built conditionally if CSparse found)
 
 ## In Progress
 
@@ -303,9 +304,11 @@ These tests would only be built if the respective libraries are found:
   - Compile flag: `JLT_MATLAB_LIB_SUPPORT`
   - Note: Requires Matlab installation
 
-- [ ] **csparse.hpp** - CSparse sparse matrix library interface
+- [x] **csparse.hpp** - CSparse sparse matrix library interface ✅ **COMPLETED** - 65 assertions
   - Requires: CSparse library (`-lcsparse`)
+  - Tests: unique_ptr wrappers, mathmatrix↔CSparse conversion, round-trip conversion, memory management
   - Note: Wrapper for Timothy A. Davis's CSparse library
+  - Date: 2026-02-06
 
 - [ ] **tictoc.hpp** - Timing utilities
   - Requires: Boost timer library (`-lboost_timer`)

@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **Tests**: Added CSparse sparse matrix test coverage (test_csparse.cpp, 65
+  assertions) - tests unique_ptr wrappers, mathmatrix↔CSparse conversion,
+  memory management (2026-02-06)
 - **vcs.hpp**: Added `hasVCSChanges()` function to detect uncommitted changes
   in Git and Mercurial repositories (2026-02-06)
 - **vcs.hpp**: Revision strings now include "+" indicator when there are
