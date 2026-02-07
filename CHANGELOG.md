@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- **vcs.hpp**: Added `hasVCSChanges()` function to detect uncommitted changes
+  in Git and Mercurial repositories (2026-02-06)
+- **vcs.hpp**: Revision strings now include "+" indicator when there are
+  uncommitted changes (e.g., "53f13c3+") (2026-02-06)
+
 ### Fixed
 - **stlio.hpp**: Fixed formatting bug where library was overriding
   caller's stream format flags (fixed, scientific, precision) - now

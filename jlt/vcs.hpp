@@ -13,8 +13,7 @@
 
 // Functions for Version Control Systems.
 
-// TODO: * print "+" when there are changes to repo.
-//       * this breaks if the command is run from outside the repo.  Fix?
+// TODO: * this breaks if the command is run from outside the repo.  Fix?
 //       * width of banner
 
 //
@@ -58,17 +57,46 @@ std::string getRepo()
     return std::string("none");
 }
 
-// Short (7 char) hash string of the current commit.
-std::string getVCSRevision()
+// Check if there are uncommitted changes in the repository.
+bool hasVCSChanges()
 {
   std::string r = getRepo();
 
   if (r == "git")
-    return get_command_output("git log -1 --format=%h");
+    {
+      // Check for both staged and unstaged changes
+      std::string status = get_command_output("git status --porcelain");
+      return !status.empty();
+    }
   else if (r == "hg")
-    return get_command_output("hg parent --template '{node}' | cut -b -7");
+    {
+      // Check for modified, added, removed, or deleted files
+      std::string status = get_command_output("hg status -mard");
+      return !status.empty();
+    }
+  else
+    return false;  // no repo means no changes
+}
+
+// Short (7 char) hash string of the current commit.
+// Appends "+" if there are uncommitted changes.
+std::string getVCSRevision()
+{
+  std::string r = getRepo();
+  std::string revision;
+
+  if (r == "git")
+    revision = get_command_output("git log -1 --format=%h");
+  else if (r == "hg")
+    revision = get_command_output("hg parent --template '{node}' | cut -b -7");
   else
     return r;  // not an error if no repo
+
+  // Append "+" if there are uncommitted changes
+  if (hasVCSChanges())
+    revision += "+";
+
+  return revision;
 }
 
 // Date of the current commit (YYYY-MM-DD).

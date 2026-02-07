@@ -78,15 +78,30 @@ TEST_CASE("Git repository detection", "[vcs][git]") {
 TEST_CASE("VCS revision and date extraction", "[vcs]") {
     SECTION("getVCSRevision returns non-empty for git repo") {
         std::string revision = getVCSRevision();
-        // Should return either a 7-char hash or "none"
-        REQUIRE((revision.length() == 7 || revision == "none"));
+        // Should return either a 7-char hash (or 8 if modified with "+") or "none"
+        REQUIRE((revision.length() == 7 || revision.length() == 8 || revision == "none"));
 
-        // If we're in a git repo, it should be a 7-char hex string
+        // If we're in a git repo, it should be a 7-char hex string (possibly with "+")
         if (getRepo() == "git") {
-            REQUIRE(revision.length() == 7);
-            // Check it contains only hex characters
-            for (char c : revision) {
+            REQUIRE((revision.length() == 7 || revision.length() == 8));
+
+            // Strip trailing "+" if present
+            std::string hash = revision;
+            bool hasPlus = false;
+            if (revision.length() == 8 && revision[7] == '+') {
+                hash = revision.substr(0, 7);
+                hasPlus = true;
+            }
+
+            // Check the hash contains only hex characters
+            REQUIRE(hash.length() == 7);
+            for (char c : hash) {
                 REQUIRE(((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')));
+            }
+
+            // If there's a "+", verify hasVCSChanges() returns true
+            if (hasPlus) {
+                REQUIRE(hasVCSChanges());
             }
         }
     }
@@ -112,6 +127,22 @@ TEST_CASE("VCS revision and date extraction", "[vcs]") {
             REQUIRE(revdate.find("(") != std::string::npos);
             REQUIRE(revdate.find(")") != std::string::npos);
         }
+    }
+}
+
+TEST_CASE("VCS changes detection", "[vcs][changes]") {
+    SECTION("hasVCSChanges detects uncommitted changes") {
+        // This test depends on the state of the repository
+        // We just verify the function doesn't crash and returns a bool
+        bool hasChanges = hasVCSChanges();
+
+        // The result should be consistent with getVCSRevision()
+        std::string revision = getVCSRevision();
+        if (getRepo() == "git" && revision.length() == 8 && revision[7] == '+') {
+            // If revision has "+", hasVCSChanges should be true
+            REQUIRE(hasChanges);
+        }
+        // Note: We can't test the inverse (no changes) without modifying the repo state
     }
 }
 

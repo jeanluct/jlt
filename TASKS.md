@@ -73,6 +73,14 @@
   - Tests: All 108 stlio assertions passing
   - Date: 2026-02-06
 
+- [x] Add uncommitted changes indicator to vcs.hpp
+  - Added: hasVCSChanges() function to detect uncommitted changes in Git/Hg repos
+  - Changed: getVCSRevision() now appends "+" when there are uncommitted changes
+  - Benefits: Users can immediately see if their build includes uncommitted changes
+  - Example: "rev 53f13c3+ (2026-02-06)" indicates uncommitted changes present
+  - Tests: Updated test_vcs.cpp to handle 7 or 8 character revisions (32 assertions passing)
+  - Date: 2026-02-06
+
 ### Test Suite
 - [x] Create comprehensive Catch2 test suite in tests/
   - [x] Set up Catch2 v2.13.10 single-header framework
@@ -279,7 +287,7 @@ The following components in `jlt/` still need test coverage:
 - [x] **math.hpp** - Mathematical utility functions (Mod, Sign) ✅ **COMPLETED** - 53 assertions
 - [x] **stlio.hpp** - STL container I/O printing ✅ **COMPLETED** - 46 assertions
 - [x] **display_task.hpp** - Task display utilities ✅ **COMPLETED** - 43 assertions
-- [x] **vcs.hpp** - Version control system info extraction ✅ **COMPLETED** - 29 assertions
+- [x] **vcs.hpp** - Version control system info extraction ✅ **COMPLETED** - 32 assertions
 - [x] **finitediff.hpp** - Finite difference calculations ✅ **COMPLETED** - 137 assertions
 
 ### External Dependency Tests (Optional)
