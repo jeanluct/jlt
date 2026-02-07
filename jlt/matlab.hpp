@@ -8,6 +8,8 @@
 #define JLT_MATLAB_HPP
 
 #include <iostream>
+#include <fstream>
+#include <iomanip>
 #include <string>
 #include <vector>
 #include <jlt/matrix.hpp>
@@ -58,6 +60,187 @@ matrix<T> vector_of_vectors_to_matrix(const std::vector<std::vector<T>>& vv)
 }
 
 } // namespace detail
+
+
+//
+// MatlabFile: Unified file handle for Matlab binary (.mat) or text (.m) files
+//
+// Provides automatic file extension handling and RAII-based resource management.
+// Works seamlessly with both binary MAT-files (when JLT_MATLAB_LIB_SUPPORT is
+// defined) and text .m files.
+//
+// Example usage:
+//   MatlabFile mf("data");  // Opens data.mat or data.m automatically
+//   printMatlabForm(mf, 3.14, "pi");
+//   printMatlabForm(mf, my_matrix, "A");
+//   // File automatically closed by destructor
+//
+class MatlabFile {
+private:
+#ifdef JLT_MATLAB_LIB_SUPPORT
+  MATFile* mat_handle;
+#else
+  std::ofstream text_handle;
+#endif
+  std::string filename;
+  bool is_open;
+
+public:
+  // Open file with automatic extension (.mat or .m)
+  // mode: "w" for write (maps to "wz" for compressed MAT-file v7)
+  explicit MatlabFile(const std::string& basename, const std::string& mode = "w")
+    : filename(basename), is_open(false)
+    {
+#ifdef JLT_MATLAB_LIB_SUPPORT
+      // Append .mat extension
+      filename += ".mat";
+
+      // Map mode: "w" -> "wz" (compressed MAT-file v7)
+      std::string mat_mode = "wz";
+      if (mode == "w") mat_mode = "wz";
+      // Future: support "w4", "w6", "w7.3" modes
+
+      mat_handle = matOpen(filename.c_str(), mat_mode.c_str());
+      if (mat_handle == nullptr)
+	{
+	  JLT_THROW(std::runtime_error(
+	    "MatlabFile: Failed to open " + filename));
+	}
+      is_open = true;
+#else
+      // Append .m extension
+      filename += ".m";
+
+      text_handle.open(filename.c_str());
+      if (!text_handle.is_open())
+	{
+	  JLT_THROW(std::runtime_error(
+	    "MatlabFile: Failed to open " + filename));
+	}
+      is_open = true;
+#endif
+    }
+
+  // Destructor: automatically close file
+  ~MatlabFile()
+    {
+      if (is_open)
+	{
+	  close();
+	}
+    }
+
+  // Delete copy constructor and copy assignment (file handle semantics)
+  MatlabFile(const MatlabFile&) = delete;
+  MatlabFile& operator=(const MatlabFile&) = delete;
+
+  // Move constructor
+  MatlabFile(MatlabFile&& other) noexcept
+    :
+#ifdef JLT_MATLAB_LIB_SUPPORT
+    mat_handle(other.mat_handle),
+#else
+    text_handle(std::move(other.text_handle)),
+#endif
+    filename(std::move(other.filename)),
+    is_open(other.is_open)
+    {
+      other.is_open = false;
+#ifdef JLT_MATLAB_LIB_SUPPORT
+      other.mat_handle = nullptr;
+#endif
+    }
+
+  // Move assignment
+  MatlabFile& operator=(MatlabFile&& other) noexcept
+    {
+      if (this != &other)
+	{
+	  // Close current file if open
+	  if (is_open)
+	    {
+	      close();
+	    }
+
+	  // Move from other
+#ifdef JLT_MATLAB_LIB_SUPPORT
+	  mat_handle = other.mat_handle;
+	  other.mat_handle = nullptr;
+#else
+	  text_handle = std::move(other.text_handle);
+#endif
+	  filename = std::move(other.filename);
+	  is_open = other.is_open;
+	  other.is_open = false;
+	}
+      return *this;
+    }
+
+  // Explicitly close the file
+  void close()
+    {
+      if (is_open)
+	{
+#ifdef JLT_MATLAB_LIB_SUPPORT
+	  if (mat_handle != nullptr)
+	    {
+	      matClose(mat_handle);
+	      mat_handle = nullptr;
+	    }
+#else
+	  if (text_handle.is_open())
+	    {
+	      text_handle.close();
+	    }
+#endif
+	  is_open = false;
+	}
+    }
+
+  // Check if file is open
+  bool isOpen() const
+    {
+      return is_open;
+    }
+
+  // Get the full filename with extension
+  std::string getFilename() const
+    {
+      return filename;
+    }
+
+  // Stream formatting methods (text mode only - no-ops in binary mode)
+#ifdef JLT_MATLAB_LIB_SUPPORT
+  // Binary mode: these are no-ops for API consistency
+  void setPrecision(int) { }
+  void setFlags(std::ios_base::fmtflags) { }
+  void setHighPrecision() { }
+#else
+  // Text mode: configure stream formatting
+  void setPrecision(int prec)
+    {
+      text_handle << std::setprecision(prec);
+    }
+
+  void setFlags(std::ios_base::fmtflags flags)
+    {
+      text_handle.setf(flags);
+    }
+
+  // Convenience method: set high precision with fixed and scientific notation
+  void setHighPrecision()
+    {
+      text_handle << std::setprecision(16) << std::fixed << std::scientific;
+    }
+#endif
+
+  // Accessor methods for printMatlabForm functions
+#ifdef JLT_MATLAB_LIB_SUPPORT
+  MATFile* getMatHandle() { return mat_handle; }
+#else
+  std::ostream& getStream() { return text_handle; }
+#endif
+};
 
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
@@ -396,6 +579,95 @@ std::ostream& printMatlabForm(std::ostream& strm,
     matrix<T> A = detail::vector_of_vectors_to_matrix(Avv);
     return printMatlabForm(strm, A, name, description);
   }
+
+
+//
+// MatlabFile convenience overloads
+//
+
+#ifdef JLT_MATLAB_LIB_SUPPORT
+
+void printMatlabForm(MatlabFile& mf, const double var,
+		     const std::string name,
+		     const std::string description = "")
+  {
+    printMatlabForm(mf.getMatHandle(), var, name, description);
+  }
+
+void printMatlabForm(MatlabFile& mf, const std::string str,
+		     const std::string name,
+		     const std::string description = "")
+  {
+    printMatlabForm(mf.getMatHandle(), str, name, description);
+  }
+
+template<typename T>
+void printMatlabForm(MatlabFile& mf, const std::vector<T>& v,
+		     const std::string name = "",
+		     const std::string description = "",
+		     const std::string orientation = "")
+  {
+    printMatlabForm(mf.getMatHandle(), v, name, description, orientation);
+  }
+
+template<typename T>
+void printMatlabForm(MatlabFile& mf, const matrix<T>& A,
+		     const std::string name = "",
+		     const std::string description = "")
+  {
+    printMatlabForm(mf.getMatHandle(), A, name, description);
+  }
+
+template<typename T>
+void printMatlabForm(MatlabFile& mf, const std::vector<std::vector<T>>& Avv,
+		     const std::string name = "",
+		     const std::string description = "")
+  {
+    printMatlabForm(mf.getMatHandle(), Avv, name, description);
+  }
+
+#else
+
+std::ostream& printMatlabForm(MatlabFile& mf, const double var,
+			      const std::string name,
+			      const std::string description = "")
+  {
+    return printMatlabForm(mf.getStream(), var, name, description);
+  }
+
+std::ostream& printMatlabForm(MatlabFile& mf, const std::string str,
+			      const std::string name,
+			      const std::string description = "")
+  {
+    return printMatlabForm(mf.getStream(), str, name, description);
+  }
+
+template<typename T>
+std::ostream& printMatlabForm(MatlabFile& mf, const std::vector<T>& v,
+			      const std::string name = "",
+			      const std::string description = "")
+  {
+    return printMatlabForm(mf.getStream(), v, name, description);
+  }
+
+template<typename T>
+std::ostream& printMatlabForm(MatlabFile& mf, const matrix<T>& A,
+			      const std::string name = "",
+			      const std::string description = "")
+  {
+    return printMatlabForm(mf.getStream(), A, name, description);
+  }
+
+template<typename T>
+std::ostream& printMatlabForm(MatlabFile& mf, const std::vector<std::vector<T>>& Avv,
+			      const std::string name = "",
+			      const std::string description = "")
+  {
+    return printMatlabForm(mf.getStream(), Avv, name, description);
+  }
+
+#endif
+
 
 } // namespace jlt
 

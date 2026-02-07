@@ -7,12 +7,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Changed
-- **BREAKING**: **mathmatrix.hpp**: Renamed `is_reducible()` to `is_primitive()` - the old function was misnamed and actually tested primitivity, not reducibility; inverted return logic (now returns true if primitive, false if not); tests if A^(n²-2n+2) has all positive entries (2026-02-07)
-- **eigensystem.hpp**, **svdecomp.hpp**: Removed legacy
-  `JLT_NO_VECTOR_DATA_METHOD` macro (GCC < 4.1 workaround); now always
-  uses std::vector::data() which is standard in C++11; simplified code
-  by removing all preprocessor conditionals for old compiler support
+- **BREAKING**: **vector.hpp**, **matrix.hpp**: Removed all `printMatlabForm()`
+  member functions - use standalone `jlt::printMatlabForm(stream, obj, ...)`
+  functions from matlab.hpp instead; improves consistency and keeps matlab.hpp
+  cleanly separated from core classes; no functional changes, just API style
   (2026-02-07)
+- **BREAKING**: **mathmatrix.hpp**: Renamed `is_reducible()` to
+  `is_primitive()` - the old function was misnamed and actually tested
+  primitivity, not reducibility; inverted return logic (now returns true if
+  primitive, false if not); tests if A^(n²-2n+2) has all positive entries
+  (2026-02-07)
+- **eigensystem.hpp**, **svdecomp.hpp**: Removed legacy
+  `JLT_NO_VECTOR_DATA_METHOD` macro (GCC < 4.1 workaround); now always uses
+  std::vector::data() which is standard in C++11; simplified code by removing
+  all preprocessor conditionals for old compiler support (2026-02-07)
 - **eigensystem.hpp**: Added `JLT_MIN_WORKSIZE` macro support for all
   three functions (symmetric_matrix_eigensystem, matrix_eigenvalues
   real, matrix_eigenvalues complex); when defined, uses minimum LAPACK
@@ -21,79 +29,106 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   in svdecomp.hpp (2026-02-07)
 
 ### Added
-- **mathmatrix.hpp**: Added `is_nonnegative()` predicate to check if all matrix elements are non-negative; used by is_primitive() and is_reducible() to validate input (2026-02-07)
-- **mathmatrix.hpp**: Added proper `is_reducible()` using Frobenius criterion - tests if matrix can be permuted to block upper-triangular form; computes (I+A)^(n-1) and checks for zeros; references Horn & Johnson, Seneta, Berman & Plemmons (2026-02-07)
-- **mathmatrix.hpp**: Both `is_primitive()` and `is_reducible()` now throw std::domain_error for matrices with negative elements, as these concepts are only defined for non-negative matrices (2026-02-07)
+- **matlab.hpp**: Added `MatlabFile` class for unified file handling -
+  automatically manages .mat or .m files based on JLT_MATLAB_LIB_SUPPORT;
+  provides RAII-based resource management; eliminates need for duplicate
+  #ifdef code paths; supports move semantics but non-copyable; includes
+  standalone printMatlabForm() function overloads for all supported types
+  (double, string, vector, matrix, vector<vector>) that work with MatlabFile;
+  includes stream formatting methods (setPrecision, setFlags, setHighPrecision)
+  that work in text mode and are no-ops in binary mode for API consistency;
+  keeps matlab.hpp cleanly separated from vector.hpp and matrix.hpp to avoid
+  circular dependencies (2026-02-07)
+- **matlab/load_data.m**: Added Matlab utility script to automatically load
+  the most recent data file (.m or .mat); useful when working with code that
+  can generate either format (2026-02-07)
+- **mathmatrix.hpp**: Added `is_nonnegative()` predicate to check if all
+  matrix elements are non-negative; used by is_primitive() and is_reducible()
+  to validate input (2026-02-07)
+- **mathmatrix.hpp**: Added proper `is_reducible()` using Frobenius
+  criterion - tests if matrix can be permuted to block upper-triangular form;
+  computes (I+A)^(n-1) and checks for zeros; references Horn & Johnson,
+  Seneta, Berman & Plemmons (2026-02-07)
+- **mathmatrix.hpp**: Both `is_primitive()` and `is_reducible()` now throw
+  std::domain_error for matrices with negative elements, as these concepts are
+  only defined for non-negative matrices (2026-02-07)
 - **eigensystem.hpp**: Added hermitian matrix eigensystem support with
-  hermitian_matrix_eigensystem() function for matrix<std::complex<T>>; computes
-  real eigenvalues (type T) and eigenvectors; returns eigenvalues in descending order;
-  supports JLT_MIN_WORKSIZE macro for minimal workspace (max(1, 2*N-1)); uses LAPACK
-  cheev/zheev routines (2026-02-07)
-- **mathmatrix.hpp**: Added adjoint/hermitian operations - adjoint() member function
-  (in-place conjugate transpose), hermitian_transpose() and hermitian_conjugate() aliases,
-  and standalone versions that return new matrices; for real matrices, adjoint equals
-  transpose (2026-02-07)
+  hermitian_matrix_eigensystem() function for matrix<std::complex<T>>;
+  computes real eigenvalues (type T) and eigenvectors; returns eigenvalues in
+  descending order; supports JLT_MIN_WORKSIZE macro for minimal workspace
+  (max(1, 2*N-1)); uses LAPACK cheev/zheev routines (2026-02-07)
+- **mathmatrix.hpp**: Added adjoint/hermitian operations - adjoint() member
+  function (in-place conjugate transpose), hermitian_transpose() and
+  hermitian_conjugate() aliases, and standalone versions that return new
+  matrices; for real matrices, adjoint equals transpose (2026-02-07)
 - **mathmatrix.hpp**: Added matrix symmetry predicates -
   is_symmetric() and is_hermitian() member functions with optional
   tolerance parameter (default: epsilon * frobenius_norm); standalone
   versions also provided; for real matrices, is_hermitian ==
   is_symmetric (2026-02-07)
-- **internal/lapack_fortran.hpp**: Added Fortran declarations for
-  complex hermitian eigenvalue solvers (cheev, zheev) (2026-02-07)
+- **internal/lapack_fortran.hpp**: Added Fortran declarations for complex
+  hermitian eigenvalue solvers (cheev, zheev) (2026-02-07)
 - **lapack.hpp**: Added overloaded heev() wrappers for std::complex<float> and
   std::complex<double> to compute hermitian matrix eigenvalues (2026-02-07)
-- **Tests**: Added hermitian eigensystem tests (test_eigensystem.cpp now has 32 assertions,
-  +12 from previous) - tests complex<float> and complex<double> for 3x3 hermitian matrix,
-  2x2 with known eigenvalues, and 4x4 identity; verifies real eigenvalues and descending
-  order (2026-02-07)
-- **Tests**: Added adjoint/hermitian operation tests (test_mathmatrix.cpp now has 280
-  assertions, +25 from 255) - tests is_nonnegative() (6 assertions), is_primitive() (9 assertions),
-  is_reducible() (10 assertions); validates proper behavior for primitive/non-primitive matrices,
-  reducible/irreducible matrices, and exception throwing for negative matrices (2026-02-07)
-- **svdecomp.hpp**: Added complex matrix SVD support with overloaded SVdecomp() functions
-  for matrix<std::complex<T>>; singular values are real (type T) while matrices U/Vt
-  are complex; implements both full decomposition (U, w, Vt) and singular-values-only
-  modes using LAPACK cgesvd/zgesvd routines (2026-02-07)
-- **Tests**: Added comprehensive complex matrix SVD tests (test_svdecomp.cpp now has
-  97 assertions, +52 from previous) - tests complex<float> and complex<double> for
-  2x2, 3x2 rectangular, identity, zero, and pure imaginary matrices; verifies singular
-  value ordering, reconstruction accuracy, and values-only computation (2026-02-07)
-- **internal/lapack_fortran.hpp**: Added complex SVD support (cgesvd,
-  zgesvd, cgesdd, zgesdd) for computing singular value decomposition
-  of complex matrices; renamed from lapack.h and moved to
-  jlt/internal/ to indicate it's not for direct user access
+- **Tests**: Added hermitian eigensystem tests (test_eigensystem.cpp now has
+  32 assertions, +12 from previous) - tests complex<float> and complex<double>
+  for 3x3 hermitian matrix, 2x2 with known eigenvalues, and 4x4 identity;
+  verifies real eigenvalues and descending order (2026-02-07)
+- **Tests**: Added adjoint/hermitian operation tests (test_mathmatrix.cpp now
+  has 280 assertions, +25 from 255) - tests is_nonnegative() (6 assertions),
+  is_primitive() (9 assertions), is_reducible() (10 assertions); validates
+  proper behavior for primitive/non-primitive matrices, reducible/irreducible
+  matrices, and exception throwing for negative matrices (2026-02-07)
+- **svdecomp.hpp**: Added complex matrix SVD support with overloaded
+  SVdecomp() functions for matrix<std::complex<T>>; singular values are real
+  (type T) while matrices U/Vt are complex; implements both full decomposition
+  (U, w, Vt) and singular-values-only modes using LAPACK cgesvd/zgesvd
+  routines (2026-02-07)
+- **Tests**: Added comprehensive complex matrix SVD tests (test_svdecomp.cpp
+  now has 97 assertions, +52 from previous) - tests complex<float> and
+  complex<double> for 2x2, 3x2 rectangular, identity, zero, and pure imaginary
+  matrices; verifies singular value ordering, reconstruction accuracy, and
+  values-only computation (2026-02-07)
+- **internal/lapack_fortran.hpp**: Added complex SVD support (cgesvd, zgesvd,
+  cgesdd, zgesdd) for computing singular value decomposition of complex
+  matrices; renamed from lapack.h and moved to jlt/internal/ to indicate it's
+  not for direct user access (2026-02-07)
+- **lapack.hpp**: Added overloaded gesvd() and gesdd() functions for
+  std::complex<float> and std::complex<double> to enable complex matrix SVD
+  computations (2026-02-07)
+- **Tests**: Added direct LAPACK wrapper tests (test_lapack.cpp, 45
+  assertions) - tests overload resolution for all types (float, double,
+  complex<float>, complex<double>) across syev, geev, gesvd, and gesdd
+  functions; verifies correct Fortran function dispatch (2026-02-07)
+- **matrix.hpp**: Added standalone `transpose()` function that returns a
+  transposed copy of the matrix, complementing the in-place transpose()
+  method; marked with `[[nodiscard]]` to prevent accidental misuse
   (2026-02-07)
-- **lapack.hpp**: Added overloaded gesvd() and gesdd() functions for std::complex<float>
-  and std::complex<double> to enable complex matrix SVD computations (2026-02-07)
-- **Tests**: Added direct LAPACK wrapper tests (test_lapack.cpp, 45 assertions) -
-  tests overload resolution for all types (float, double, complex<float>, complex<double>)
-  across syev, geev, gesvd, and gesdd functions; verifies correct Fortran function
-  dispatch (2026-02-07)
-- **matrix.hpp**: Added standalone `transpose()` function that returns a transposed
-  copy of the matrix, complementing the in-place transpose() method; marked with
-  `[[nodiscard]]` to prevent accidental misuse (2026-02-07)
 - **mathmatrix.hpp**: Added standalone `transpose()` function for consistency with
   matrix.hpp (2026-02-07)
-- **matrix.hpp**: Implemented transpose() for non-square matrices - now properly
-  transposes mxn matrices to nxm matrices using temporary matrix with swapped
-  dimensions (2026-02-07)
-- **Tests**: Added comprehensive matrix transpose test coverage (test_matrix_transpose.cpp,
-  202 assertions) - tests square matrices (2x2, 3x3, identity, symmetric), non-square
-  matrices (2x3, 3x2, row vectors, column vectors), edge cases (1x1, different types),
-  transpose properties, and standalone function behavior (2026-02-07)
-- **Tests**: Added high-priority test improvements for mathvector (+43 assertions)
-  and mathmatrix (+116 assertions) - includes division by zero tests, size mismatch
-  documentation, normalization tests, matrix-vector multiplication, and mathematical
-  identity verification (2026-02-07)
+- **matrix.hpp**: Implemented transpose() for non-square matrices - now
+  properly transposes mxn matrices to nxm matrices using temporary matrix with
+  swapped dimensions (2026-02-07)
+- **Tests**: Added comprehensive matrix transpose test coverage
+  (test_matrix_transpose.cpp, 202 assertions) - tests square matrices (2x2,
+  3x3, identity, symmetric), non-square matrices (2x3, 3x2, row vectors,
+  column vectors), edge cases (1x1, different types), transpose properties,
+  and standalone function behavior (2026-02-07)
+- **Tests**: Added high-priority test improvements for mathvector (+43
+  assertions) and mathmatrix (+116 assertions) - includes division by zero
+  tests, size mismatch documentation, normalization tests, matrix-vector
+  multiplication, and mathematical identity verification (2026-02-07)
 - **tictoc.hpp**: Now outputs all three timing metrics with labeled format:
-  `0.5w 0.5u 0s  (1.2w 1.2u 0s)` where w=wall, u=user, s=system times in seconds,
-  showing elapsed times followed by cumulative times in parentheses (2026-02-06)
-- **tictoc.hpp**: Added `get_timing()` method for programmatic access to timing
-  information including wall, user, and system times (elapsed and cumulative) (2026-02-06)
+  `0.5w 0.5u 0s (1.2w 1.2u 0s)` where w=wall, u=user, s=system times in
+  seconds, showing elapsed times followed by cumulative times in parentheses
+  (2026-02-06)
+- **tictoc.hpp**: Added `get_timing()` method for programmatic access to
+  timing information including wall, user, and system times (elapsed and
+  cumulative) (2026-02-06)
 - **Tests**: Added tictoc.hpp test coverage (test_tictoc.cpp, 44 assertions) -
   tests basic timing, tic/toc measurements, labels, dangling tic behavior,
-  timing accuracy, restart functionality, output format validation, and programmatic API;
-  requires Boost timer library (2026-02-06)
+  timing accuracy, restart functionality, output format validation, and
+  programmatic API; requires Boost timer library (2026-02-06)
 - **Tests**: Added CSparse sparse matrix test coverage (test_csparse.cpp, 65
   assertions) - tests unique_ptr wrappers, mathmatrix↔CSparse conversion,
   memory management (2026-02-06)
@@ -113,22 +148,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   duplication (2026-02-06)
 
 ### Changed
-- **internal/lapack_fortran.hpp**: Renamed from lapack.h, moved to jlt/internal/
-  subdirectory, and updated header guard (JLT_LAPACK_H → JLT_LAPACK_FORTRAN_HPP);
-  clarified in comments that it provides C++ declarations with C linkage (not pure C code)
-  and is for internal use only; added #include <complex> for std::complex support
-  (2026-02-07)
-- **lapack.hpp**: Updated to include <jlt/internal/lapack_fortran.hpp> instead of
-  <jlt/lapack.h> (2026-02-07)
-- **matrix.hpp**: Optimized in-place transpose() to use `std::swap()` instead of
-  manual 3-way swap for cleaner, more idiomatic code (2026-02-07)
-- **tictoc.hpp**: **BREAKING CHANGE** - Output format changed to labeled format
-  with w/u/s suffixes for better readability. Old format was tab-separated numbers
-  without context. New format: `0.5w 0.5u 0s  (1.2w 1.2u 0s)` clearly shows which
-  time is which. (2026-02-06)
-- **tictoc.hpp**: Refactored internal timing storage to use mathvector<double, double>
-  for cleaner vector operations (subtraction, indexing) instead of tracking three
-  separate nanosecond_type variables (2026-02-06)
+- **internal/lapack_fortran.hpp**: Renamed from lapack.h, moved to
+  jlt/internal/ subdirectory, and updated header guard (JLT_LAPACK_H →
+  JLT_LAPACK_FORTRAN_HPP); clarified in comments that it provides C++
+  declarations with C linkage (not pure C code) and is for internal use only;
+  added #include <complex> for std::complex support (2026-02-07)
+- **lapack.hpp**: Updated to include <jlt/internal/lapack_fortran.hpp> instead
+  of <jlt/lapack.h> (2026-02-07)
+- **matrix.hpp**: Optimized in-place transpose() to use `std::swap()` instead
+  of manual 3-way swap for cleaner, more idiomatic code (2026-02-07)
+- **tictoc.hpp**: **BREAKING CHANGE** - Output format changed to labeled
+  format with w/u/s suffixes for better readability. Old format was
+  tab-separated numbers without context. New format: `0.5w 0.5u 0s (1.2w 1.2u
+  0s)` clearly shows which time is which. (2026-02-06)
+- **tictoc.hpp**: Refactored internal timing storage to use mathvector<double,
+  double> for cleaner vector operations (subtraction, indexing) instead of
+  tracking three separate nanosecond_type variables (2026-02-06)
 - **tictoc.hpp**: Moved nanoseconds_per_second constant to static class member
   for better code organization (2026-02-06)
 - **stlio.hpp**: Removed deprecated `jlt::write_to` API and simplified
@@ -147,8 +182,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - **stlio.hpp**: Added comprehensive tuple and optional support for C++11/14/17
 - **stlio.hpp**: Added format_traits specializations for std::complex<T>
-- **stlio.hpp**: Added input validation and input operators for vector, valarray, list
-- **stlio.hpp**: Added support for std::array, std::deque, std::set, std::unordered_set
+- **stlio.hpp**: Added input validation and input operators for vector,
+  valarray, list
+- **stlio.hpp**: Added support for std::array, std::deque, std::set,
+  std::unordered_set
 - **mathmatrix.hpp**: Added `frobenius_norm()` method
 - **Tests**: Added comprehensive test suite using Catch2 v2.13.10 (446+ assertions)
   - test_stlio.cpp - STL container I/O (108 assertions)
@@ -159,23 +196,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - test_command.cpp - Unix command execution
   - test_finitediff.cpp - Finite difference functions
   - test_matlab.cpp - Matlab I/O (text and binary)
-- **Tests**: Added optional LAPACK-dependent tests (test_eigensystem, test_svdecomp)
+- **Tests**: Added optional LAPACK-dependent tests (test_eigensystem,
+  test_svdecomp)
 - **Tests**: Added optional Matlab binary format tests (requires Matlab libraries)
 - **Bounds checking**: Added compile-time bounds checking with
   `JLT_VECTOR_CHECK_BOUNDS` and `JLT_MATRIX_CHECK_BOUNDS` macros
 
 ### Changed
-- **stlio.hpp**: Refactored format_traits to reduce code duplication using inheritance
-- **stlio.hpp**: Refactored to use DRY principles and RAII pattern (stream_flags_saver)
+- **stlio.hpp**: Refactored format_traits to reduce code duplication using
+  inheritance
+- **stlio.hpp**: Refactored to use DRY principles and RAII pattern
+  (stream_flags_saver)
 - **stlio.hpp**: Moved implementation details to `detail` namespace
 - **matlab.hpp**: Moved `printMatlabForm_nodefaults` to detail namespace
-- **Naming**: Renamed `isSquare`, `isZero`, `isReducible` to snake_case for consistency
+- **Naming**: Renamed `isSquare`, `isZero`, `isReducible` to snake_case for
+  consistency
 - **Modernization**: Added `constexpr` and `noexcept` qualifiers where appropriate
 - **Modernization**: Replaced C-style casts with C++ static_cast/reinterpret_cast
 - **mathvector.hpp**: Refactored cross product to single generic template
 
 ### Fixed
-- **stlio.hpp**: Removed `[[nodiscard]]` from I/O operators to fix compiler warnings
+- **stlio.hpp**: Removed `[[nodiscard]]` from I/O operators to fix compiler
+  warnings
 - **mathmatrix.hpp**: Fixed dimension check bug in `invert()` method
 - **mathmatrix.hpp**: Fixed S default value for complex numbers
 - **math.hpp**: Fixed `mag2` for complex numbers and added proper type traits
@@ -186,7 +228,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 - **stlio.hpp**: Removed deprecated `jlt::write_to` generic API
-- Removed pre-C++11 conditional compilation blocks (library now requires C++11 minimum)
+- Removed pre-C++11 conditional compilation blocks (library now requires C++11
+  minimum)
 - Removed pre-C++11 support from csparse.hpp
 - Removed Testing/ directory from git
 
@@ -240,7 +283,8 @@ numerical library.
   - Phased out obsolete math.hpp overloads
   - Removed old compiler workarounds (PGCC, PGI, KCC)
   - Standardized naming conventions (_test suffix)
-- **Exception handling**: Converted from cerr/exit to proper exception throwing (issue #6)
+- **Exception handling**: Converted from cerr/exit to proper exception
+  throwing (issue #6)
   - Renamed `_THROW` macros to `JLT_THROW`
 
 ### 2012-2013: Mercurial Era and Matlab Improvements
@@ -272,7 +316,8 @@ numerical library.
   - Downsampling support
   - Split into Fourier and real parts (refinek, refinek2)
   - Bug fixes for high modes in even dimensions
-- **New features**: Added `interpline` for curve interpolation via point insertion
+- **New features**: Added `interpline` for curve interpolation via point
+  insertion
 
 #### 2009
 - **Polynomial classes**:

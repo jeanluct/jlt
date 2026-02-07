@@ -22,11 +22,11 @@ int main()
   jlt::mathvector<double> v(2);
   v[0] = 0; v[1] = -1;
 
-  // Write matrix using member function (Matlab format).
+  // Write matrix using standalone function (Matlab format).
   // "M" will be the Matlab workspace name.
   cout << "Text form readable by Matlab:\n";
-  M.printMatlabForm(cout,"M","Optional description for M");
-  v.printMatlabForm(cout,"v","Optional description for v");
+  jlt::printMatlabForm(cout, M, "M", "Optional description for M");
+  jlt::printMatlabForm(cout, v, "v", "Optional description for v");
 
   cout << endl;
 
@@ -37,33 +37,32 @@ int main()
   v.printMathematicaForm(cout,"v","Optional description for v")
     << endl;  // for Mathematica form, newline is not included
 
-  // Open the Matlab file for writing.
-  std::string matfile = "matlabtest.mat";	// MAT file name
-  MATFile *pmat = 0;
-  pmat = matOpen(matfile.c_str(), "wz");
+  // Write to Matlab file using the unified MatlabFile interface.
+  // No #ifdef needed - automatically creates .mat or .m based on compilation.
+  cout << "\nWrite to Matlab file using MatlabFile:\n";
 
-  cout << "\nWrite to MAT file " << matfile << ":";
+  {
+    jlt::MatlabFile mf("matlabtest");
+    cout << "Created: " << mf.getFilename() << endl;
 
-  // Write matrix using member function.
+    // Set high precision for text output (no-op in binary mode)
+    mf.setHighPrecision();
 
-  // "M" will be the Matlab workspace name.
-  M.printMatlabForm(pmat,"M");
-  // "v" will be the Matlab workspace name.
-  v.printMatlabForm(pmat,"v");
-  // Output as a row vector.
-  v.printMatlabForm(pmat,"v_row","","row");
+    // Write using standalone printMatlabForm functions
+    jlt::printMatlabForm(mf, M, "M");
+    jlt::printMatlabForm(mf, v, "v");
 
-  // Write with a description string.
-  M.printMatlabForm(pmat,"M2","a matrix");
-  v.printMatlabForm(pmat,"v2","a vector");
+    // Write with a description string.
+    jlt::printMatlabForm(mf, M, "M2", "a matrix");
+    jlt::printMatlabForm(mf, v, "v2", "a vector");
 
-  // Write a number using function.
-  // "b" will be the Matlab workspace name.
-  double b = 1.23;
-  jlt::printMatlabForm(pmat,b,"b");
-  jlt::printMatlabForm(pmat,b,"b2","a constant");
+    // Write a number
+    double b = 1.23;
+    jlt::printMatlabForm(mf, b, "b");
+    jlt::printMatlabForm(mf, b, "b2", "a constant");
 
-  matClose(pmat);
+    // File automatically closed by destructor
+  }
 
-  cout << " done\n";
+  cout << "done (file auto-closed)\n";
 }

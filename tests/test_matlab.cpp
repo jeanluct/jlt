@@ -342,3 +342,179 @@ TEST_CASE("Edge cases and special values", "[matlab]") {
     REQUIRE(result.find("x_descr") != std::string::npos);
   }
 }
+
+TEST_CASE("MatlabFile basic usage", "[matlab][matlabfile]") {
+  SECTION("Opens with automatic .m extension") {
+    MatlabFile mf("test_output");
+    REQUIRE(mf.getFilename() == "test_output.m");
+    REQUIRE(mf.isOpen());
+  }
+
+  SECTION("Explicit close") {
+    MatlabFile mf("test_close");
+    REQUIRE(mf.isOpen());
+    mf.close();
+    REQUIRE_FALSE(mf.isOpen());
+  }
+
+  SECTION("Double close is safe") {
+    MatlabFile mf("test_double_close");
+    mf.close();
+    REQUIRE_FALSE(mf.isOpen());
+    // Should not throw or crash
+    mf.close();
+    REQUIRE_FALSE(mf.isOpen());
+  }
+}
+
+TEST_CASE("MatlabFile RAII", "[matlab][matlabfile]") {
+  SECTION("File closed by destructor") {
+    {
+      MatlabFile mf("test_raii");
+      REQUIRE(mf.isOpen());
+      printMatlabForm(mf, 42.0, "answer");
+    } // Destructor should close file automatically
+    REQUIRE(true); // Just verify no crash
+  }
+}
+
+TEST_CASE("MatlabFile write operations", "[matlab][matlabfile]") {
+  SECTION("Write double value") {
+    MatlabFile mf("test_double");
+    printMatlabForm(mf, 3.14159, "pi");
+    mf.close();
+    REQUIRE_FALSE(mf.isOpen());
+  }
+
+  SECTION("Write string value") {
+    MatlabFile mf("test_string");
+    printMatlabForm(mf, "hello world", "greeting");
+    mf.close();
+    REQUIRE_FALSE(mf.isOpen());
+  }
+
+  SECTION("Write vector") {
+    MatlabFile mf("test_vector");
+    std::vector<double> v = {1.0, 2.0, 3.0, 4.0, 5.0};
+    printMatlabForm(mf, v, "v");
+    mf.close();
+    REQUIRE_FALSE(mf.isOpen());
+  }
+
+  SECTION("Write matrix") {
+    MatlabFile mf("test_matrix");
+    matrix<double> A(2, 2);
+    A(0, 0) = 1.0; A(0, 1) = 2.0;
+    A(1, 0) = 3.0; A(1, 1) = 4.0;
+    printMatlabForm(mf, A, "A");
+    mf.close();
+    REQUIRE_FALSE(mf.isOpen());
+  }
+
+  SECTION("Write vector of vectors") {
+    MatlabFile mf("test_vv");
+    std::vector<std::vector<double>> vv = {
+      {1.0, 2.0, 3.0},
+      {4.0, 5.0, 6.0}
+    };
+    printMatlabForm(mf, vv, "data");
+    mf.close();
+    REQUIRE_FALSE(mf.isOpen());
+  }
+
+  SECTION("Write multiple variables") {
+    MatlabFile mf("test_multiple");
+    printMatlabForm(mf, 3.14159, "pi");
+    printMatlabForm(mf, 2.71828, "e");
+    std::vector<double> v = {1.0, 2.0, 3.0};
+    printMatlabForm(mf, v, "vec");
+    mf.close();
+    REQUIRE_FALSE(mf.isOpen());
+  }
+}
+
+TEST_CASE("MatlabFile move semantics", "[matlab][matlabfile]") {
+  SECTION("Move constructor") {
+    MatlabFile mf1("test_move_ctor");
+    REQUIRE(mf1.isOpen());
+    std::string filename1 = mf1.getFilename();
+
+    MatlabFile mf2(std::move(mf1));
+    REQUIRE(mf2.isOpen());
+    REQUIRE(mf2.getFilename() == filename1);
+    REQUIRE_FALSE(mf1.isOpen());
+  }
+
+  SECTION("Move assignment") {
+    MatlabFile mf1("test_move_assign1");
+    MatlabFile mf2("test_move_assign2");
+    REQUIRE(mf1.isOpen());
+    REQUIRE(mf2.isOpen());
+
+    std::string filename1 = mf1.getFilename();
+    mf2 = std::move(mf1);
+
+    REQUIRE(mf2.isOpen());
+    REQUIRE(mf2.getFilename() == filename1);
+    REQUIRE_FALSE(mf1.isOpen());
+  }
+}
+
+TEST_CASE("MatlabFile stream formatting", "[matlab][matlabfile]") {
+  SECTION("setPrecision method works") {
+    MatlabFile mf("test_precision");
+    mf.setPrecision(3);
+    printMatlabForm(mf, 3.14159265, "pi");
+    mf.close();
+
+    // Read back and check precision
+    std::ifstream in("test_precision.m");
+    std::string line;
+    std::getline(in, line);
+    // Should have 3 decimal places: "3.14"
+    REQUIRE(line.find("3.14") != std::string::npos);
+    REQUIRE(line.find("pi = ") != std::string::npos);
+  }
+
+  SECTION("setHighPrecision method works") {
+    MatlabFile mf("test_highprec");
+    mf.setHighPrecision();
+    printMatlabForm(mf, 3.14159265358979323846, "pi");
+    mf.close();
+
+    // Read back and check high precision output
+    std::ifstream in("test_highprec.m");
+    std::string line;
+    std::getline(in, line);
+    // Should have many decimal places (16 digits precision)
+    // and scientific notation
+    REQUIRE(line.find("pi = ") != std::string::npos);
+    REQUIRE(line.length() > 25); // High precision = longer output
+  }
+
+  SECTION("setFlags method works") {
+    MatlabFile mf("test_flags");
+    mf.setPrecision(6);
+    mf.setFlags(std::ios_base::scientific);
+    printMatlabForm(mf, 1234.5678, "num");
+    mf.close();
+
+    // Read back and check scientific notation
+    std::ifstream in("test_flags.m");
+    std::string line;
+    std::getline(in, line);
+    // Should be in scientific notation
+    REQUIRE(line.find("e+") != std::string::npos);
+  }
+
+  SECTION("Formatting methods don't crash in binary mode") {
+    // These are no-ops in binary mode, but should not crash
+    MatlabFile mf("test_binary_format");
+    mf.setPrecision(16);
+    mf.setFlags(std::ios_base::fixed | std::ios_base::scientific);
+    mf.setHighPrecision();
+    printMatlabForm(mf, 3.14159, "pi");
+    REQUIRE(mf.isOpen());
+    mf.close();
+  }
+}

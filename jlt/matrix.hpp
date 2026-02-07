@@ -404,22 +404,6 @@ public:
       return strm;
     }
 
-  std::ostream& printMatlabForm(std::ostream& strm,
-				const std::string name = "",
-				const std::string description = "") const
-    {
-      return detail::printMatlabForm_nodefaults(strm,*this,name,description);
-    }
-
-#ifdef JLT_MATLAB_LIB_SUPPORT
-  void printMatlabForm(MATFile *pmat,
-		       const std::string name = "",
-		       const std::string description = "") const
-  {
-    detail::printMatlabForm_nodefaults(pmat,*this,name,description);
-  }
-#endif // JLT_MATLAB_LIB_SUPPORT
-
 };
 
 template<class T>

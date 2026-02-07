@@ -107,23 +107,6 @@ vector(std::initializer_list<T> _l) : std::vector<T>(_l) {}
       return strm;
     }
 
-  std::ostream& printMatlabForm(std::ostream& strm,
-				const std::string name = "",
-				const std::string description = "") const
-    {
-      return jlt::printMatlabForm(strm,*this,name,description);
-    }
-
-#ifdef JLT_MATLAB_LIB_SUPPORT
-  void printMatlabForm(MATFile *pmat,
-		       const std::string name,
-		       const std::string description = "",
-		       const std::string orientation = "") const
-    {
-      jlt::printMatlabForm(pmat,*this,name,description,orientation);
-    }
-#endif // JLT_MATLAB_LIB_SUPPORT
-
 };
 
 } // namespace jlt
