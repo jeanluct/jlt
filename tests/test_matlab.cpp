@@ -518,3 +518,72 @@ TEST_CASE("MatlabFile stream formatting", "[matlab][matlabfile]") {
     mf.close();
   }
 }
+
+TEST_CASE("MatlabFile stream insertion operator", "[matlab][matlabfile]") {
+  SECTION("Direct stream insertion with strings") {
+    MatlabFile mf("test_stream_insert");
+    mf << "% This is a comment\n";
+    mf << "x = 42;\n";
+    mf << "y = " << 3.14 << ";\n";
+    mf.close();
+
+    // Read back and verify
+    std::ifstream in("test_stream_insert.m");
+    std::string line1, line2, line3;
+    std::getline(in, line1);
+    std::getline(in, line2);
+    std::getline(in, line3);
+    REQUIRE(line1 == "% This is a comment");
+    REQUIRE(line2 == "x = 42;");
+    REQUIRE(line3.find("y = 3.14") != std::string::npos);
+  }
+
+  SECTION("Stream insertion with manipulators") {
+    MatlabFile mf("test_stream_manip");
+    mf << "Line 1" << std::endl;
+    mf << "Line 2" << std::endl;
+    mf.close();
+
+    // Read back and verify
+    std::ifstream in("test_stream_manip.m");
+    std::string line1, line2;
+    std::getline(in, line1);
+    std::getline(in, line2);
+    REQUIRE(line1 == "Line 1");
+    REQUIRE(line2 == "Line 2");
+  }
+
+  SECTION("Mixed stream insertion and printMatlabForm") {
+    MatlabFile mf("test_mixed");
+    mf << "% Header comment\n";
+    printMatlabForm(mf, 3.14159, "pi");
+    mf << "% Footer comment\n";
+    printMatlabForm(mf, 2.71828, "e");
+    mf.close();
+
+    // Read back and verify structure
+    std::ifstream in("test_mixed.m");
+    std::string content((std::istreambuf_iterator<char>(in)),
+                        std::istreambuf_iterator<char>());
+    REQUIRE(content.find("% Header comment") != std::string::npos);
+    REQUIRE(content.find("pi = 3.14159") != std::string::npos);
+    REQUIRE(content.find("% Footer comment") != std::string::npos);
+    REQUIRE(content.find("e = 2.71828") != std::string::npos);
+  }
+
+  SECTION("Stream insertion with various types") {
+    MatlabFile mf("test_types");
+    mf << "int_val = " << 42 << ";\n";
+    mf << "double_val = " << 3.14159 << ";\n";
+    mf << "string_val = '" << "hello" << "';\n";
+    mf.close();
+
+    // Read back and verify
+    std::ifstream in("test_types.m");
+    std::string content((std::istreambuf_iterator<char>(in)),
+                        std::istreambuf_iterator<char>());
+    REQUIRE(content.find("int_val = 42") != std::string::npos);
+    REQUIRE(content.find("double_val = 3.14159") != std::string::npos);
+    REQUIRE(content.find("string_val = 'hello'") != std::string::npos);
+  }
+}

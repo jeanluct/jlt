@@ -48,8 +48,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (double, string, vector, matrix, vector<vector>) that work with MatlabFile;
   includes stream formatting methods (setPrecision, setFlags, setHighPrecision)
   that work in text mode and are no-ops in binary mode for API consistency;
-  keeps matlab.hpp cleanly separated from vector.hpp and matrix.hpp to avoid
-  circular dependencies (2026-02-07)
+  stream insertion operators (operator<<) in text mode allow direct writing
+  like "out << \"comment\\n\"" for custom Matlab code; keeps matlab.hpp cleanly
+  separated from vector.hpp and matrix.hpp to avoid circular dependencies
+  (2026-02-07)
 - **matlab/load_data.m**: Added Matlab utility script to automatically load
   the most recent data file (.m or .mat); useful when working with code that
   can generate either format (2026-02-07)

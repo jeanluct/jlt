@@ -232,6 +232,22 @@ public:
     {
       text_handle << std::setprecision(16) << std::fixed << std::scientific;
     }
+
+  // Stream insertion operator - forward to underlying ofstream
+  // Allows: out << "something" << variable << "\n";
+  template<typename T>
+  MatlabFile& operator<<(const T& value)
+    {
+      text_handle << value;
+      return *this;
+    }
+
+  // Overload for stream manipulators (endl, flush, etc.)
+  MatlabFile& operator<<(std::ostream& (*manip)(std::ostream&))
+    {
+      text_handle << manip;
+      return *this;
+    }
 #endif
 
   // Accessor methods for printMatlabForm functions
