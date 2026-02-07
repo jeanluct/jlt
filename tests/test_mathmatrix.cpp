@@ -432,3 +432,306 @@ TEST_CASE("mathmatrix edge cases", "[mathmatrix]") {
         REQUIRE(M.trace() == 10.0);
     }
 }
+
+TEST_CASE("mathmatrix-vector multiplication", "[mathmatrix]") {
+    SECTION("basic matrix-vector multiply") {
+        // 2x3 matrix times 3x1 vector = 2x1 vector
+        mathmatrix<double> A(2, 3, {
+            1.0, 2.0, 3.0,
+            4.0, 5.0, 6.0
+        });
+        mathvector<double> x = {1.0, 2.0, 3.0};
+
+        auto y = A * x;
+
+        REQUIRE(y.size() == 2);
+        REQUIRE(y[0] == Approx(14.0));  // 1*1 + 2*2 + 3*3 = 1 + 4 + 9 = 14
+        REQUIRE(y[1] == Approx(32.0));  // 4*1 + 5*2 + 6*3 = 4 + 10 + 18 = 32
+    }
+
+    SECTION("identity matrix times vector") {
+        mathmatrix<double> I(3, 3, {
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0
+        });
+        mathvector<double> x = {2.0, 3.0, 4.0};
+
+        auto y = I * x;
+
+        REQUIRE(y[0] == Approx(2.0));
+        REQUIRE(y[1] == Approx(3.0));
+        REQUIRE(y[2] == Approx(4.0));
+    }
+
+    SECTION("zero matrix times vector") {
+        mathmatrix<double> Z(2, 3, 0.0);
+        mathvector<double> x = {1.0, 2.0, 3.0};
+
+        auto y = Z * x;
+
+        REQUIRE(y[0] == Approx(0.0));
+        REQUIRE(y[1] == Approx(0.0));
+    }
+
+    SECTION("diagonal matrix times vector") {
+        mathmatrix<double> D(3, 3, {
+            2.0, 0.0, 0.0,
+            0.0, 3.0, 0.0,
+            0.0, 0.0, 4.0
+        });
+        mathvector<double> x = {1.0, 1.0, 1.0};
+
+        auto y = D * x;
+
+        REQUIRE(y[0] == Approx(2.0));
+        REQUIRE(y[1] == Approx(3.0));
+        REQUIRE(y[2] == Approx(4.0));
+    }
+
+    SECTION("single row matrix times vector") {
+        mathmatrix<double> A(1, 3, {2.0, 3.0, 4.0});
+        mathvector<double> x = {1.0, 2.0, 3.0};
+
+        auto y = A * x;
+
+        REQUIRE(y.size() == 1);
+        REQUIRE(y[0] == Approx(20.0));  // 2*1 + 3*2 + 4*3 = 20
+    }
+
+    SECTION("single column matrix times single element vector") {
+        mathmatrix<double> A(3, 1, {2.0, 3.0, 4.0});
+        mathvector<double> x = {5.0};
+
+        auto y = A * x;
+
+        REQUIRE(y.size() == 3);
+        REQUIRE(y[0] == Approx(10.0));
+        REQUIRE(y[1] == Approx(15.0));
+        REQUIRE(y[2] == Approx(20.0));
+    }
+}
+
+TEST_CASE("mathmatrix invalid operations", "[mathmatrix]") {
+    // Note: These operations use JLT_MATRIX_ASSERT which is assert() in debug mode
+    // In release builds (NDEBUG), these checks are disabled
+    // This test documents expected behavior
+
+    SECTION("matrix-vector multiply with incompatible dimensions") {
+        mathmatrix<double> A(2, 3);  // 2x3 matrix
+        mathvector<double> x(2);     // 2x1 vector (should be 3x1)
+
+        // A * x requires A.columns() == x.size()
+        REQUIRE(A.columns() == 3);
+        REQUIRE(x.size() == 2);
+        REQUIRE(A.columns() != x.size());
+        // In debug: assert fails
+        // In release: undefined behavior
+    }
+
+    SECTION("matrix multiplication with incompatible dimensions") {
+        mathmatrix<double> A(2, 3);  // 2x3
+        mathmatrix<double> B(2, 2);  // 2x2 (should be 3xN)
+
+        // A * B requires A.columns() == B.rows()
+        REQUIRE(A.columns() == 3);
+        REQUIRE(B.rows() == 2);
+        REQUIRE(A.columns() != B.rows());
+    }
+
+    SECTION("addition with mismatched dimensions") {
+        mathmatrix<double> A(2, 3);
+        mathmatrix<double> B(3, 2);
+
+        REQUIRE(A.rows() != B.rows());
+        REQUIRE(A.columns() != B.columns());
+    }
+}
+
+TEST_CASE("mathmatrix mathematical identities", "[mathmatrix]") {
+    // Note: transpose() modifies the matrix in-place (for square matrices only)
+    // It returns a reference to *this after transposing
+
+    SECTION("transpose properties (square matrix)") {
+        mathmatrix<double> A_orig(3, 3, {
+            1.0, 2.0, 3.0,
+            4.0, 5.0, 6.0,
+            7.0, 8.0, 9.0
+        });
+
+        // Make a copy to transpose
+        mathmatrix<double> A(A_orig);
+        A.transpose();
+
+        // Check transpose swapped rows and columns
+        REQUIRE(A(0, 0) == A_orig(0, 0));
+        REQUIRE(A(0, 1) == A_orig(1, 0));
+        REQUIRE(A(0, 2) == A_orig(2, 0));
+        REQUIRE(A(1, 0) == A_orig(0, 1));
+        REQUIRE(A(2, 1) == A_orig(1, 2));
+    }
+
+    SECTION("transpose of transpose returns original (square matrix)") {
+        mathmatrix<double> A_orig(2, 2, {
+            1.0, 2.0,
+            3.0, 4.0
+        });
+
+        mathmatrix<double> A(A_orig);
+        A.transpose();  // First transpose
+        A.transpose();  // Second transpose
+
+        // Should be back to original
+        for (auto i = 0u; i < A.rows(); ++i) {
+            for (auto j = 0u; j < A.columns(); ++j) {
+                REQUIRE(A(i, j) == Approx(A_orig(i, j)));
+            }
+        }
+    }
+
+    SECTION("transpose of product (AB)^T = B^T A^T (square matrices)") {
+        mathmatrix<double> A(2, 2, {
+            1.0, 2.0,
+            3.0, 4.0
+        });
+        mathmatrix<double> B(2, 2, {
+            5.0, 6.0,
+            7.0, 8.0
+        });
+
+        // Compute (AB)^T
+        auto AB = A * B;
+        AB.transpose();
+
+        // Compute B^T A^T
+        mathmatrix<double> B_T(B);
+        B_T.transpose();
+        mathmatrix<double> A_T(A);
+        A_T.transpose();
+        auto B_T_A_T = B_T * A_T;
+
+        // Check all elements match
+        for (auto i = 0u; i < AB.rows(); ++i) {
+            for (auto j = 0u; j < AB.columns(); ++j) {
+                REQUIRE(AB(i, j) == Approx(B_T_A_T(i, j)));
+            }
+        }
+    }
+
+    SECTION("transpose of sum (A+B)^T = A^T + B^T (square matrices)") {
+        mathmatrix<double> A(2, 2, {
+            1.0, 2.0,
+            3.0, 4.0
+        });
+        mathmatrix<double> B(2, 2, {
+            5.0, 6.0,
+            7.0, 8.0
+        });
+
+        // Compute (A+B)^T
+        auto AplusB = A + B;
+        AplusB.transpose();
+
+        // Compute A^T + B^T
+        mathmatrix<double> A_T(A);
+        A_T.transpose();
+        mathmatrix<double> B_T(B);
+        B_T.transpose();
+        auto A_T_plusB_T = A_T + B_T;
+
+        // Check all elements match
+        for (auto i = 0u; i < AplusB.rows(); ++i) {
+            for (auto j = 0u; j < AplusB.columns(); ++j) {
+                REQUIRE(AplusB(i, j) == Approx(A_T_plusB_T(i, j)));
+            }
+        }
+    }
+
+    SECTION("distributive property A(B+C) = AB + AC") {
+        mathmatrix<double> A(2, 2, {
+            1.0, 2.0,
+            3.0, 4.0
+        });
+        mathmatrix<double> B(2, 2, {
+            5.0, 6.0,
+            7.0, 8.0
+        });
+        mathmatrix<double> C(2, 2, {
+            9.0, 10.0,
+            11.0, 12.0
+        });
+
+        auto BplusC = B + C;
+        auto A_BplusC = A * BplusC;
+
+        auto AB = A * B;
+        auto AC = A * C;
+        auto AB_plusAC = AB + AC;
+
+        for (auto i = 0u; i < A_BplusC.rows(); ++i) {
+            for (auto j = 0u; j < A_BplusC.columns(); ++j) {
+                REQUIRE(A_BplusC(i, j) == Approx(AB_plusAC(i, j)));
+            }
+        }
+    }
+
+    SECTION("associative property (AB)C = A(BC)") {
+        mathmatrix<double> A(2, 3, {
+            1.0, 2.0, 3.0,
+            4.0, 5.0, 6.0
+        });
+        mathmatrix<double> B(3, 2, {
+            1.0, 2.0,
+            3.0, 4.0,
+            5.0, 6.0
+        });
+        mathmatrix<double> C(2, 2, {
+            7.0, 8.0,
+            9.0, 10.0
+        });
+
+        auto AB = A * B;
+        auto AB_C = AB * C;
+
+        auto BC = B * C;
+        auto A_BC = A * BC;
+
+        REQUIRE(AB_C.rows() == A_BC.rows());
+        REQUIRE(AB_C.columns() == A_BC.columns());
+
+        for (auto i = 0u; i < AB_C.rows(); ++i) {
+            for (auto j = 0u; j < AB_C.columns(); ++j) {
+                REQUIRE(AB_C(i, j) == Approx(A_BC(i, j)));
+            }
+        }
+    }
+
+    SECTION("identity matrix properties") {
+        mathmatrix<double> I(3, 3, {
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0
+        });
+        mathmatrix<double> A(3, 3, {
+            2.0, 3.0, 4.0,
+            5.0, 6.0, 7.0,
+            8.0, 9.0, 10.0
+        });
+
+        // I * A = A
+        auto IA = I * A;
+        for (auto i = 0u; i < A.rows(); ++i) {
+            for (auto j = 0u; j < A.columns(); ++j) {
+                REQUIRE(IA(i, j) == Approx(A(i, j)));
+            }
+        }
+
+        // A * I = A
+        auto AI = A * I;
+        for (auto i = 0u; i < A.rows(); ++i) {
+            for (auto j = 0u; j < A.columns(); ++j) {
+                REQUIRE(AI(i, j) == Approx(A(i, j)));
+            }
+        }
+    }
+}

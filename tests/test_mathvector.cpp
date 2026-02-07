@@ -299,3 +299,142 @@ TEST_CASE("mathvector edge cases", "[mathvector]") {
         REQUIRE(mag2(v) == 14.0);  // (-1)² + (-2)² + (-3)² = 1 + 4 + 9 = 14
     }
 }
+
+TEST_CASE("mathvector division by zero", "[mathvector]") {
+    SECTION("scalar division by zero produces inf") {
+        mathvector<double> v = {1.0, 2.0, 3.0};
+        v /= 0.0;
+        // Division by zero produces infinity (IEEE 754 behavior)
+        REQUIRE(std::isinf(v[0]));
+        REQUIRE(std::isinf(v[1]));
+        REQUIRE(std::isinf(v[2]));
+    }
+
+    SECTION("component-wise division by zero vector") {
+        mathvector<double> v1 = {1.0, 2.0, 3.0};
+        mathvector<double> v2 = {0.0, 0.0, 0.0};
+        v1 /= v2;
+        // Division by zero produces infinity
+        REQUIRE(std::isinf(v1[0]));
+        REQUIRE(std::isinf(v1[1]));
+        REQUIRE(std::isinf(v1[2]));
+    }
+
+    SECTION("component-wise division with some zeros") {
+        mathvector<double> v1 = {1.0, 2.0, 3.0};
+        mathvector<double> v2 = {1.0, 0.0, 2.0};
+        v1 /= v2;
+        REQUIRE(v1[0] == Approx(1.0));
+        REQUIRE(std::isinf(v1[1]));  // 2.0 / 0.0 = inf
+        REQUIRE(v1[2] == Approx(1.5));
+    }
+
+    SECTION("zero divided by zero produces NaN") {
+        mathvector<double> v1 = {0.0, 0.0, 0.0};
+        mathvector<double> v2 = {0.0, 0.0, 0.0};
+        v1 /= v2;
+        // 0.0 / 0.0 = NaN (IEEE 754 behavior)
+        REQUIRE(std::isnan(v1[0]));
+        REQUIRE(std::isnan(v1[1]));
+        REQUIRE(std::isnan(v1[2]));
+    }
+}
+
+TEST_CASE("mathvector size mismatch behavior", "[mathvector]") {
+    // Note: The library uses JLT_VECTOR_ASSERT which is assert() in debug builds.
+    // In release builds (NDEBUG defined), these checks are disabled.
+    // This test documents the expected behavior in debug mode.
+
+    SECTION("addition with mismatched sizes") {
+        mathvector<double> v1 = {1.0, 2.0, 3.0};
+        mathvector<double> v2 = {4.0, 5.0};
+        // In debug: assert fails
+        // In release: undefined behavior (likely segfault or wrong results)
+        // We document this but don't test it since assert() aborts the program
+        REQUIRE(v1.size() == 3);
+        REQUIRE(v2.size() == 2);
+        REQUIRE(v1.size() != v2.size());
+    }
+
+    SECTION("subtraction with mismatched sizes") {
+        mathvector<double> v1 = {1.0, 2.0};
+        mathvector<double> v2 = {4.0, 5.0, 6.0};
+        REQUIRE(v1.size() != v2.size());
+    }
+
+    SECTION("dot product with mismatched sizes") {
+        mathvector<double> v1 = {1.0, 2.0, 3.0};
+        mathvector<double> v2 = {4.0, 5.0};
+        // Note: dot() uses JLT_VECTOR_ASSERT
+        REQUIRE(v1.size() != v2.size());
+    }
+
+    SECTION("component-wise division with mismatched sizes") {
+        mathvector<double> v1 = {1.0, 2.0, 3.0, 4.0};
+        mathvector<double> v2 = {1.0, 2.0};
+        REQUIRE(v1.size() != v2.size());
+    }
+
+    SECTION("operations with same size work correctly") {
+        mathvector<double> v1 = {1.0, 2.0, 3.0};
+        mathvector<double> v2 = {4.0, 5.0, 6.0};
+        REQUIRE(v1.size() == v2.size());
+
+        auto v3 = v1 + v2;
+        REQUIRE(v3.size() == 3);
+        REQUIRE(v3[0] == 5.0);
+    }
+}
+
+TEST_CASE("mathvector normalization and unit vectors", "[mathvector]") {
+    SECTION("normalize a vector manually") {
+        mathvector<double> v = {3.0, 4.0};
+        double magnitude = abs(v);
+        REQUIRE(magnitude == Approx(5.0));
+
+        // Normalize by dividing by magnitude
+        v /= magnitude;
+        REQUIRE(v[0] == Approx(0.6));
+        REQUIRE(v[1] == Approx(0.8));
+        REQUIRE(abs(v) == Approx(1.0));
+    }
+
+    SECTION("normalize 3D vector") {
+        mathvector<double> v = {1.0, 2.0, 2.0};
+        double magnitude = abs(v);  // sqrt(1 + 4 + 4) = 3
+        REQUIRE(magnitude == Approx(3.0));
+
+        v /= magnitude;
+        REQUIRE(abs(v) == Approx(1.0));  // Unit vector has magnitude 1
+        REQUIRE(mag2(v) == Approx(1.0));
+    }
+
+    SECTION("zero vector cannot be normalized") {
+        mathvector<double> v = {0.0, 0.0, 0.0};
+        double magnitude = abs(v);
+        REQUIRE(magnitude == Approx(0.0));
+
+        // Attempting to normalize would divide by zero
+        // Result would be NaN
+        v /= magnitude;
+        REQUIRE(std::isnan(v[0]));
+        REQUIRE(std::isnan(v[1]));
+        REQUIRE(std::isnan(v[2]));
+    }
+
+    SECTION("unit vector properties") {
+        // Standard unit vectors
+        mathvector<double> ex = {1.0, 0.0, 0.0};
+        mathvector<double> ey = {0.0, 1.0, 0.0};
+        mathvector<double> ez = {0.0, 0.0, 1.0};
+
+        REQUIRE(abs(ex) == Approx(1.0));
+        REQUIRE(abs(ey) == Approx(1.0));
+        REQUIRE(abs(ez) == Approx(1.0));
+
+        // Unit vectors are orthogonal
+        REQUIRE(dot(ex, ey) == Approx(0.0));
+        REQUIRE(dot(ey, ez) == Approx(0.0));
+        REQUIRE(dot(ez, ex) == Approx(0.0));
+    }
+}

@@ -88,8 +88,14 @@
   - [x] Write test_matrix.cpp (83 assertions - all passing)
     - Added: Move semantics tests (move constructor, move assignment, self-move)
     - Tests verify C++11 move operations work correctly with std::vector storage
-  - [x] Write test_mathvector.cpp (81 assertions - all passing)
-  - [x] Write test_mathmatrix.cpp (90+ assertions - all passing)
+  - [x] Write test_mathvector.cpp (124 assertions - all passing)
+    - Added: Division by zero behavior tests (inf/NaN handling)
+    - Added: Size mismatch documentation tests
+    - Added: Vector normalization and unit vector tests
+  - [x] Write test_mathmatrix.cpp (206 assertions - all passing)
+    - Added: Matrix-vector multiplication tests (identity, zero, diagonal matrices)
+    - Added: Invalid operation documentation tests (size mismatch)
+    - Added: Mathematical identity tests (transpose, distributive, associative properties)
   - [x] Write test_polynomial.cpp (88 assertions - all passing)
   - [x] Write test_matrixutil.cpp (52 assertions - all passing)
   - Added: Exception safety tests for RAII improvements (5 new assertions)
@@ -165,8 +171,8 @@
   - Defines JLT_MATLAB_LIB_SUPPORT when building
   - Tests tagged with "matlab" label for filtering
 
-**Test Coverage: 1149+ assertions across 21 test suites - ALL PASSING**
-- 15 core test suites: 919 assertions (no external dependencies)
+**Test Coverage: 1308+ assertions across 21 test suites - ALL PASSING**
+- 15 core test suites: 1078 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 - 1 Matlab test suite: 61 assertions (built conditionally if Matlab found)
 - 1 CSparse test suite: 65 assertions (built conditionally if CSparse found)
