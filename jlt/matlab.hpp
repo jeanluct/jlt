@@ -14,6 +14,7 @@
 #include <vector>
 #include <jlt/matrix.hpp>
 #include <jlt/exceptions.hpp>
+#include <jlt/stlio.hpp>
 #ifdef JLT_MATLAB_LIB_SUPPORT
 #  include "mat.h"
 #endif
