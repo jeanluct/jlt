@@ -171,9 +171,9 @@
   - Defines JLT_MATLAB_LIB_SUPPORT when building
   - Tests tagged with "matlab" label for filtering
 
-**Test Coverage: 1510 assertions across 22 test suites - ALL PASSING**
+**Test Coverage: 1555 assertions across 23 test suites - ALL PASSING**
 - 16 core test suites: 1280 assertions (no external dependencies)
-- 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
+- 3 LAPACK test suites: 105 assertions (built conditionally if LAPACK found)
 - 1 Matlab test suite: 61 assertions (built conditionally if Matlab found)
 - 1 CSparse test suite: 65 assertions (built conditionally if CSparse found)
 - 1 Boost test suite: 44 assertions (built conditionally if Boost timer found)

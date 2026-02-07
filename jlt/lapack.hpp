@@ -19,7 +19,7 @@ namespace jlt {
 namespace lapack {
 
   extern "C" {
-# include <jlt/lapack.h>
+# include <jlt/internal/lapack_fortran.hpp>
   }
 
   //
@@ -297,6 +297,125 @@ namespace lapack {
 	     int* info)
   {
     dgesdd_(jobz,M,N,A,ldA,S,U,ldU,VT,ldVT,work,lwork,iwork,info);
+  }
+
+  // M by N complex matrix
+  template<class T>
+  void gesvd(char* jobu,
+	     char* jobvt,
+	     int* M,
+	     int* N,
+	     std::complex<T>* A,
+	     int* ldA,
+	     T* S,
+	     std::complex<T>* U,
+	     int* ldU,
+	     std::complex<T>* VT,
+	     int* ldVT,
+	     std::complex<T>* work,
+	     int* lwork,
+	     T* rwork,
+	     int* info);
+
+  inline
+  void gesvd(char* jobu,
+	     char* jobvt,
+	     int* M,
+	     int* N,
+	     std::complex<float>* A,
+	     int* ldA,
+	     float* S,
+	     std::complex<float>* U,
+	     int* ldU,
+	     std::complex<float>* VT,
+	     int* ldVT,
+	     std::complex<float>* work,
+	     int* lwork,
+	     float* rwork,
+	     int* info)
+  {
+    cgesvd_(jobu,jobvt,M,N,A,ldA,S,U,ldU,VT,ldVT,work,lwork,rwork,info);
+  }
+
+  inline
+  void gesvd(char* jobu,
+	     char* jobvt,
+	     int* M,
+	     int* N,
+	     std::complex<double>* A,
+	     int* ldA,
+	     double* S,
+	     std::complex<double>* U,
+	     int* ldU,
+	     std::complex<double>* VT,
+	     int* ldVT,
+	     std::complex<double>* work,
+	     int* lwork,
+	     double* rwork,
+	     int* info)
+  {
+    zgesvd_(jobu,jobvt,M,N,A,ldA,S,U,ldU,VT,ldVT,work,lwork,rwork,info);
+  }
+
+  // M by N complex matrix (divide and conquer)
+  template<class T>
+  void gesdd(char* jobz,
+	     int* M,
+	     int* N,
+	     std::complex<T>* A,
+	     int* ldA,
+	     T* S,
+	     std::complex<T>* U,
+	     int* ldU,
+	     std::complex<T>* VT,
+	     int* ldVT,
+	     std::complex<T>* work,
+	     int* lwork,
+	     T* rwork,
+	     int* lrwork,
+	     int* iwork,
+	     int* info);
+
+  inline
+  void gesdd(char* jobz,
+	     int* M,
+	     int* N,
+	     std::complex<float>* A,
+	     int* ldA,
+	     float* S,
+	     std::complex<float>* U,
+	     int* ldU,
+	     std::complex<float>* VT,
+	     int* ldVT,
+	     std::complex<float>* work,
+	     int* lwork,
+	     float* rwork,
+	     int* lrwork,
+	     int* iwork,
+	     int* info)
+  {
+    cgesdd_(jobz,M,N,A,ldA,S,U,ldU,VT,ldVT,work,lwork,rwork,lrwork,iwork,info);
+  }
+
+  inline
+  void gesdd(char* jobz,
+	     int* M,
+	     int* N,
+	     std::complex<double>* A,
+	     int* ldA,
+	     double* S,
+	     std::complex<double>* U,
+	     int* ldU,
+	     std::complex<double>* VT,
+	     int* ldVT,
+	     std::complex<double>* work,
+	     int* lwork,
+	     double* rwork,
+	     int* lrwork,
+	     int* iwork,
+	     int* info)
+  {
+    zgesdd_(jobz,M,N,A,ldA,S,U,ldU,VT,ldVT,work,lwork,rwork,lrwork,iwork,info);
   }
 
 } // namespace lapack

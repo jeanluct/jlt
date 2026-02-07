@@ -39,7 +39,7 @@ detailed build instructions.
 
 ## Testing
 
-Comprehensive test suite with **1510 assertions across 22 test suites** using Catch2:
+Comprehensive test suite with **1555 assertions across 23 test suites** using Catch2:
 
 ```bash
 cd tests && mkdir -p build && cd build

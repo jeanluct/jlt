@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **internal/lapack_fortran.hpp**: Added complex SVD support (cgesvd, zgesvd, cgesdd, zgesdd)
+  for computing singular value decomposition of complex matrices; renamed from lapack.h
+  and moved to jlt/internal/ to indicate it's not for direct user access (2026-02-07)
+- **lapack.hpp**: Added overloaded gesvd() and gesdd() functions for std::complex<float>
+  and std::complex<double> to enable complex matrix SVD computations (2026-02-07)
+- **Tests**: Added direct LAPACK wrapper tests (test_lapack.cpp, 45 assertions) -
+  tests overload resolution for all types (float, double, complex<float>, complex<double>)
+  across syev, geev, gesvd, and gesdd functions; verifies correct Fortran function
+  dispatch (2026-02-07)
 - **matrix.hpp**: Added standalone `transpose()` function that returns a transposed
   copy of the matrix, complementing the in-place transpose() method; marked with
   `[[nodiscard]]` to prevent accidental misuse (2026-02-07)
@@ -51,6 +60,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   duplication (2026-02-06)
 
 ### Changed
+- **internal/lapack_fortran.hpp**: Renamed from lapack.h, moved to jlt/internal/
+  subdirectory, and updated header guard (JLT_LAPACK_H → JLT_LAPACK_FORTRAN_HPP);
+  clarified in comments that it provides C++ declarations with C linkage (not pure C code)
+  and is for internal use only; added #include <complex> for std::complex support (2026-02-07)
+- **lapack.hpp**: Updated to include <jlt/internal/lapack_fortran.hpp> instead of
+  <jlt/lapack.h> (2026-02-07)
 - **matrix.hpp**: Optimized in-place transpose() to use `std::swap()` instead of
   manual 3-way swap for cleaner, more idiomatic code (2026-02-07)
 - **tictoc.hpp**: **BREAKING CHANGE** - Output format changed to labeled format
