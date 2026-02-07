@@ -483,6 +483,21 @@ template<class T, class S>
   return std::sqrt(mag2((v)));
 }
 
+namespace detail {
+
+// Specialization of mag2_traits for nested mathvectors
+// For mathvector<T,S>: recursively compute mag2 of the inner vector
+template<class T, class S>
+struct mag2_traits<mathvector<T,S>>
+{
+  static S compute(const mathvector<T,S>& val)
+  {
+    return mag2(val);
+  }
+};
+
+} // namespace detail
+
 } // namespace jlt
 
 #endif // JLT_MATHVECTOR_HPP
