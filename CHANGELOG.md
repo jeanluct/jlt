@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+- **eigensystem.hpp**: Removed legacy `JLT_NO_VECTOR_DATA_METHOD` macro (GCC < 4.1 workaround);
+  now always uses std::vector::data() which is standard in C++11; simplified code by removing
+  all preprocessor conditionals for old compiler support (2026-02-07)
+- **eigensystem.hpp**: Added `JLT_MIN_WORKSIZE` macro support for all three functions
+  (symmetric_matrix_eigensystem, matrix_eigenvalues real, matrix_eigenvalues complex);
+  when defined, uses minimum LAPACK workspace requirements (3*N-1 for syev, 3*N for geev,
+  2*N for complex geev) instead of querying for optimal size; matches pattern in svdecomp.hpp (2026-02-07)
+- **svdecomp.hpp**: Removed legacy `JLT_NO_VECTOR_DATA_METHOD` macro; now always uses
+  std::vector::data() for cleaner, simpler code (2026-02-07)
+
 ### Added
 - **svdecomp.hpp**: Added complex matrix SVD support with overloaded SVdecomp() functions
   for matrix<std::complex<T>>; singular values are real (type T) while matrices U/Vt

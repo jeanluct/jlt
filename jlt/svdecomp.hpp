@@ -13,11 +13,6 @@
 #include <algorithm>
 #include <complex>
 
-// No data() method in std::vector prior to GCC 4.1.
-#if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 1))
-#  define JLT_NO_VECTOR_DATA_METHOD
-#endif
-
 namespace jlt {
 
 //
@@ -57,14 +52,8 @@ int SVdecomp(matrix<T>& A,
   int worksize = -1;
   T tmpwork[1];
 
-# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(),
 		Vt.data(), &N, U.data(), &M, tmpwork, &worksize, &info);
-# else
-  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		&(*Vt.begin()), &N, &(*U.begin()), &M,
-		tmpwork, &worksize, &info);
-#endif
 
   worksize = static_cast<int>(tmpwork[0]);
 
@@ -77,14 +66,8 @@ int SVdecomp(matrix<T>& A,
   std::vector<T> work(worksize);
 #endif
 
-# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), Vt.data(), &N,
 		U.data(), &M, work.data(), &worksize, &info);
-# else
-  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		&(*Vt.begin()), &N, &(*U.begin()), &M,
-		&(*work.begin()), &worksize, &info);
-# endif
 
   return info;
 }
@@ -111,13 +94,8 @@ int SVdecomp(matrix<T>& A, std::vector<T>& w)
   int worksize = -1;
   T tmpwork[1];
 
-# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(),
 		nullptr, &N, nullptr, &M, tmpwork, &worksize, &info);
-# else
-  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		0, &N, 0, &M, tmpwork, &worksize, &info);
-#endif
 
   worksize = static_cast<int>(tmpwork[0]);
 
@@ -130,13 +108,8 @@ int SVdecomp(matrix<T>& A, std::vector<T>& w)
   std::vector<T> work(worksize);
 #endif
 
-# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), nullptr, &N, nullptr, &M,
 		work.data(), &worksize, &info);
-# else
-  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		0, &N, 0, &M, &(*work.begin()), &worksize, &info);
-# endif
 
   return info;
 }
@@ -175,15 +148,9 @@ int SVdecomp(matrix<std::complex<T>>& A,
   int cworksize = -1;
   std::complex<T> ctmpwork[1];
 
-# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(),
 		Vt.data(), &N, U.data(), &M, ctmpwork, &cworksize,
 		rwork.data(), &info);
-# else
-  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		&(*Vt.begin()), &N, &(*U.begin()), &M,
-		ctmpwork, &cworksize, &(*rwork.begin()), &info);
-#endif
 
   cworksize = static_cast<int>(ctmpwork[0].real());
 
@@ -194,14 +161,8 @@ int SVdecomp(matrix<std::complex<T>>& A,
 
   std::vector<std::complex<T>> cwork(cworksize);
 
-# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), Vt.data(), &N,
 		U.data(), &M, cwork.data(), &cworksize, rwork.data(), &info);
-# else
-  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		&(*Vt.begin()), &N, &(*U.begin()), &M,
-		&(*cwork.begin()), &cworksize, &(*rwork.begin()), &info);
-# endif
 
   return info;
 }
@@ -227,14 +188,9 @@ int SVdecomp(matrix<std::complex<T>>& A, std::vector<T>& w)
   int cworksize = -1;
   std::complex<T> ctmpwork[1];
 
-# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(),
 		nullptr, &N, nullptr, &M, ctmpwork, &cworksize,
 		rwork.data(), &info);
-# else
-  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		0, &N, 0, &M, ctmpwork, &cworksize, &(*rwork.begin()), &info);
-#endif
 
   cworksize = static_cast<int>(ctmpwork[0].real());
 
@@ -245,14 +201,8 @@ int SVdecomp(matrix<std::complex<T>>& A, std::vector<T>& w)
 
   std::vector<std::complex<T>> cwork(cworksize);
 
-# if !defined(JLT_NO_VECTOR_DATA_METHOD)
   lapack::gesvd(&jobu, &jobvt, &N, &M, A.data(), &N, w.data(), nullptr, &N,
 		nullptr, &M, cwork.data(), &cworksize, rwork.data(), &info);
-# else
-  lapack::gesvd(&jobu, &jobvt, &N, &M, &(*A.begin()), &N, &(*w.begin()),
-		0, &N, 0, &M, &(*cwork.begin()), &cworksize,
-		&(*rwork.begin()), &info);
-# endif
 
   return info;
 }
