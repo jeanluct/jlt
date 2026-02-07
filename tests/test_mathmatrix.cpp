@@ -917,3 +917,164 @@ TEST_CASE("mathmatrix symmetry tests", "[mathmatrix][symmetric][hermitian]") {
         REQUIRE(M.is_symmetric(1e-6));
     }
 }
+
+TEST_CASE("mathmatrix non-negativity test", "[mathmatrix][nonnegative]") {
+    SECTION("non-negative matrices") {
+        mathmatrix<double> A(2, 2, {1.0, 2.0, 3.0, 4.0});
+        REQUIRE(A.is_nonnegative());
+
+        mathmatrix<double> B(2, 2, {0.0, 1.0, 2.0, 0.0});  // with zeros
+        REQUIRE(B.is_nonnegative());
+
+        mathmatrix<int> C(2, 2, {0, 5, 10, 0});
+        REQUIRE(C.is_nonnegative());
+    }
+
+    SECTION("matrices with negative elements") {
+        mathmatrix<double> A(2, 2, {-1.0, 2.0, 3.0, 4.0});
+        REQUIRE_FALSE(A.is_nonnegative());
+
+        mathmatrix<double> B(2, 2, {1.0, 2.0, 3.0, -0.001});
+        REQUIRE_FALSE(B.is_nonnegative());
+    }
+
+    SECTION("empty matrix is non-negative (vacuous truth)") {
+        mathmatrix<double> M;
+        REQUIRE(M.is_nonnegative());
+    }
+}
+
+TEST_CASE("mathmatrix primitivity test", "[mathmatrix][primitive]") {
+    SECTION("primitive matrices") {
+        // All-ones matrix is primitive (already positive at power 1)
+        mathmatrix<double> A(3, 3, {
+            1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0
+        });
+        REQUIRE(A.is_primitive());
+
+        // Nearly-full matrix (aperiodic and irreducible)
+        mathmatrix<double> B(3, 3, {
+            1.0, 1.0, 0.0,
+            0.0, 0.0, 1.0,
+            1.0, 0.0, 1.0
+        });
+        REQUIRE(B.is_primitive());
+
+        // 1x1 matrix with positive entry is primitive
+        mathmatrix<double> C(1, 1, {1.0});
+        REQUIRE(C.is_primitive());
+    }
+
+    SECTION("non-primitive matrices") {
+        // Identity matrix for n > 1 is NOT primitive (has zeros off-diagonal)
+        mathmatrix<double> I(2, 2, {
+            1.0, 0.0,
+            0.0, 1.0
+        });
+        REQUIRE_FALSE(I.is_primitive());
+
+        // Alternating permutation (period 2)
+        mathmatrix<double> A(2, 2, {
+            0.0, 1.0,
+            1.0, 0.0
+        });
+        REQUIRE_FALSE(A.is_primitive());
+
+        // Cyclic permutation (period 3)
+        mathmatrix<double> B(3, 3, {
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0,
+            1.0, 0.0, 0.0
+        });
+        REQUIRE_FALSE(B.is_primitive());
+
+        // Zero matrix is not primitive
+        mathmatrix<double> Z(2, 2, {
+            0.0, 0.0,
+            0.0, 0.0
+        });
+        REQUIRE_FALSE(Z.is_primitive());
+    }
+
+    SECTION("negative matrix throws exception") {
+        mathmatrix<double> A(2, 2, {-1.0, 2.0, 3.0, 4.0});
+        REQUIRE_THROWS_AS(A.is_primitive(), std::domain_error);
+
+        mathmatrix<double> B(2, 2, {1.0, 2.0, -0.5, 4.0});
+        REQUIRE_THROWS_AS(B.is_primitive(), std::domain_error);
+    }
+}
+
+TEST_CASE("mathmatrix reducibility test", "[mathmatrix][reducible]") {
+    SECTION("reducible matrices") {
+        // Identity matrix (n > 1) is reducible (block diagonal)
+        mathmatrix<double> I(3, 3, {
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0
+        });
+        REQUIRE(I.is_reducible());
+
+        // Diagonal matrix is reducible
+        mathmatrix<double> D(2, 2, {
+            2.0, 0.0,
+            0.0, 3.0
+        });
+        REQUIRE(D.is_reducible());
+
+        // Block upper triangular
+        mathmatrix<double> B(3, 3, {
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0,
+            0.0, 0.0, 1.0
+        });
+        REQUIRE(B.is_reducible());
+
+        // Lower triangular with positive diagonal
+        mathmatrix<double> L(3, 3, {
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            1.0, 1.0, 1.0
+        });
+        REQUIRE(L.is_reducible());
+    }
+
+    SECTION("irreducible matrices") {
+        // Cyclic permutation is irreducible (strongly connected)
+        mathmatrix<double> C(3, 3, {
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0,
+            1.0, 0.0, 0.0
+        });
+        REQUIRE_FALSE(C.is_reducible());
+
+        // All-ones matrix is irreducible (fully connected)
+        mathmatrix<double> A(3, 3, {
+            1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0
+        });
+        REQUIRE_FALSE(A.is_reducible());
+
+        // Alternating permutation is irreducible
+        mathmatrix<double> P(2, 2, {
+            0.0, 1.0,
+            1.0, 0.0
+        });
+        REQUIRE_FALSE(P.is_reducible());
+
+        // 1x1 matrix is considered irreducible
+        mathmatrix<double> S(1, 1, {1.0});
+        REQUIRE_FALSE(S.is_reducible());
+    }
+
+    SECTION("negative matrix throws exception") {
+        mathmatrix<double> A(2, 2, {-1.0, 2.0, 3.0, 4.0});
+        REQUIRE_THROWS_AS(A.is_reducible(), std::domain_error);
+
+        mathmatrix<double> B(2, 2, {1.0, 2.0, -0.5, 4.0});
+        REQUIRE_THROWS_AS(B.is_reducible(), std::domain_error);
+    }
+}

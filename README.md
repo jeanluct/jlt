@@ -39,7 +39,7 @@ detailed build instructions.
 
 ## Testing
 
-Comprehensive test suite with **1662 assertions across 23 test suites** using Catch2:
+Comprehensive test suite with **1687 assertions across 23 test suites** using Catch2:
 
 ```bash
 cd tests && mkdir -p build && cd build
@@ -50,7 +50,7 @@ ctest -R lapack          # Run only LAPACK tests
 ```
 
 Test coverage includes:
-- **Core library** (1288 assertions): vector, matrix, mathvector,
+- **Core library** (1313 assertions): vector, matrix, mathvector,
   mathmatrix, polynomial, etc.
 - **LAPACK integration** (174 assertions): LAPACK wrappers (45), eigensystems (32),
   SVD decomposition for real and complex matrices (97)

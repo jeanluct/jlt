@@ -240,34 +240,36 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
     }
 #endif
 
-  // Reducible matrix: a high-enough power still contains zeros.
-  /* Warning: this tests for primitivity, no reducibility.  See issue #1. */
-  [[nodiscard]] bool is_reducible() const
+  // Check if all matrix elements are non-negative.
+  [[nodiscard]] bool is_nonnegative() const
     {
-#if 0
-  size_type ma = A.rows();
-  size_type na = A.columns();
-  size_type nb = B.columns();
-
-  JLT_MATRIX_ASSERT(na == B.rows());
-
-  mathmatrix<T,S> res(ma,nb);
-
-  for (size_type i = 0; i < ma; ++i)
-    {
-      for (size_type j = 0; j < nb; ++j)
+      for (auto i = this->cbegin(); i != this->cend(); ++i)
 	{
-	  for (size_type k = 0; k < na; ++k) res(i,j) += A(i,k)*B(k,j);
+	  if (*i < T()) return false;
 	}
+      return true;
     }
-#endif
 
+  // Primitive matrix: some power has all strictly positive entries.
+  // Tests if A^k has all positive entries for k = n²-2n+2 (the maximum
+  // exponent of primitivity for an n×n matrix).
+  // Requires: matrix must be non-negative (throws std::domain_error otherwise).
+  [[nodiscard]] bool is_primitive() const
+    {
       JLT_MATRIX_ASSERT(is_square());
+
+      // Check that matrix is non-negative (required for primitivity)
+      if (!is_nonnegative())
+	{
+	  JLT_THROW(std::domain_error(
+	    "is_primitive() requires non-negative matrix"));
+	}
+
       size_type n = rows();
 
       if (n == 0) return false;
 
-      // See Ham and Song preprint (2006), p. 9.
+      // Compute A^(n²-2n+2) using repeated squaring with renormalization.
       // Take log2 since we nest the multiplications.
       auto pmax = static_cast<size_type>(ceil(log2(n*n - 2*n + 2)));
 
@@ -298,10 +300,110 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
       // Now look for zeros.
       for (auto i = M.cbegin(); i != M.cend(); ++i)
 	{
-	  if (*i == T()) return true;
+	  if (*i == T()) return false;  // Found zero = NOT primitive
 	}
 
-      return false;
+      return true;  // No zeros = IS primitive
+    }
+
+  // Reducible matrix: can be permuted to block upper-triangular form.
+  // Uses Frobenius criterion: A is irreducible iff (I+A)^(n-1) > 0 elementwise.
+  // References:
+  //   - Horn & Johnson (1985), Matrix Analysis, Theorem 8.5.2, p. 531.
+  //   - Seneta (2006), Non-negative Matrices and Markov Chains, §1.2, p. 5.
+  //   - Berman & Plemmons (1994), Nonnegative Matrices, Theorem 2.5, p. 29.
+  // Returns true if reducible (NOT irreducible).
+  // Requires: matrix must be non-negative (throws std::domain_error otherwise).
+  [[nodiscard]] bool is_reducible() const
+    {
+      JLT_MATRIX_ASSERT(is_square());
+
+      // Check that matrix is non-negative (required for Frobenius criterion)
+      if (!is_nonnegative())
+	{
+	  JLT_THROW(std::domain_error(
+	    "is_reducible() requires non-negative matrix"));
+	}
+
+      size_type n = rows();
+
+      if (n == 0) return false;  // Empty matrix considered irreducible
+
+      // Compute (I + A)
+      mathmatrix<T,S> M(*this);
+      for (size_type i = 0; i < n; ++i)
+	{
+	  M(i,i) += 1;  // Add identity
+	}
+
+      // Compute M^(n-1) using repeated squaring with renormalization
+      // We only care about zero vs non-zero, so renormalize to avoid overflow
+      if (n == 1) return false;  // 1x1 matrix is irreducible
+
+      // Compute (I+A)^(n-1) efficiently
+      // For simplicity, we'll use the same approach as is_primitive
+      // but with power (n-1) instead of (n²-2n+2)
+      auto power = n - 1;
+      auto pmax = static_cast<size_type>(ceil(log2(power)));
+
+      mathmatrix<T,S> Mp(n,n), Mpower = M;
+
+      // Build up M^(n-1) by repeated squaring
+      // Start with result = I
+      mathmatrix<T,S> result(n,n);
+      result.identity();
+
+      // Binary exponentiation
+      while (power > 0)
+	{
+	  if (power & 1)  // If power is odd
+	    {
+	      // result = result * Mpower
+	      for (size_type i = 0; i < n; ++i)
+		{
+		  for (size_type j = 0; j < n; ++j)
+		    {
+		      Mp(i,j) = result(i,0)*Mpower(0,j);
+		      for (size_type k = 1; k < n; ++k)
+			{
+			  Mp(i,j) += result(i,k)*Mpower(k,j);
+			}
+		      // Renormalise
+		      if (Mp(i,j) != T()) Mp(i,j) = 1;
+		    }
+		}
+	      result = Mp;
+	    }
+
+	  power >>= 1;  // Divide power by 2
+
+	  if (power > 0)
+	    {
+	      // Mpower = Mpower * Mpower
+	      for (size_type i = 0; i < n; ++i)
+		{
+		  for (size_type j = 0; j < n; ++j)
+		    {
+		      Mp(i,j) = Mpower(i,0)*Mpower(0,j);
+		      for (size_type k = 1; k < n; ++k)
+			{
+			  Mp(i,j) += Mpower(i,k)*Mpower(k,j);
+			}
+		      // Renormalise
+		      if (Mp(i,j) != T()) Mp(i,j) = 1;
+		    }
+		}
+	      Mpower = Mp;
+	    }
+	}
+
+      // Now look for zeros in result = (I+A)^(n-1)
+      for (auto i = result.cbegin(); i != result.cend(); ++i)
+	{
+	  if (*i == T()) return true;  // Found zero = IS reducible
+	}
+
+      return false;  // No zeros = NOT reducible (i.e., irreducible)
     }
 
   // Replace nonzero entries by 1.

@@ -7,17 +7,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Changed
-- **eigensystem.hpp**: Removed legacy `JLT_NO_VECTOR_DATA_METHOD` macro (GCC < 4.1 workaround);
-  now always uses std::vector::data() which is standard in C++11; simplified code by removing
-  all preprocessor conditionals for old compiler support (2026-02-07)
-- **eigensystem.hpp**: Added `JLT_MIN_WORKSIZE` macro support for all three functions
-  (symmetric_matrix_eigensystem, matrix_eigenvalues real, matrix_eigenvalues complex);
-  when defined, uses minimum LAPACK workspace requirements (3*N-1 for syev, 3*N for geev,
-  2*N for complex geev) instead of querying for optimal size; matches pattern in svdecomp.hpp (2026-02-07)
-- **svdecomp.hpp**: Removed legacy `JLT_NO_VECTOR_DATA_METHOD` macro; now always uses
-  std::vector::data() for cleaner, simpler code (2026-02-07)
+- **BREAKING**: **mathmatrix.hpp**: Renamed `is_reducible()` to `is_primitive()` - the old function was misnamed and actually tested primitivity, not reducibility; inverted return logic (now returns true if primitive, false if not); tests if A^(n²-2n+2) has all positive entries (2026-02-07)
+- **eigensystem.hpp**, **svdecomp.hpp**: Removed legacy
+  `JLT_NO_VECTOR_DATA_METHOD` macro (GCC < 4.1 workaround); now always
+  uses std::vector::data() which is standard in C++11; simplified code
+  by removing all preprocessor conditionals for old compiler support
+  (2026-02-07)
+- **eigensystem.hpp**: Added `JLT_MIN_WORKSIZE` macro support for all
+  three functions (symmetric_matrix_eigensystem, matrix_eigenvalues
+  real, matrix_eigenvalues complex); when defined, uses minimum LAPACK
+  workspace requirements (3*N-1 for syev, 3*N for geev, 2*N for
+  complex geev) instead of querying for optimal size; matches pattern
+  in svdecomp.hpp (2026-02-07)
 
 ### Added
+- **mathmatrix.hpp**: Added `is_nonnegative()` predicate to check if all matrix elements are non-negative; used by is_primitive() and is_reducible() to validate input (2026-02-07)
+- **mathmatrix.hpp**: Added proper `is_reducible()` using Frobenius criterion - tests if matrix can be permuted to block upper-triangular form; computes (I+A)^(n-1) and checks for zeros; references Horn & Johnson, Seneta, Berman & Plemmons (2026-02-07)
+- **mathmatrix.hpp**: Both `is_primitive()` and `is_reducible()` now throw std::domain_error for matrices with negative elements, as these concepts are only defined for non-negative matrices (2026-02-07)
 - **eigensystem.hpp**: Added hermitian matrix eigensystem support with
   hermitian_matrix_eigensystem() function for matrix<std::complex<T>>; computes
   real eigenvalues (type T) and eigenvectors; returns eigenvalues in descending order;
@@ -27,21 +33,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (in-place conjugate transpose), hermitian_transpose() and hermitian_conjugate() aliases,
   and standalone versions that return new matrices; for real matrices, adjoint equals
   transpose (2026-02-07)
-- **mathmatrix.hpp**: Added matrix symmetry predicates - is_symmetric() and is_hermitian()
-  member functions with optional tolerance parameter (default: epsilon * frobenius_norm);
-  standalone versions also provided; for real matrices, is_hermitian == is_symmetric (2026-02-07)
-- **internal/lapack_fortran.hpp**: Added Fortran declarations for complex hermitian eigenvalue
-  solvers (cheev, zheev) (2026-02-07)
+- **mathmatrix.hpp**: Added matrix symmetry predicates -
+  is_symmetric() and is_hermitian() member functions with optional
+  tolerance parameter (default: epsilon * frobenius_norm); standalone
+  versions also provided; for real matrices, is_hermitian ==
+  is_symmetric (2026-02-07)
+- **internal/lapack_fortran.hpp**: Added Fortran declarations for
+  complex hermitian eigenvalue solvers (cheev, zheev) (2026-02-07)
 - **lapack.hpp**: Added overloaded heev() wrappers for std::complex<float> and
   std::complex<double> to compute hermitian matrix eigenvalues (2026-02-07)
 - **Tests**: Added hermitian eigensystem tests (test_eigensystem.cpp now has 32 assertions,
   +12 from previous) - tests complex<float> and complex<double> for 3x3 hermitian matrix,
   2x2 with known eigenvalues, and 4x4 identity; verifies real eigenvalues and descending
   order (2026-02-07)
-- **Tests**: Added adjoint/hermitian operation tests (test_mathmatrix.cpp now has 255
-  assertions, +43 from previous) - tests adjoint for real and complex matrices, standalone
-  functions, hermitian_transpose/hermitian_conjugate aliases, is_symmetric/is_hermitian
-  predicates with tolerance parameters (2026-02-07)
+- **Tests**: Added adjoint/hermitian operation tests (test_mathmatrix.cpp now has 280
+  assertions, +25 from 255) - tests is_nonnegative() (6 assertions), is_primitive() (9 assertions),
+  is_reducible() (10 assertions); validates proper behavior for primitive/non-primitive matrices,
+  reducible/irreducible matrices, and exception throwing for negative matrices (2026-02-07)
 - **svdecomp.hpp**: Added complex matrix SVD support with overloaded SVdecomp() functions
   for matrix<std::complex<T>>; singular values are real (type T) while matrices U/Vt
   are complex; implements both full decomposition (U, w, Vt) and singular-values-only
@@ -50,9 +58,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   97 assertions, +52 from previous) - tests complex<float> and complex<double> for
   2x2, 3x2 rectangular, identity, zero, and pure imaginary matrices; verifies singular
   value ordering, reconstruction accuracy, and values-only computation (2026-02-07)
-- **internal/lapack_fortran.hpp**: Added complex SVD support (cgesvd, zgesvd, cgesdd, zgesdd)
-  for computing singular value decomposition of complex matrices; renamed from lapack.h
-  and moved to jlt/internal/ to indicate it's not for direct user access (2026-02-07)
+- **internal/lapack_fortran.hpp**: Added complex SVD support (cgesvd,
+  zgesvd, cgesdd, zgesdd) for computing singular value decomposition
+  of complex matrices; renamed from lapack.h and moved to
+  jlt/internal/ to indicate it's not for direct user access
+  (2026-02-07)
 - **lapack.hpp**: Added overloaded gesvd() and gesdd() functions for std::complex<float>
   and std::complex<double> to enable complex matrix SVD computations (2026-02-07)
 - **Tests**: Added direct LAPACK wrapper tests (test_lapack.cpp, 45 assertions) -
@@ -106,7 +116,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **internal/lapack_fortran.hpp**: Renamed from lapack.h, moved to jlt/internal/
   subdirectory, and updated header guard (JLT_LAPACK_H → JLT_LAPACK_FORTRAN_HPP);
   clarified in comments that it provides C++ declarations with C linkage (not pure C code)
-  and is for internal use only; added #include <complex> for std::complex support (2026-02-07)
+  and is for internal use only; added #include <complex> for std::complex support
+  (2026-02-07)
 - **lapack.hpp**: Updated to include <jlt/internal/lapack_fortran.hpp> instead of
   <jlt/lapack.h> (2026-02-07)
 - **matrix.hpp**: Optimized in-place transpose() to use `std::swap()` instead of
@@ -189,7 +200,8 @@ numerical library.
 ### 2020-2024: Modernization Era
 
 #### 2023
-- **Modernization**: Restored and updated `tictoc.hpp` to use modern Boost timer (issue #12)
+- **Modernization**: Restored and updated `tictoc.hpp` to use modern Boost timer
+  (issue #12)
 
 #### 2022
 - **Modernization**: Ran clang-tidy modernization passes
