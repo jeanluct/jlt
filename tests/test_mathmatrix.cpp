@@ -373,12 +373,18 @@ TEST_CASE("mathmatrix transpose", "[mathmatrix]") {
             4.0, 5.0, 6.0
         });
 
-        // transpose() prints warning to stderr for non-square matrices
-        // but doesn't throw - dimensions remain unchanged
-        // This test just verifies it doesn't crash
+        // transpose() now works for non-square matrices (swaps dimensions)
         M.transpose();
-        REQUIRE(M.rows() == 2);
-        REQUIRE(M.columns() == 3);
+        REQUIRE(M.rows() == 3);
+        REQUIRE(M.columns() == 2);
+
+        // Verify the transpose is correct
+        REQUIRE(M(0, 0) == 1.0);
+        REQUIRE(M(0, 1) == 4.0);
+        REQUIRE(M(1, 0) == 2.0);
+        REQUIRE(M(1, 1) == 5.0);
+        REQUIRE(M(2, 0) == 3.0);
+        REQUIRE(M(2, 1) == 6.0);
     }
 }
 

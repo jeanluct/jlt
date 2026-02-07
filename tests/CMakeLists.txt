@@ -28,6 +28,11 @@ add_executable(test_matrix test_matrix.cpp)
 target_link_libraries(test_matrix catch2)
 add_test(NAME test_matrix COMMAND test_matrix)
 
+# Matrix transpose tests (comprehensive tests for square and non-square)
+add_executable(test_matrix_transpose test_matrix_transpose.cpp)
+target_link_libraries(test_matrix_transpose catch2)
+add_test(NAME test_matrix_transpose COMMAND test_matrix_transpose)
+
 # Mathematical vector tests
 add_executable(test_mathvector test_mathvector.cpp)
 target_link_libraries(test_mathvector catch2)
@@ -209,7 +214,7 @@ enable_testing()
 # Print summary
 message(STATUS "")
 message(STATUS "Test Summary:")
-message(STATUS "  Core tests: vector, matrix, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command, vcs, display_task, stlio, reciprocal_polynomial, finitediff, matlab, bounds_checking")
+message(STATUS "  Core tests: vector, matrix, matrix_transpose, mathvector, mathmatrix, polynomial, matrixutil, exceptions, math, command, vcs, display_task, stlio, reciprocal_polynomial, finitediff, matlab, bounds_checking")
 if(LAPACK_FOUND)
     message(STATUS "  LAPACK tests: eigensystem, svdecomp")
 else()

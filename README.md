@@ -39,7 +39,7 @@ detailed build instructions.
 
 ## Testing
 
-Comprehensive test suite with **1308+ assertions across 21 test suites** using Catch2:
+Comprehensive test suite with **1463+ assertions across 22 test suites** using Catch2:
 
 ```bash
 cd tests && mkdir -p build && cd build
@@ -50,7 +50,7 @@ ctest -R lapack          # Run only LAPACK tests
 ```
 
 Test coverage includes:
-- **Core library** (1078 assertions): vector, matrix, mathvector,
+- **Core library** (1233 assertions): vector, matrix, mathvector,
   mathmatrix, polynomial, etc.
 - **LAPACK integration** (60 assertions): eigensystems, SVD decomposition
 - **Optional libraries**: Matlab MAT-file I/O (61 assertions), CSparse
@@ -182,7 +182,7 @@ See `AGENTS.md` for:
 - **2014**: Migration from Subversion to Mercurial
 - **2018**: Migration to Git
 - **2020s**: Modernization (C++11, RAII, comprehensive test suite)
-- **2026**: 1308+ test assertions, bounds checking, improved error handling
+- **2026**: 1463+ test assertions, bounds checking, improved error handling
 
 See `CHANGELOG.md` for detailed version history.
 

@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **matrix.hpp**: Implemented transpose() for non-square matrices - now properly
+  transposes mxn matrices to nxm matrices using temporary matrix with swapped
+  dimensions (2026-02-07)
+- **Tests**: Added comprehensive matrix transpose test coverage (test_matrix_transpose.cpp,
+  155 assertions) - tests square matrices (2x2, 3x3, identity, symmetric), non-square
+  matrices (2x3, 3x2, row vectors, column vectors), edge cases (1x1, different types),
+  and transpose properties (2026-02-07)
+- **Tests**: Added high-priority test improvements for mathvector (+43 assertions)
+  and mathmatrix (+116 assertions) - includes division by zero tests, size mismatch
+  documentation, normalization tests, matrix-vector multiplication, and mathematical
+  identity verification (2026-02-07)
 - **tictoc.hpp**: Now outputs all three timing metrics with labeled format:
   `0.5w 0.5u 0s  (1.2w 1.2u 0s)` where w=wall, u=user, s=system times in seconds,
   showing elapsed times followed by cumulative times in parentheses (2026-02-06)

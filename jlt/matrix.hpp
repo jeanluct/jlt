@@ -321,9 +321,20 @@ matrix<T>& operator=(matrix<T>&& M) noexcept
 	}
       else
 	{
-	  // Not square: use temporary matrix.
+	  // Not square: use temporary matrix with swapped dimensions
+	  matrix<T> temp(n, m);  // n rows, m columns (swapped)
 
-	  std::cerr << "transpose(): Not implemented for nonsquare matrices yet.\n";
+	  for (size_type i = 0; i < m; ++i)
+	    {
+	      for (size_type j = 0; j < n; ++j)
+		{
+		  temp(j, i) = (*this)(i, j);
+		}
+	    }
+
+	  // Swap with temporary (efficient - just swaps internal vector)
+	  std::swap(m, n);
+	  storage.swap(temp.storage);
 	}
 
       return *this;
