@@ -58,7 +58,8 @@ vector(std::initializer_list<T> _l) : std::vector<T>(_l) {}
   reference operator[](size_type i)
     {
 #     ifdef JLT_VECTOR_CHECK_BOUNDS
-        return at(i);
+        // Use std::vector::at() for bounds checking (throws std::out_of_range)
+        return std::vector<T>::at(i);
 #     else
         return std::vector<T>::operator[](i);
 #     endif
@@ -67,28 +68,14 @@ vector(std::initializer_list<T> _l) : std::vector<T>(_l) {}
   const_reference operator[](size_type i) const
     {
 #     ifdef JLT_VECTOR_CHECK_BOUNDS
-        return at(i);
+        // Use std::vector::at() for bounds checking (throws std::out_of_range)
+        return std::vector<T>::at(i);
 #     else
         return std::vector<T>::operator[](i);
 #     endif
     }
 
-  // Bound-checked
-  [[nodiscard]] reference at(size_type i)
-    {
-      if (i >= size())
-	JLT_THROW(std::out_of_range("Out of range exception in jlt::vector."));
-
-      return std::vector<T>::operator[](i);
-    }
-
-  [[nodiscard]] const_reference at(size_type i) const
-    {
-      if (i >= size())
-	JLT_THROW(std::out_of_range("Out of range exception in jlt::vector."));
-
-      return std::vector<T>::operator[](i);
-    }
+  // Note: at() is inherited from std::vector<T> and provides bounds checking
 
   std::vector<T>& operator=(const std::vector<T>& v)
     {
