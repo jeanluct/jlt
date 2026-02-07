@@ -24,3 +24,4 @@ matlab/interpline_helper.mex*
 *.toc
 # CTest generated files
 Testing/
+.opencode/
