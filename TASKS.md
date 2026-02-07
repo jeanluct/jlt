@@ -165,11 +165,12 @@
   - Defines JLT_MATLAB_LIB_SUPPORT when building
   - Tests tagged with "matlab" label for filtering
 
-**Test Coverage: 1105+ assertions across 20 test suites - ALL PASSING**
+**Test Coverage: 1125+ assertions across 21 test suites - ALL PASSING**
 - 15 core test suites: 919 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 - 1 Matlab test suite: 61 assertions (built conditionally if Matlab found)
 - 1 CSparse test suite: 65 assertions (built conditionally if CSparse found)
+- 1 Boost test suite: 20 assertions (built conditionally if Boost timer found)
 
 ## In Progress
 
@@ -310,9 +311,11 @@ These tests would only be built if the respective libraries are found:
   - Note: Wrapper for Timothy A. Davis's CSparse library
   - Date: 2026-02-06
 
-- [ ] **tictoc.hpp** - Timing utilities
-  - Requires: Boost timer library (`-lboost_timer`)
-  - Note: Uses `boost::timer::cpu_timer`
+- [x] **tictoc.hpp** - Timing utilities ✅ **COMPLETED** - 20 assertions
+  - Requires: Boost timer library (`-lboost_timer -lboost_chrono`)
+  - Tests: Basic timing, tic/toc measurements, labels, dangling tic behavior, timing accuracy, restart functionality
+  - Note: Uses `boost::timer::cpu_timer` - measures CPU time (not wall-clock time)
+  - Date: 2026-02-06
 
 ### Wrapper/Interface Files (Low Priority)
 - [ ] **lapack.hpp** - LAPACK wrapper functions

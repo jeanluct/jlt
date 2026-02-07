@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **Tests**: Added tictoc.hpp test coverage (test_tictoc.cpp, 20 assertions) -
+  tests basic timing, tic/toc measurements, labels, dangling tic behavior,
+  timing accuracy, restart functionality; requires Boost timer library (2026-02-06)
 - **Tests**: Added CSparse sparse matrix test coverage (test_csparse.cpp, 65
   assertions) - tests unique_ptr wrappers, mathmatrix↔CSparse conversion,
   memory management (2026-02-06)
