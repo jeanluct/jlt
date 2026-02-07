@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **stlio.hpp**: Fixed formatting bug where library was overriding
   caller's stream format flags (fixed, scientific, precision) - now
   correctly preserves caller's formatting preferences (2026-02-06)
+- **mathvector.hpp**: Added `mag2_traits` specialization for nested
+  mathvectors to support arbitrary nesting depth (2026-02-06)
+- **vector.hpp**: Removed redundant `at()` implementation - now inherits
+  from `std::vector<T>::at()` for better error messages and less code
+  duplication (2026-02-06)
 
 ### Changed
 - **stlio.hpp**: Removed deprecated `jlt::write_to` API and simplified

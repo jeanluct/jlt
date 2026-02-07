@@ -8,6 +8,12 @@
   - Date: 2026-02-03
   - Content: Build/lint/test commands, code style guidelines, project structure
   - Lines: ~150
+- [x] Create CHANGELOG.md documenting project history
+  - File: /home/jeanluc/C/jlt/CHANGELOG.md
+  - Date: 2026-02-06
+  - Content: Comprehensive 22-year history (2004-2026), version control migrations, architectural decisions
+  - Lines: 279
+  - Covers: Recent improvements (2026.1), historical changes by era, bug fixes, external dependencies
 
 ### Critical Bugs
 - [x] Fix matrix.hpp row() method bug (line 251: +m → +n)
@@ -43,6 +49,29 @@
   - Impact: Exception-safe, automatic cleanup even if exceptions thrown during LU decomposition
   - Tests: All 47 matrixutil assertions still passing
   - Date: 2026-02-03
+
+- [x] Remove redundant at() implementation from vector.hpp
+  - Removed: 18 lines of custom at() that duplicated std::vector::at()
+  - Changed: operator[] now directly calls std::vector<T>::at() when JLT_VECTOR_CHECK_BOUNDS enabled
+  - Benefits: Better error messages (includes indices and size), less code duplication, more maintainable
+  - Example error: "vector::_M_range_check: __n (which is 5) >= this->size() (which is 3)"
+  - Tests: All 32 vector assertions and 39 bounds checking assertions passing
+  - Date: 2026-02-06
+
+- [x] Fix mag2_traits for nested mathvectors
+  - Added: Specialization for mathvector<T,S> that recursively calls mag2()
+  - Fixed: Compile error in mathvector_test.cpp when using nested vectors
+  - Impact: Allows mag2() to work with arbitrarily nested mathvectors
+  - Test case: mathvector<mathvector<double>, double> now compiles and works correctly
+  - Date: 2026-02-06
+
+- [x] Fix stlio.hpp formatting bug
+  - Fixed: Library was overriding caller's stream format flags (fixed, scientific, precision)
+  - Removed: strm.setf() calls in print_sequence() that modified caller's flags
+  - Added: Comprehensive flag mirroring (flags, precision, fill, locale) in print_element()
+  - Impact: Caller's formatting preferences now preserved correctly
+  - Tests: All 108 stlio assertions passing
+  - Date: 2026-02-06
 
 ### Test Suite
 - [x] Create comprehensive Catch2 test suite in tests/
