@@ -30,6 +30,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **matlab.hpp**: Refactored duplicate vector<vector<T>> to matrix<T>
   conversion logic into `detail::vector_of_vectors_to_matrix()` helper
   function (2026-02-06)
+- **matrix.hpp**: Refactored print functions (printOn, printMatrixForm,
+  printMathematicaForm) to use shared `detail::print_elements_with_separator()`
+  helper, eliminating code duplication (2026-02-06)
 
 ## [2026.1] - 2026-01-XX
 

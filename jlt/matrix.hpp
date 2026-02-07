@@ -89,6 +89,25 @@ printMatlabForm_nodefaults(MATFile *, const matrix<T>&,
 			   const std::string, const std::string);
 #endif
 
+// Helper: Print elements from range [begin, end) with separator between elements.
+// Avoids trailing separator after the last element.
+template<typename Iterator, typename SepFunc>
+void print_elements_with_separator(std::ostream& strm,
+                                    Iterator begin, Iterator end,
+                                    SepFunc sep_func)
+{
+  if (begin == end) return;
+
+  auto it = begin;
+  strm << *it;
+  ++it;
+
+  for (; it != end; ++it) {
+    sep_func(strm);
+    strm << *it;
+  }
+}
+
 } // namespace detail
 
 
@@ -319,11 +338,10 @@ matrix<T>& operator=(matrix<T>&& M) noexcept
     {
       if (storage.empty()) return strm;
 
-      for (const_iterator i = storage.data(); i != storage.data() + storage.size() - 1; ++i)
-	{
-	  strm << *i << "\t";
-	}
-      strm << *(storage.data() + storage.size() - 1);	// To avoid dangling tab.
+      detail::print_elements_with_separator(strm,
+                                            storage.data(),
+                                            storage.data() + storage.size(),
+                                            [](std::ostream& s) { s << "\t"; });
 
       return strm;
     }
@@ -332,12 +350,12 @@ matrix<T>& operator=(matrix<T>&& M) noexcept
     {
       if (storage.empty()) return strm;
 
-      for (const_iterator i = storage.data(); i != storage.data() + storage.size(); i += n) {
-	for (const_iterator j = i; j != i + n - 1; ++j)
-	  {
-	    strm << *j << "\t";
-	  }
-	strm << *(i + n - 1) << std::endl;	// To avoid dangling tab.
+      for (const_iterator row = storage.data(); row != storage.data() + storage.size(); row += n) {
+        detail::print_elements_with_separator(strm,
+                                              row,
+                                              row + n,
+                                              [](std::ostream& s) { s << "\t"; });
+        strm << std::endl;
       }
 
       return strm;
@@ -356,16 +374,18 @@ matrix<T>& operator=(matrix<T>&& M) noexcept
       if (!name.empty()) strm << name << " = ";
 
       strm << "{";
-      for (const_iterator i = storage.data(); i != storage.data() + storage.size(); i += n) {
-	strm << "{";
-	for (const_iterator j = i; j != i + n - 1; ++j)
-	  {
-	    strm << *j << ",";
-	  }
-	if (i != storage.data() + storage.size() - n)
-	  strm << *(i + n - 1) << "},";
-	else
-	  strm << *(i + n - 1) << "}";
+      for (const_iterator row = storage.data(); row != storage.data() + storage.size(); row += n) {
+        strm << "{";
+        detail::print_elements_with_separator(strm,
+                                              row,
+                                              row + n,
+                                              [](std::ostream& s) { s << ","; });
+        strm << "}";
+
+        // Add comma after each row except the last
+        if (row != storage.data() + storage.size() - n) {
+          strm << ",";
+        }
       }
       // Don't append newline, since in Mathematica it is common to
       // write on same line.

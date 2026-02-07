@@ -237,8 +237,8 @@
 ### Bug Fixes Needed
 - ✅ **FIXED** mathmatrix.hpp: Wrong matrix dimension checks in invert() (line 354 - was checking private members m/n, now uses rows()/columns() public methods)
 - ✅ **FIXED** csparse.hpp: Removed deprecated auto_ptr alias, now uses std::unique_ptr directly; also fixed destructor bugs (inverted logic: if (!get()) → if (get()))
+- ✅ **VERIFIED** matrix.hpp: Constructor exception safety - Already uses std::vector which provides strong exception guarantee (no manual uninitialized_copy needed)
 
-- matrix.hpp: Constructor exception safety (lines 118-121, 150-153) - need try-catch for uninitialized_copy
 - mathmatrix.hpp: LAPACK calls without exception protection (lines 332-360)
 
 ## Future Improvements
@@ -248,20 +248,20 @@
 - ✅ **COMPLETED** Replace C-style casts with `static_cast` - updated polynomial.hpp, svdecomp.hpp, matlab.hpp, eigensystem.hpp, mathmatrix.hpp, tictoc.hpp
 - ✅ **COMPLETED** Add `[[nodiscard]]` attributes - already present on appropriate functions throughout codebase
 - [x] Remove pre-C++11 compatibility code - csparse.hpp auto_ptr fallback removed (2026-02-04)
-- Refactor matrix print functions (matrix.hpp lines 340-397) - similar formatting logic can be factored out
-- Refactor LAPACK interface patterns (eigensystem.hpp lines 48-184) - repeated patterns for different data types
-- ✅ **VERIFIED** Forward declarations in mathmatrix.hpp, mathvector.hpp, polynomial.hpp, matrix.hpp are correct and working
-- ✅ **COMPLETED** Add missing includes (`<algorithm>`) to several files
-  - Added to `polynomial.hpp` (uses std::max/min)
-  - Added to `svdecomp.hpp` (uses std::min/max)
-  - Note: `<memory>` was already present in `csparse.hpp`
-  - Note: `<algorithm>` already present in `eigensystem.hpp`, `matrixutil.hpp`
 - ✅ **COMPLETED** Refactor duplicate logic in matlab.hpp
   - Extracted `vector_of_vectors_to_matrix()` helper function in `detail` namespace
   - Removed duplicate code blocks at lines 206-216 and 382-392
   - Benefits: Single location for logic, better maintainability, removed TODO comments
   - Added empty vector/row handling for robustness
   - Tests: All 42 matlab assertions still passing
+  - Date: 2026-02-06
+
+- ✅ **COMPLETED** Refactor matrix print functions in matrix.hpp
+  - Extracted `detail::print_elements_with_separator()` helper function
+  - Refactored printOn(), printMatrixForm(), and printMathematicaForm()
+  - Benefits: DRY principle, eliminated nested loops, clearer intent with lambdas
+  - Reduced code duplication: 3 methods now share common iteration logic
+  - Tests: All 83 matrix assertions still passing
   - Date: 2026-02-06
 
 ### Testing
