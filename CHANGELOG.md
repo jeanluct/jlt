@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   functions from matlab.hpp instead; improves consistency and keeps matlab.hpp
   cleanly separated from core classes; no functional changes, just API style
   (2026-02-07)
+- **BREAKING**: **vector.hpp**, **matrix.hpp**: Removed all
+  `printMathematicaForm()` member functions - use standalone
+  `jlt::printMathematicaForm(stream, obj, ...)`  functions from
+  mathematica.hpp instead; maintains consistency with matlab.hpp API; cleaner
+  separation of concerns (2026-02-07)
 - **BREAKING**: **mathmatrix.hpp**: Renamed `is_reducible()` to
   `is_primitive()` - the old function was misnamed and actually tested
   primitivity, not reducibility; inverted return logic (now returns true if
@@ -29,6 +34,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   in svdecomp.hpp (2026-02-07)
 
 ### Added
+- **mathematica.hpp**: New header with standalone `printMathematicaForm()`
+  functions for vector and matrix output in Mathematica/Wolfram Language
+  format; uses compact single-line syntax {elem1,elem2,...} for vectors and
+  {{row1},{row2},...} for matrices; no trailing newline (idiomatic for
+  Mathematica expression chaining); cleaner separation of concerns
+  (2026-02-07)
 - **matlab.hpp**: Added `MatlabFile` class for unified file handling -
   automatically manages .mat or .m files based on JLT_MATLAB_LIB_SUPPORT;
   provides RAII-based resource management; eliminates need for duplicate
@@ -221,7 +232,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **mathmatrix.hpp**: Fixed dimension check bug in `invert()` method
 - **mathmatrix.hpp**: Fixed S default value for complex numbers
 - **math.hpp**: Fixed `mag2` for complex numbers and added proper type traits
-- **csparse.hpp**: Fixed destructor bugs and removed thread-unsafe static variables
+- **csparse.hpp**: Fixed destructor bugs and removed thread-unsafe static
+  variables
 - **matrix.hpp**: Removed thread-unsafe static variables from operator[]
 - **reciprocal_polynomial.hpp**: Fixed equality operator bug
 - **CMakeLists.txt**: Fixed MATLAB/LAPACK variable name confusion

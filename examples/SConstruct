@@ -18,7 +18,7 @@ for p in progs:
 for p in lapackprogs:
     lapackenv.Program(p + '.cpp')
 
-matlabenv.Program('matlab_test.cpp')
+matlabenv.Program('matlab_mathematica_test.cpp')
 
 csparseenv.Program('csparse_test.cpp')
 

@@ -5,7 +5,8 @@
 //
 
 #include <string>
-#include <jlt/matlab.hpp>	// include first
+#include <jlt/matlab.hpp>
+#include <jlt/mathematica.hpp>
 #include <jlt/mathmatrix.hpp>
 
 // Write a mathmatrix and a mathvector in Matlab and Mathematica form.
@@ -30,11 +31,11 @@ int main()
 
   cout << endl;
 
-  // Write matrix using member function (Mathematica format).
+  // Write matrix using standalone function (Mathematica format).
   cout << "Text form readable by Mathematica:\n";
-  M.printMathematicaForm(cout,"M","Optional description for M")
+  jlt::printMathematicaForm(cout, M, "M", "Optional description for M")
     << endl;  // for Mathematica form, newline is not included
-  v.printMathematicaForm(cout,"v","Optional description for v")
+  jlt::printMathematicaForm(cout, v, "v", "Optional description for v")
     << endl;  // for Mathematica form, newline is not included
 
   // Write to Matlab file using the unified MatlabFile interface.

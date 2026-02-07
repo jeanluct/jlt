@@ -371,39 +371,6 @@ public:
       return strm;
     }
 
-  std::ostream& printMathematicaForm(std::ostream& strm,
-				     const std::string name = "",
-				     const std::string comment = "") const
-    {
-      if (storage.empty()) return strm;
-
-      // Print comment if specified.
-      if (!comment.empty()) strm << "(* " << comment << " *)" << std::endl;
-
-      // Only print = if variable name is specified.
-      if (!name.empty()) strm << name << " = ";
-
-      strm << "{";
-      for (const_iterator row = storage.data(); row != storage.data() + storage.size(); row += n) {
-        strm << "{";
-        detail::print_elements_with_separator(strm,
-                                              row,
-                                              row + n,
-                                              [](std::ostream& s) { s << ","; });
-        strm << "}";
-
-        // Add comma after each row except the last
-        if (row != storage.data() + storage.size() - n) {
-          strm << ",";
-        }
-      }
-      // Don't append newline, since in Mathematica it is common to
-      // write on same line.
-      strm << "}";
-
-      return strm;
-    }
-
 };
 
 template<class T>
