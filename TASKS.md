@@ -248,7 +248,13 @@
   - Added to `svdecomp.hpp` (uses std::min/max)
   - Note: `<memory>` was already present in `csparse.hpp`
   - Note: `<algorithm>` already present in `eigensystem.hpp`, `matrixutil.hpp`
-- Refactor duplicate logic in matlab.hpp (lines 376-385, 199-209)
+- ✅ **COMPLETED** Refactor duplicate logic in matlab.hpp
+  - Extracted `vector_of_vectors_to_matrix()` helper function in `detail` namespace
+  - Removed duplicate code blocks at lines 206-216 and 382-392
+  - Benefits: Single location for logic, better maintainability, removed TODO comments
+  - Added empty vector/row handling for robustness
+  - Tests: All 42 matlab assertions still passing
+  - Date: 2026-02-06
 
 ### Testing
 - Increase code coverage to >90% (currently: 18 test suites, 1040+ assertions)

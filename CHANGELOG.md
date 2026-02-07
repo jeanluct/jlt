@@ -21,6 +21,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   printing helpers (2026-02-06)
 - **stlio.hpp**: Replaced `JLT_FIELD_SEP_STRING` macro with
   version-guarded `field_sep` for C++17 compatibility
+- **matlab.hpp**: Refactored duplicate vector<vector<T>> to matrix<T>
+  conversion logic into `detail::vector_of_vectors_to_matrix()` helper
+  function (2026-02-06)
 
 ## [2026.1] - 2026-01-XX
 

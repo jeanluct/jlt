@@ -33,6 +33,30 @@ template<typename T> std::ostream&
 printMatlabForm_nodefaults(std::ostream&, const matrix<T>&,
 			   const std::string, const std::string);
 
+// Convert vector<vector<T>> to matrix<T>.
+// Validates that all rows have the same size.
+template<typename T>
+matrix<T> vector_of_vectors_to_matrix(const std::vector<std::vector<T>>& vv)
+{
+  if (vv.empty() || vv[0].empty())
+    {
+      return matrix<T>(0, 0);
+    }
+
+  matrix<T> result(vv.size(), vv[0].size());
+
+  for (typename std::vector<std::vector<T>>::size_type i = 0; i < vv.size(); ++i)
+    {
+      JLT_MATRIX_ASSERT(vv[i].size() == vv[0].size());
+      for (typename std::vector<T>::size_type j = 0; j < vv[i].size(); ++j)
+        {
+          result(i, j) = vv[i][j];
+        }
+    }
+
+  return result;
+}
+
 } // namespace detail
 
 
@@ -203,18 +227,8 @@ void printMatlabForm(MATFile *pmat,
 		     const std::string name = "",
 		     const std::string description = "")
   {
-    jlt::matrix<T> A(Avv.size(),Avv[0].size());
-
-    /* TODO: this should be a constructor; check all rows have same size. */
-    for (int i = 0; i < Avv.size(); ++i)
-      {
-        JLT_MATRIX_ASSERT(Avv[i].size() == Avv[0].size());
-	for (int j = 0; j < Avv[i].size(); ++j)
-	  {
-	    A(i,j) = Avv[i][j];
-	  }
-      }
-    printMatlabForm(pmat,A,name,description);
+    matrix<T> A = detail::vector_of_vectors_to_matrix(Avv);
+    printMatlabForm(pmat, A, name, description);
   }
 #endif // JLT_MATLAB_LIB_SUPPORT
 
@@ -379,18 +393,8 @@ std::ostream& printMatlabForm(std::ostream& strm,
 			      const std::string name = "",
 			      const std::string description = "")
   {
-    jlt::matrix<T> A(Avv.size(),Avv[0].size());
-
-    /* TODO: this should be a constructor; check all rows have same size. */
-    for (int i = 0; i < Avv.size(); ++i)
-      {
-        JLT_MATRIX_ASSERT(Avv[i].size() == Avv[0].size());
-	for (int j = 0; j < Avv[i].size(); ++j)
-	  {
-	    A(i,j) = Avv[i][j];
-	  }
-      }
-    return printMatlabForm(strm,A,name,description);
+    matrix<T> A = detail::vector_of_vectors_to_matrix(Avv);
+    return printMatlabForm(strm, A, name, description);
   }
 
 } // namespace jlt
