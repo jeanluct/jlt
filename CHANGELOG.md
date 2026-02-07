@@ -7,9 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- **Tests**: Added tictoc.hpp test coverage (test_tictoc.cpp, 20 assertions) -
+- **tictoc.hpp**: Now outputs all three timing metrics with labeled format:
+  `0.5w 0.5u 0s  (1.2w 1.2u 0s)` where w=wall, u=user, s=system times in seconds,
+  showing elapsed times followed by cumulative times in parentheses (2026-02-06)
+- **tictoc.hpp**: Added `get_timing()` method for programmatic access to timing
+  information including wall, user, and system times (elapsed and cumulative) (2026-02-06)
+- **Tests**: Added tictoc.hpp test coverage (test_tictoc.cpp, 44 assertions) -
   tests basic timing, tic/toc measurements, labels, dangling tic behavior,
-  timing accuracy, restart functionality; requires Boost timer library (2026-02-06)
+  timing accuracy, restart functionality, output format validation, and programmatic API;
+  requires Boost timer library (2026-02-06)
 - **Tests**: Added CSparse sparse matrix test coverage (test_csparse.cpp, 65
   assertions) - tests unique_ptr wrappers, mathmatrix↔CSparse conversion,
   memory management (2026-02-06)
@@ -29,6 +35,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   duplication (2026-02-06)
 
 ### Changed
+- **tictoc.hpp**: **BREAKING CHANGE** - Output format changed to labeled format
+  with w/u/s suffixes for better readability. Old format was tab-separated numbers
+  without context. New format: `0.5w 0.5u 0s  (1.2w 1.2u 0s)` clearly shows which
+  time is which. (2026-02-06)
+- **tictoc.hpp**: Refactored internal timing storage to use mathvector<double, double>
+  for cleaner vector operations (subtraction, indexing) instead of tracking three
+  separate nanosecond_type variables (2026-02-06)
+- **tictoc.hpp**: Moved nanoseconds_per_second constant to static class member
+  for better code organization (2026-02-06)
 - **stlio.hpp**: Removed deprecated `jlt::write_to` API and simplified
   printing helpers (2026-02-06)
 - **stlio.hpp**: Replaced `JLT_FIELD_SEP_STRING` macro with

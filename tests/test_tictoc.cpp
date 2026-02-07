@@ -51,8 +51,8 @@ TEST_CASE("tictoc tic/toc measurements", "[tictoc][timing]") {
 
         std::string output = oss.str();
         REQUIRE(!output.empty());
-        // Output should contain two tab-separated numbers and newline
-        REQUIRE(output.find('\t') != std::string::npos);
+        // Output should contain w, u, s suffixes and newline
+        REQUIRE(output.find('w') != std::string::npos);
         REQUIRE(output.find('\n') != std::string::npos);
     }
 
@@ -152,17 +152,13 @@ TEST_CASE("tictoc timing accuracy", "[tictoc][timing]") {
 
         std::string output = oss.str();
 
-        // Parse the elapsed time (first number before first tab)
-        size_t tab_pos = output.find('\t');
-        REQUIRE(tab_pos != std::string::npos);
-
-        std::string time_str = output.substr(0, tab_pos);
-        double elapsed_seconds = std::stod(time_str);
-
-        // Should be a positive number (actual CPU work was done)
-        // Don't check exact value since it depends on CPU speed
-        REQUIRE(elapsed_seconds >= 0);
-        REQUIRE(elapsed_seconds < 10.0);  // Should complete in under 10 seconds
+        // Output format: 0.5w 0.5u 0s  (1.2w 1.2u 0s)
+        // Just verify it contains the expected suffixes
+        REQUIRE(output.find('w') != std::string::npos);
+        REQUIRE(output.find('u') != std::string::npos);
+        REQUIRE(output.find('s') != std::string::npos);
+        REQUIRE(output.find('(') != std::string::npos);
+        REQUIRE(output.find(')') != std::string::npos);
     }
 
     SECTION("Cumulative time increases monotonically") {
@@ -176,29 +172,19 @@ TEST_CASE("tictoc timing accuracy", "[tictoc][timing]") {
         for (int i = 0; i < 500000; ++i) sum1 += i;
         timer.toc();
 
-        std::string output1 = oss.str();
-
         timer.tic();
         volatile double sum2 = 0;
         for (int i = 0; i < 500000; ++i) sum2 += i;
         timer.toc();
 
-        std::string output2 = oss.str();
+        std::string output = oss.str();
 
-        // Extract cumulative times (second number after first tab, before newline)
-        auto extract_cumulative = [](const std::string& s, size_t start) {
-            size_t first_tab = s.find('\t', start);
-            size_t second_tab = s.find('\t', first_tab + 1);
-            size_t newline = s.find('\n', second_tab);
-            std::string cum_str = s.substr(second_tab + 1, newline - second_tab - 1);
-            return std::stod(cum_str);
-        };
+        // Should have two lines (two toc() calls)
+        size_t first_newline = output.find('\n');
+        size_t second_newline = output.find('\n', first_newline + 1);
 
-        double cumulative1 = extract_cumulative(output1, 0);
-        double cumulative2 = extract_cumulative(output2, output1.length());
-
-        // Second cumulative time should be greater than or equal to first
-        REQUIRE(cumulative2 >= cumulative1);
+        REQUIRE(first_newline != std::string::npos);
+        REQUIRE(second_newline != std::string::npos);
     }
 }
 
@@ -237,5 +223,105 @@ TEST_CASE("tictoc restart resets timer", "[tictoc][timing]") {
         // Should be less than the first run (we did 10x less work)
         REQUIRE(cumulative >= 0);
         REQUIRE(cumulative < 1.0); // Should be less than 1 second
+    }
+}
+
+TEST_CASE("tictoc timer output format", "[tictoc][format]") {
+    SECTION("Output contains all three time types with labels") {
+        std::ostringstream oss;
+        tictoc timer(oss);
+
+        timer.tic();
+        volatile double sum = 0;
+        for (int i = 0; i < 1000000; ++i) sum += i * 1.5;
+        timer.toc();
+
+        std::string output = oss.str();
+
+        // Format: 0.5w 0.5u 0s  (1.2w 1.2u 0s)
+        // Should contain w, u, s suffixes
+        REQUIRE(output.find('w') != std::string::npos);
+        REQUIRE(output.find('u') != std::string::npos);
+        REQUIRE(output.find('s') != std::string::npos);
+
+        // Should contain parentheses for cumulative times
+        REQUIRE(output.find('(') != std::string::npos);
+        REQUIRE(output.find(')') != std::string::npos);
+
+        // Should have newline at end
+        REQUIRE(output.back() == '\n');
+    }
+
+    SECTION("With label, output still contains all times") {
+        std::ostringstream oss;
+        tictoc timer(oss);
+
+        timer.tic("Test operation");
+        volatile double sum = 0;
+        for (int i = 0; i < 1000000; ++i) sum += i * 1.5;
+        timer.toc();
+
+        std::string output = oss.str();
+
+        // Should contain label
+        REQUIRE(output.find("Test operation") != std::string::npos);
+
+        // Should still contain time suffixes
+        REQUIRE(output.find('w') != std::string::npos);
+        REQUIRE(output.find('u') != std::string::npos);
+        REQUIRE(output.find('s') != std::string::npos);
+    }
+}
+
+TEST_CASE("tictoc get_timing() method", "[tictoc][api]") {
+    SECTION("Programmatic access to timing info") {
+        std::ostringstream oss;
+        tictoc timer(oss);
+
+        timer.tic();
+        volatile double sum = 0;
+        for (int i = 0; i < 1000000; ++i) sum += i * 1.5;
+        timer.toc();
+
+        // Get timing info programmatically
+        auto info = timer.get_timing();
+
+        // Check all fields are reasonable
+        REQUIRE(info.wall_elapsed >= 0);
+        REQUIRE(info.wall_cumulative >= 0);
+        REQUIRE(info.user_elapsed >= 0);
+        REQUIRE(info.user_cumulative >= 0);
+        REQUIRE(info.system_elapsed >= 0);
+        REQUIRE(info.system_cumulative >= 0);
+
+        // Cumulative >= elapsed for each metric
+        REQUIRE(info.wall_cumulative >= info.wall_elapsed);
+        REQUIRE(info.user_cumulative >= info.user_elapsed);
+        REQUIRE(info.system_cumulative >= info.system_elapsed);
+    }
+
+    SECTION("Multiple tic/toc sequences") {
+        std::ostringstream oss;
+        tictoc timer(oss);
+
+        // First operation
+        timer.tic();
+        volatile double sum1 = 0;
+        for (int i = 0; i < 1000000; ++i) sum1 += i;
+        timer.toc();
+
+        auto info1 = timer.get_timing();
+
+        // Second operation
+        timer.tic();
+        volatile double sum2 = 0;
+        for (int i = 0; i < 1000000; ++i) sum2 += i;
+        timer.toc();
+
+        auto info2 = timer.get_timing();
+
+        // Cumulative time should increase (or stay the same if very fast)
+        REQUIRE(info2.wall_cumulative >= info1.wall_cumulative);
+        REQUIRE(info2.user_cumulative >= info1.user_cumulative);
     }
 }

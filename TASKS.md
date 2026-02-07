@@ -165,12 +165,12 @@
   - Defines JLT_MATLAB_LIB_SUPPORT when building
   - Tests tagged with "matlab" label for filtering
 
-**Test Coverage: 1125+ assertions across 21 test suites - ALL PASSING**
+**Test Coverage: 1149+ assertions across 21 test suites - ALL PASSING**
 - 15 core test suites: 919 assertions (no external dependencies)
 - 2 LAPACK test suites: 60 assertions (built conditionally if LAPACK found)
 - 1 Matlab test suite: 61 assertions (built conditionally if Matlab found)
 - 1 CSparse test suite: 65 assertions (built conditionally if CSparse found)
-- 1 Boost test suite: 20 assertions (built conditionally if Boost timer found)
+- 1 Boost test suite: 44 assertions (built conditionally if Boost timer found)
 
 ## In Progress
 
@@ -311,10 +311,13 @@ These tests would only be built if the respective libraries are found:
   - Note: Wrapper for Timothy A. Davis's CSparse library
   - Date: 2026-02-06
 
-- [x] **tictoc.hpp** - Timing utilities ✅ **COMPLETED** - 20 assertions
+- [x] **tictoc.hpp** - Timing utilities ✅ **COMPLETED** - 44 assertions
   - Requires: Boost timer library (`-lboost_timer -lboost_chrono`)
-  - Tests: Basic timing, tic/toc measurements, labels, dangling tic behavior, timing accuracy, restart functionality
-  - Note: Uses `boost::timer::cpu_timer` - measures CPU time (not wall-clock time)
+  - Tests: Basic timing, tic/toc measurements, labels, dangling tic behavior, timing accuracy, restart functionality, output format validation, programmatic API
+  - Features: Outputs all three timing metrics (wall-clock, user CPU, system CPU) with labeled format
+  - Output format: `0.5w 0.5u 0s  (1.2w 1.2u 0s)` - elapsed times, then cumulative in parens; w=wall, u=user, s=system
+  - API: get_timing() method for programmatic access to all timing values
+  - Note: Uses `boost::timer::cpu_timer` - provides complete timing information
   - Date: 2026-02-06
 
 ### Wrapper/Interface Files (Low Priority)

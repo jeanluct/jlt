@@ -22,7 +22,7 @@
 #include <set>
 #include <complex>
 #include <tuple>
-#include "../jlt/stlio.hpp"
+#include <jlt/stlio.hpp>
 
 using namespace jlt;
 
