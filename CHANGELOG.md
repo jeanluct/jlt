@@ -7,13 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **matrix.hpp**: Added standalone `transpose()` function that returns a transposed
+  copy of the matrix, complementing the in-place transpose() method; marked with
+  `[[nodiscard]]` to prevent accidental misuse (2026-02-07)
+- **mathmatrix.hpp**: Added standalone `transpose()` function for consistency with
+  matrix.hpp (2026-02-07)
 - **matrix.hpp**: Implemented transpose() for non-square matrices - now properly
   transposes mxn matrices to nxm matrices using temporary matrix with swapped
   dimensions (2026-02-07)
 - **Tests**: Added comprehensive matrix transpose test coverage (test_matrix_transpose.cpp,
-  155 assertions) - tests square matrices (2x2, 3x3, identity, symmetric), non-square
+  202 assertions) - tests square matrices (2x2, 3x3, identity, symmetric), non-square
   matrices (2x3, 3x2, row vectors, column vectors), edge cases (1x1, different types),
-  and transpose properties (2026-02-07)
+  transpose properties, and standalone function behavior (2026-02-07)
 - **Tests**: Added high-priority test improvements for mathvector (+43 assertions)
   and mathmatrix (+116 assertions) - includes division by zero tests, size mismatch
   documentation, normalization tests, matrix-vector multiplication, and mathematical
@@ -46,6 +51,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   duplication (2026-02-06)
 
 ### Changed
+- **matrix.hpp**: Optimized in-place transpose() to use `std::swap()` instead of
+  manual 3-way swap for cleaner, more idiomatic code (2026-02-07)
 - **tictoc.hpp**: **BREAKING CHANGE** - Output format changed to labeled format
   with w/u/s suffixes for better readability. Old format was tab-separated numbers
   without context. New format: `0.5w 0.5u 0s  (1.2w 1.2u 0s)` clearly shows which

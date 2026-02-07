@@ -288,18 +288,18 @@ public:
       return *this;
     }
 
-// Move assignment operator
-matrix<T>& operator=(matrix<T>&& M) noexcept
-  {
-    if (&M != this) {
-      m = M.m;
-      n = M.n;
-      storage = std::move(M.storage);
-      M.m = 0;
-      M.n = 0;
+  // Move assignment operator
+  matrix<T>& operator=(matrix<T>&& M) noexcept
+    {
+      if (&M != this) {
+        m = M.m;
+        n = M.n;
+        storage = std::move(M.storage);
+        M.m = 0;
+        M.n = 0;
+      }
+      return *this;
     }
-    return *this;
-  }
 
   //
   // Transpose
@@ -309,13 +309,12 @@ matrix<T>& operator=(matrix<T>&& M) noexcept
       if (rows() == columns())
 	{
 	  // Square: do transpose "in place"
-	  for (size_type i = 0; i < rows()-1; ++i)
+	  // Only swap upper triangle with lower triangle (diagonal unchanged)
+	  for (size_type i = 0; i < rows(); ++i)
 	    {
 	      for (size_type j = i+1; j < columns(); ++j)
 		{
-		  T temp = (*this)(j,i);
-		  (*this)(j,i) = (*this)(i,j);
-		  (*this)(i,j) = temp;
+		  std::swap((*this)(i,j), (*this)(j,i));
 		}
 	    }
 	}
@@ -440,6 +439,16 @@ std::istream& operator>>(std::istream& strm, matrix<T>& M)
     }
 
   return strm;
+}
+
+// Standalone transpose function - returns a transposed copy of the matrix
+template<class T>
+[[nodiscard]]
+inline matrix<T> transpose(const matrix<T>& M)
+{
+  matrix<T> result(M);
+  result.transpose();
+  return result;
 }
 
 } // namespace jlt

@@ -3,7 +3,7 @@
 
 using namespace jlt;
 
-TEST_CASE("matrix transpose for square matrices", "[matrix][transpose]") {
+TEST_CASE("matrix transpose method for square matrices", "[matrix][transpose]") {
     SECTION("2x2 transpose") {
         matrix<double> M(2, 2, {
             1.0, 2.0,
@@ -263,5 +263,119 @@ TEST_CASE("matrix transpose edge cases", "[matrix][transpose]") {
                 REQUIRE(M(i, j) == 0.0);
             }
         }
+    }
+}
+
+
+TEST_CASE("standalone transpose function", "[matrix][transpose][standalone]") {
+    SECTION("transpose returns a copy (square matrix)") {
+        matrix<double> M(2, 2, {
+            1.0, 2.0,
+            3.0, 4.0
+        });
+
+        auto M_T = transpose(M);
+
+        // Result is transposed
+        REQUIRE(M_T.rows() == 2);
+        REQUIRE(M_T.columns() == 2);
+        REQUIRE(M_T(0, 0) == 1.0);
+        REQUIRE(M_T(0, 1) == 3.0);
+        REQUIRE(M_T(1, 0) == 2.0);
+        REQUIRE(M_T(1, 1) == 4.0);
+
+        // Original is unchanged
+        REQUIRE(M(0, 0) == 1.0);
+        REQUIRE(M(0, 1) == 2.0);
+        REQUIRE(M(1, 0) == 3.0);
+        REQUIRE(M(1, 1) == 4.0);
+    }
+
+    SECTION("transpose returns a copy (non-square matrix)") {
+        matrix<double> M(2, 3, {
+            1.0, 2.0, 3.0,
+            4.0, 5.0, 6.0
+        });
+
+        auto M_T = transpose(M);
+
+        // Result is transposed (3x2)
+        REQUIRE(M_T.rows() == 3);
+        REQUIRE(M_T.columns() == 2);
+        REQUIRE(M_T(0, 0) == 1.0);
+        REQUIRE(M_T(0, 1) == 4.0);
+        REQUIRE(M_T(1, 0) == 2.0);
+        REQUIRE(M_T(1, 1) == 5.0);
+        REQUIRE(M_T(2, 0) == 3.0);
+        REQUIRE(M_T(2, 1) == 6.0);
+
+        // Original is unchanged (2x3)
+        REQUIRE(M.rows() == 2);
+        REQUIRE(M.columns() == 3);
+        REQUIRE(M(0, 0) == 1.0);
+        REQUIRE(M(0, 2) == 3.0);
+        REQUIRE(M(1, 1) == 5.0);
+    }
+
+    SECTION("transpose can be chained") {
+        matrix<double> M(2, 3, {
+            1.0, 2.0, 3.0,
+            4.0, 5.0, 6.0
+        });
+
+        // Double transpose returns to original
+        auto M_TT = transpose(transpose(M));
+
+        REQUIRE(M_TT.rows() == 2);
+        REQUIRE(M_TT.columns() == 3);
+
+        for (auto i = 0u; i < M.rows(); ++i) {
+            for (auto j = 0u; j < M.columns(); ++j) {
+                REQUIRE(M_TT(i, j) == M(i, j));
+            }
+        }
+    }
+
+    SECTION("transpose of identity is identity") {
+        matrix<double> I(3, 3, {
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0
+        });
+
+        auto I_T = transpose(I);
+
+        for (auto i = 0u; i < 3; ++i) {
+            for (auto j = 0u; j < 3; ++j) {
+                REQUIRE(I_T(i, j) == I(i, j));
+            }
+        }
+    }
+
+    SECTION("transpose preserves type") {
+        matrix<int> M(2, 2, {
+            1, 2,
+            3, 4
+        });
+
+        auto M_T = transpose(M);
+
+        REQUIRE(M_T(0, 0) == 1);
+        REQUIRE(M_T(0, 1) == 3);
+        REQUIRE(M_T(1, 0) == 2);
+        REQUIRE(M_T(1, 1) == 4);
+    }
+
+    SECTION("transpose can be assigned") {
+        matrix<double> M(2, 3, {
+            1.0, 2.0, 3.0,
+            4.0, 5.0, 6.0
+        });
+
+        matrix<double> M_T = transpose(M);
+
+        REQUIRE(M_T.rows() == 3);
+        REQUIRE(M_T.columns() == 2);
+        REQUIRE(M_T(1, 1) == 5.0);
     }
 }

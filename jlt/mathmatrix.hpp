@@ -753,6 +753,16 @@ inline mathmatrix<T,S> diagonal_matrix(const mathvector<T,S>& v,
   return diag;
 }
 
+// Standalone transpose function - returns a transposed copy of the matrix
+template<class T, class S>
+[[nodiscard]]
+inline mathmatrix<T,S> transpose(const mathmatrix<T,S>& M)
+{
+  mathmatrix<T,S> result(M);
+  result.transpose();
+  return result;
+}
+
 } // namespace jlt
 
 #endif // JLT_MATHMATRIX_HPP
