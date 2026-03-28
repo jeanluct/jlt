@@ -344,7 +344,6 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
       // For simplicity, we'll use the same approach as is_primitive
       // but with power (n-1) instead of (n²-2n+2)
       auto power = n - 1;
-      auto pmax = static_cast<size_type>(ceil(log2(power)));
 
       mathmatrix<T,S> Mp(n,n), Mpower = M;
 
