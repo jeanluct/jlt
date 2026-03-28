@@ -4,12 +4,84 @@ project(jlt_tests)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(JLT_TESTS_MAX_WARNINGS "Enable maximal compiler warnings" OFF)
+option(JLT_TESTS_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+
+set(JLT_TEST_WARNING_FLAGS)
+set(JLT_TEST_BASE_WARNING_FLAGS)
+set(JLT_TEST_MAX_COMMON_WARNING_FLAGS)
+set(JLT_TEST_MAX_COMPILER_WARNING_FLAGS)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    list(APPEND JLT_TEST_BASE_WARNING_FLAGS
+        -Wall
+    )
+endif()
+
+if(JLT_TESTS_MAX_WARNINGS)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        list(APPEND JLT_TEST_MAX_COMMON_WARNING_FLAGS
+            -Wextra
+            -Wpedantic
+            -Wcast-align
+            -Wcast-qual
+            -Wconversion
+            -Wsign-conversion
+            -Wdouble-promotion
+            -Wfloat-equal
+            -Wformat=2
+            -Wimplicit-fallthrough
+            -Wmissing-declarations
+            -Wnon-virtual-dtor
+            -Wnull-dereference
+            -Wold-style-cast
+            -Woverloaded-virtual
+            -Wredundant-decls
+            -Wshadow
+            -Wswitch-enum
+            -Wundef
+            -Wuninitialized
+            -Wzero-as-null-pointer-constant
+        )
+
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            list(APPEND JLT_TEST_MAX_COMPILER_WARNING_FLAGS
+                -Wlogical-op
+                -Wuseless-cast
+                -Wduplicated-cond
+                -Wduplicated-branches
+            )
+        endif()
+
+        list(APPEND JLT_TEST_WARNING_FLAGS
+            ${JLT_TEST_MAX_COMMON_WARNING_FLAGS}
+            ${JLT_TEST_MAX_COMPILER_WARNING_FLAGS}
+        )
+    endif()
+endif()
+
 # Include the jlt library headers
 include_directories(..)
 
 # Create a library from catch.hpp (to speed up compilation)
 add_library(catch2 STATIC catch_main.cpp)
 target_include_directories(catch2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_library(jlt_test_warnings INTERFACE)
+foreach(jlt_warn_flag IN LISTS JLT_TEST_BASE_WARNING_FLAGS)
+    target_compile_options(jlt_test_warnings INTERFACE
+        $<$<COMPILE_LANGUAGE:CXX>:${jlt_warn_flag}>)
+endforeach()
+if(JLT_TESTS_MAX_WARNINGS)
+    foreach(jlt_warn_flag IN LISTS JLT_TEST_WARNING_FLAGS)
+        target_compile_options(jlt_test_warnings INTERFACE
+            $<$<COMPILE_LANGUAGE:CXX>:${jlt_warn_flag}>)
+    endforeach()
+endif()
+if(JLT_TESTS_WARNINGS_AS_ERRORS)
+    target_compile_options(jlt_test_warnings INTERFACE
+        $<$<COMPILE_LANGUAGE:CXX>:-Werror>)
+endif()
 
 # Find LAPACK (optional - tests will only be built if LAPACK is found)
 find_package(LAPACK)
@@ -21,100 +93,100 @@ endif()
 
 # Core container tests
 add_executable(test_vector test_vector.cpp)
-target_link_libraries(test_vector catch2)
+target_link_libraries(test_vector catch2 jlt_test_warnings)
 add_test(NAME test_vector COMMAND test_vector)
 
 add_executable(test_matrix test_matrix.cpp)
-target_link_libraries(test_matrix catch2)
+target_link_libraries(test_matrix catch2 jlt_test_warnings)
 add_test(NAME test_matrix COMMAND test_matrix)
 
 # Matrix transpose tests (comprehensive tests for square and non-square)
 add_executable(test_matrix_transpose test_matrix_transpose.cpp)
-target_link_libraries(test_matrix_transpose catch2)
+target_link_libraries(test_matrix_transpose catch2 jlt_test_warnings)
 add_test(NAME test_matrix_transpose COMMAND test_matrix_transpose)
 
 # Mathematical vector tests
 add_executable(test_mathvector test_mathvector.cpp)
-target_link_libraries(test_mathvector catch2)
+target_link_libraries(test_mathvector catch2 jlt_test_warnings)
 add_test(NAME test_mathvector COMMAND test_mathvector)
 
 # Mathematical matrix tests
 add_executable(test_mathmatrix test_mathmatrix.cpp)
-target_link_libraries(test_mathmatrix catch2)
+target_link_libraries(test_mathmatrix catch2 jlt_test_warnings)
 add_test(NAME test_mathmatrix COMMAND test_mathmatrix)
 
 # Polynomial tests
 add_executable(test_polynomial test_polynomial.cpp)
-target_link_libraries(test_polynomial catch2)
+target_link_libraries(test_polynomial catch2 jlt_test_warnings)
 add_test(NAME test_polynomial COMMAND test_polynomial)
 
 # Matrix utility tests (LU, QR, inverse - no LAPACK required)
 add_executable(test_matrixutil test_matrixutil.cpp)
-target_link_libraries(test_matrixutil catch2)
+target_link_libraries(test_matrixutil catch2 jlt_test_warnings)
 add_test(NAME test_matrixutil COMMAND test_matrixutil)
 
 # Exception tests
 add_executable(test_exceptions test_exceptions.cpp)
-target_link_libraries(test_exceptions catch2)
+target_link_libraries(test_exceptions catch2 jlt_test_warnings)
 add_test(NAME test_exceptions COMMAND test_exceptions)
 
 # Math utility tests (Mod, Sign functions)
 add_executable(test_math test_math.cpp)
-target_link_libraries(test_math catch2)
+target_link_libraries(test_math catch2 jlt_test_warnings)
 add_test(NAME test_math COMMAND test_math)
 
 # Command execution tests
 add_executable(test_command test_command.cpp)
-target_link_libraries(test_command catch2)
+target_link_libraries(test_command catch2 jlt_test_warnings)
 add_test(NAME test_command COMMAND test_command)
 
 # VCS (Version Control System) tests
 add_executable(test_vcs test_vcs.cpp)
-target_link_libraries(test_vcs catch2)
+target_link_libraries(test_vcs catch2 jlt_test_warnings)
 add_test(NAME test_vcs COMMAND test_vcs)
 
 # Display task tests
 add_executable(test_display_task test_display_task.cpp)
-target_link_libraries(test_display_task catch2)
+target_link_libraries(test_display_task catch2 jlt_test_warnings)
 add_test(NAME test_display_task COMMAND test_display_task)
 
 # STL I/O tests (container output formatting)
 add_executable(test_stlio test_stlio.cpp)
-target_link_libraries(test_stlio catch2)
+target_link_libraries(test_stlio catch2 jlt_test_warnings)
 add_test(NAME test_stlio COMMAND test_stlio)
 
 # Reciprocal polynomial tests
 add_executable(test_reciprocal_polynomial test_reciprocal_polynomial.cpp)
-target_link_libraries(test_reciprocal_polynomial catch2)
+target_link_libraries(test_reciprocal_polynomial catch2 jlt_test_warnings)
 add_test(NAME test_reciprocal_polynomial COMMAND test_reciprocal_polynomial)
 
 # Finite difference tests
 add_executable(test_finitediff test_finitediff.cpp)
-target_link_libraries(test_finitediff catch2)
+target_link_libraries(test_finitediff catch2 jlt_test_warnings)
 add_test(NAME test_finitediff COMMAND test_finitediff)
 
 # Matlab output format tests (text mode, no Matlab libraries required)
 add_executable(test_matlab test_matlab.cpp)
-target_link_libraries(test_matlab catch2)
+target_link_libraries(test_matlab catch2 jlt_test_warnings)
 add_test(NAME test_matlab COMMAND test_matlab)
 
 # LAPACK-dependent tests (only if LAPACK is found)
 if(LAPACK_FOUND)
     # Direct LAPACK wrapper tests (overload resolution and basic functionality)
     add_executable(test_lapack test_lapack.cpp)
-    target_link_libraries(test_lapack catch2 ${LAPACK_LIBRARIES})
+    target_link_libraries(test_lapack catch2 jlt_test_warnings ${LAPACK_LIBRARIES})
     add_test(NAME test_lapack COMMAND test_lapack)
     set_tests_properties(test_lapack PROPERTIES LABELS "lapack")
 
     # Eigensystem tests (eigenvalue/eigenvector decomposition)
     add_executable(test_eigensystem test_eigensystem.cpp)
-    target_link_libraries(test_eigensystem catch2 ${LAPACK_LIBRARIES})
+    target_link_libraries(test_eigensystem catch2 jlt_test_warnings ${LAPACK_LIBRARIES})
     add_test(NAME test_eigensystem COMMAND test_eigensystem)
     set_tests_properties(test_eigensystem PROPERTIES LABELS "lapack")
 
     # SVD tests (singular value decomposition)
     add_executable(test_svdecomp test_svdecomp.cpp)
-    target_link_libraries(test_svdecomp catch2 ${LAPACK_LIBRARIES})
+    target_link_libraries(test_svdecomp catch2 jlt_test_warnings ${LAPACK_LIBRARIES})
     add_test(NAME test_svdecomp COMMAND test_svdecomp)
     set_tests_properties(test_svdecomp PROPERTIES LABELS "lapack")
 endif()
@@ -160,7 +232,7 @@ endif()
 if(MATLAB_FOUND)
     add_executable(test_matlab_lib test_matlab_lib.cpp)
     target_include_directories(test_matlab_lib PRIVATE ${MATLAB_INCLUDE_DIR})
-    target_link_libraries(test_matlab_lib catch2 ${MATLAB_LIBRARIES})
+    target_link_libraries(test_matlab_lib catch2 jlt_test_warnings ${MATLAB_LIBRARIES})
     target_compile_definitions(test_matlab_lib PRIVATE JLT_MATLAB_LIB_SUPPORT)
     add_test(NAME test_matlab_lib COMMAND test_matlab_lib)
     set_tests_properties(test_matlab_lib PROPERTIES LABELS "matlab")
@@ -174,7 +246,7 @@ endif()
 set(CSPARSE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../extern/CSparse")
 set(CSPARSE_INCLUDE_DIR "${CSPARSE_DIR}/Include")
 
-# Build CSparse as part of the tests build.
+# In-tree integration approach for CSparse.
 add_subdirectory("${CSPARSE_DIR}" "${CMAKE_BINARY_DIR}/csparse-build")
 
 message(STATUS "CSparse - building sparse matrix tests")
@@ -191,7 +263,7 @@ message(STATUS "  Target: ${CSPARSE_TARGET}")
 
 add_executable(test_csparse test_csparse.cpp)
 target_include_directories(test_csparse PRIVATE ${CSPARSE_INCLUDE_DIR})
-target_link_libraries(test_csparse catch2 ${CSPARSE_TARGET})
+target_link_libraries(test_csparse catch2 jlt_test_warnings ${CSPARSE_TARGET})
 add_test(NAME test_csparse COMMAND test_csparse)
 set_tests_properties(test_csparse PROPERTIES LABELS "csparse")
 
@@ -207,9 +279,9 @@ if(Boost_FOUND AND Boost_TIMER_FOUND)
     # tictoc tests
     add_executable(test_tictoc test_tictoc.cpp)
     if(Boost_CHRONO_FOUND)
-        target_link_libraries(test_tictoc catch2 Boost::timer Boost::chrono)
+        target_link_libraries(test_tictoc catch2 jlt_test_warnings Boost::timer Boost::chrono)
     else()
-        target_link_libraries(test_tictoc catch2 Boost::timer)
+        target_link_libraries(test_tictoc catch2 jlt_test_warnings Boost::timer)
     endif()
     add_test(NAME test_tictoc COMMAND test_tictoc)
     set_tests_properties(test_tictoc PROPERTIES LABELS "boost")
@@ -220,7 +292,7 @@ endif()
 
 # Bounds checking tests - compiled with bounds checking flags enabled
 add_executable(test_bounds_checking test_bounds_checking.cpp)
-target_link_libraries(test_bounds_checking catch2)
+target_link_libraries(test_bounds_checking catch2 jlt_test_warnings)
 target_compile_definitions(test_bounds_checking PRIVATE JLT_VECTOR_CHECK_BOUNDS JLT_MATRIX_CHECK_BOUNDS)
 add_test(NAME test_bounds_checking COMMAND test_bounds_checking)
 set_tests_properties(test_bounds_checking PROPERTIES LABELS "bounds")
