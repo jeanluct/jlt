@@ -4,12 +4,13 @@ function x = cs_dmsol (A,b)
 %   structurally rank deficient, and b is a full vector.
 %
 %   Example:
-%       Prob = UFget ('HB/arc130') ; A = Prob.A ; b = rand (size (A,1),1) ;
+%       Prob = ssget ('HB/arc130') ; A = Prob.A ; b = rand (size (A,1),1) ;
 %       x = cs_dmsol (A,b) ; norm (A*x-b)
 %
 %   See also CS_QRSOL, CS_LUSOL, CS_DMPERM, SPRANK, RANK.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 [m n] = size (A) ;
 [p q r s cc rr] = cs_dmperm (A) ;

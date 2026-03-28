@@ -13,12 +13,13 @@ function [vnz,rnz,parent,c,leftmost,p,q] = cs_sqr (A)                       %#ok
 %   q is the fill-reducing ordering, if requested.
 %
 %   Example:
-%       Prob = UFget ('HB/ibm32') ; A = Prob.A ;
+%       Prob = ssget ('HB/ibm32') ; A = Prob.A ;
 %       [vnz, rnz, parent, c, leftmost, p, q] = cs_sqr (A) ;
 %       cspy (A (p,q)) ;
 %
 %   See also CS_AMD, CS_QR.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_sqr mexFunction not found') ;

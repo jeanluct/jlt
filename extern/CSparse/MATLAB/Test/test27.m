@@ -5,12 +5,13 @@ function test27
 %   test27
 % See also: testall
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 clear functions
 rand ('state', 0) ;
 
-Prob = UFget ('HB/ibm32') ;
+Prob = ssget ('HB/ibm32') ;
 A = Prob.A ;
 A = A (1:10,:) ;
 [m n] = size (A) ;

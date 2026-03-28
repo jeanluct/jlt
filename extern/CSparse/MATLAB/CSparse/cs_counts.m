@@ -8,11 +8,12 @@ function c = cs_counts (A,mode)                                             %#ok
 %   c = cs_counts(A,'sym'), same as cs_counts(A).
 %
 %   Example:
-%       Prob = UFget ('HB/bcsstk01') ; A = Prob.A ; c = cs_counts (A)
+%       Prob = ssget ('HB/bcsstk01') ; A = Prob.A ; c = cs_counts (A)
 %       full (sum (spones (chol (A)')))
 %
 %   See also SYMBFACT.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_counts mexFunction not found') ;

@@ -5,11 +5,12 @@ function test9
 %   test9
 % See also: testall
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 rand ('state', 0) ;
 
-index = UFget ;
+index = ssget ;
 [ignore f] = sort (max (index.nrows, index.ncols)) ;
 f = f (1:100) ;
 clf
@@ -19,7 +20,7 @@ clf
 % f = 186
 
 for i = f
-    Prob = UFget (i) ;
+    Prob = ssget (i) ;
     disp (Prob) ;
     A = Prob.A ;
     [m n] = size (A) ;

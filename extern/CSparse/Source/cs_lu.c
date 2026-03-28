@@ -1,3 +1,6 @@
+// CSparse/Source/cs_lu: sparse left-looking LU factorization
+// CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+// SPDX-License-Identifier: LGPL-2.1+
 #include "cs.h"
 /* [L,U,pinv]=lu(A, [q lnz unz]). lnz and unz can be guess */
 csn *cs_lu (const cs *A, const css *S, double tol)
@@ -56,6 +59,7 @@ csn *cs_lu (const cs *A, const css *S, double tol)
             }
         }
         if (ipiv == -1 || a <= 0) return (cs_ndone (N, NULL, xi, x, 0)) ;
+        /* tol=1 for  partial pivoting; tol<1 gives preference to diagonal */
         if (pinv [col] < 0 && fabs (x [col]) >= a*tol) ipiv = col ;
         /* --- Divide by pivot ---------------------------------------------- */
         pivot = x [ipiv] ;          /* the chosen pivot */

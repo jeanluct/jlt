@@ -5,7 +5,8 @@ function test28
 %   test28
 % See also: testall
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 clear functions
 
@@ -21,7 +22,7 @@ for n = 1:100
     end
 end
 
-index = UFget ;
+index = ssget ;
 [ignore f] = sort (index.nnz) ;
 
 fprintf ('p=dmperm (std, rand, rev)  [p,q,r,s]=dmperm (std, rand, rev)\n') ;
@@ -38,7 +39,7 @@ D3 = zeros (nmat,1) ;
 for k = 1:nmat
 
     i = f (k) ;
-    Prob = UFget (i,index) ;
+    Prob = ssget (i,index) ;
     A = Prob.A ;
     [m n] = size (A) ;
     fprintf ('%35s: ', Prob.name) ;

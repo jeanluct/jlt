@@ -13,7 +13,7 @@ function [V,beta,p,R,q] = cs_qr (A)                                         %#ok
 %
 %   Example:
 %
-%       Prob = UFget ('HB/well1033') ; A = Prob.A ; [m n] = size (A) ;
+%       Prob = ssget ('HB/well1033') ; A = Prob.A ; [m n] = size (A) ;
 %       b = rand (m,1) ;
 %       [V,beta,p,R,q] = cs_qr (A) ; % QR factorization of A(p,q)
 %       b1 = cs_qleft (V, beta, p, b) ;
@@ -27,6 +27,7 @@ function [V,beta,p,R,q] = cs_qr (A)                                         %#ok
 %
 %   See also CS_AMD, CS_QRIGHT, CS_QR, CS_DMPERM, QR, COLAMD.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_qr mexFunction not found') ;

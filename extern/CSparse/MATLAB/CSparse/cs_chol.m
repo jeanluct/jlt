@@ -7,12 +7,13 @@ function [L,p] = cs_chol (A,drop)                                           %#ok
 %   cs_chol(A,0) keeps them.  They must be kept for cs_updown to work properly.
 %
 %   Example:
-%       Prob = UFget ('HB/bcsstk01') ; A = Prob.A ; [L,p] = cs_chol (A) ;
+%       Prob = ssget ('HB/bcsstk01') ; A = Prob.A ; [L,p] = cs_chol (A) ;
 %       cspy (A (p,p)) ;
 %       cspy (L) ;
 %
 %   See also CS_AMD, CS_UPDOWN, CHOL, AMD, SYMAMD.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_chol mexFunction not found') ;

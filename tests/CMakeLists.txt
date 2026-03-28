@@ -168,11 +168,12 @@ endif()
 
 # CSparse sparse matrix library
 # CSparse is a sparse matrix library by Timothy A. Davis
-# http://www.cise.ufl.edu/research/sparse/CSparse
+# https://www.suitesparse.com
+# Source code: https://github.com/DrTimothyAldenDavis/SuiteSparse/
 # Included in extern/CSparse/ directory (GNU LGPL license)
 set(CSPARSE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../extern/CSparse")
 set(CSPARSE_INCLUDE_DIR "${CSPARSE_DIR}/Include")
-set(CSPARSE_LIBRARY "${CSPARSE_DIR}/Lib/libcsparse.a")
+set(CSPARSE_LIBRARY "${CSPARSE_DIR}/build/libcsparse.a")
 
 message(STATUS "CSparse - building sparse matrix tests")
 message(STATUS "  Include: ${CSPARSE_INCLUDE_DIR}")

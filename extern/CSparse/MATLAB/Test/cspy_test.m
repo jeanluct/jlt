@@ -4,9 +4,10 @@ function cspy_test
 %   cspy_test
 % See also: testall
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
-index = UFget ;
+index = ssget ;
 
 [ignore f] = sort (max (index.nrows, index.ncols)) ;
 
@@ -17,7 +18,7 @@ clf
 
 for i = f
 
-    Prob = UFget (i,index) ;
+    Prob = ssget (i,index) ;
     disp (Prob) ;
     A = Prob.A ;
     try

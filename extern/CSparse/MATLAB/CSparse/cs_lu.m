@@ -17,12 +17,13 @@ function [L,U,p,q] = cs_lu (A,tol)                                          %#ok
 %   pivoting; the diagonal is selected if it is >= tol * max(abs(A(:,k))).
 %
 %   Example:
-%       Prob = UFget ('HB/arc130') ; A = Prob.A ; [L,U,p,q] = cs_lu (A) ;
+%       Prob = ssget ('HB/arc130') ; A = Prob.A ; [L,U,p,q] = cs_lu (A) ;
 %       cspy (A (p,q)) ; cspy (L+U) ;
 %       norm (L*U - A(p,q), 1)
 %
 %   See also CS_AMD, LU, UMFPACK, AMD, COLAMD.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_lu mexFunction not found') ;

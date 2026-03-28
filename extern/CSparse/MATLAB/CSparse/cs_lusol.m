@@ -12,11 +12,12 @@ function x = cs_lusol (A,b,order,tol)                                       %#ok
 %   dense rows, 3: amd(A'*A).
 %
 %   Example:
-%       Prob = UFget ('HB/arc130') ; A = Prob.A ; n = size(A,1) ;
+%       Prob = ssget ('HB/arc130') ; A = Prob.A ; n = size(A,1) ;
 %       b = rand (n,1) ; x = cs_lusol (A,b) ; norm (A*x-b)
 %
 %   See also CS_LU, CS_AMD, CS_CHOLSOL, CS_QRSOL, MLDIVIDE.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_lusol mexFunction not found') ;

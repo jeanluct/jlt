@@ -6,11 +6,12 @@ function [p,r] = cs_scc (A)                                                 %#ok
 %   For bipartite or rectangular graphs, use cs_scc2.
 %
 %   Example:
-%       Prob = UFget ('HB/arc130') ; A = Prob.A ; [p r] = cs_scc (A) ;
+%       Prob = ssget ('HB/arc130') ; A = Prob.A ; [p r] = cs_scc (A) ;
 %       cspy (A (p,p)) ;
 %
 %   See also CS_DMPERM, DMPERM, CS_SCC2.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_scc mexFunction not found') ;

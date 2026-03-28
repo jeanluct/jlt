@@ -2,33 +2,20 @@
 *.o
 *.a
 
-# Demo executables
-Demo/cs_demo1
-Demo/cs_demo2
-Demo/cs_demo3
-
 # Test coverage executables and scripts
+Tcov/covall
+Tcov/cover
+Tcov/covs
 Tcov/cs_demo1
 Tcov/cs_demo2
 Tcov/cs_demo3
 Tcov/cstcov_test
-Tcov/covall
-Tcov/covall.linux
-Tcov/covall.sol
-Tcov/cover
-Tcov/covs
 Tcov/gcovs
 
 # Coverage data files
 Tcov/*.gcov
 Tcov/*.gcda
 Tcov/*.gcno
-Tcov/nil
-Tcov/zero
 
 # Build artifacts
-*.mexglx
-*.mexa64
-*.mexmaci64
-*.mexw32
-*.mexw64
+*.mex*

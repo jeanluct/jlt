@@ -5,13 +5,14 @@ function test16
 %   test16
 % See also: testall
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 rand ('state', 0) ;
 randn ('state', 0) ;
 clf
 
-index = UFget ;
+index = ssget ;
 [ignore f] = sort (max (index.nrows, index.ncols)) ;
 f = f (1:200) ;
 skip = 811 ;
@@ -22,7 +23,7 @@ for i = f
     if (any (i == skip))
         continue
     end
-    Prob = UFget (i) ;
+    Prob = ssget (i) ;
     A = spones (Prob.A) ;
     Aorig = A ;
     [m n] = size (A) ;

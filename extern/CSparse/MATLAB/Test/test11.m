@@ -5,15 +5,16 @@ function test11
 %   test11
 % See also: testall
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 clear functions
-index = UFget ;
+index = ssget ;
 [ignore f] = sort (max (index.nrows, index.ncols)) ;
 f = f (1:200) ;
 
 for i = f
-    Prob = UFget (i, index) ;
+    Prob = ssget (i, index) ;
     disp (Prob) ;
     A = Prob.A ;
     [m n] = size (A) ;

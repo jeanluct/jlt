@@ -5,9 +5,10 @@ function test_qrsol
 %   test_qrsol
 % See also: testall
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
-index = UFget ;
+index = ssget ;
 [ignore f] = sort (max (index.nrows, index.ncols)) ;
 
 k = 0 ;
@@ -15,7 +16,7 @@ rs1 = zeros (1,0) ;
 rs2 = zeros (1,0) ;
 
 for i = f
-    Prob = UFget (i,index) ;
+    Prob = ssget (i,index) ;
     A = Prob.A ;
     if (~isreal (A))
         continue ;

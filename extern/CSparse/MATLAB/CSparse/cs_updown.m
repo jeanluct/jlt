@@ -10,7 +10,7 @@ function L = cs_updown (L, c, parent, sigma)                                %#ok
 %   cancellation (use cs_chol(A,0)).
 %
 %   Example:
-%       Prob = UFget ('HB/bcsstk01') ; A = Prob.A ; n = size (A,1) ;
+%       Prob = ssget ('HB/bcsstk01') ; A = Prob.A ; n = size (A,1) ;
 %       L = cs_chol (A,0) ;
 %       parent = cs_etree (A) ;
 %       c = sprand (L (:, floor(n/2))) ;
@@ -20,6 +20,7 @@ function L = cs_updown (L, c, parent, sigma)                                %#ok
 %
 %   See also CS_ETREE, CS_CHOL, ETREE, CHOLUPDATE, CHOL.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_updown mexFunction not found') ;

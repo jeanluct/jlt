@@ -4,13 +4,14 @@ function A = cs_sparse (i,j,x)                                              %#ok
 %   be real, and the length of i, j, and x must be the same.
 %
 %   Example:
-%       Prob = UFget ('HB/arc130') ; S = Prob.A ;
+%       Prob = ssget ('HB/arc130') ; S = Prob.A ;
 %       [i j x] = find (S) ;
 %       A = cs_sparse (i,j,x) ;
 %       S-A
 %
 %   See also FIND, SPARSE, SPCONVERT.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_sparse mexFunction not found') ;

@@ -12,13 +12,14 @@ function p = cs_amd (A,order)                                               %#ok
 %                   where [m n] = size(A), except that colamd does not form A'*A
 %                   explicitly.
 %   Example:
-%       Prob = UFget ('HB/bcsstk01') ; A = Prob.A ;
+%       Prob = ssget ('HB/bcsstk01') ; A = Prob.A ;
 %       p = cs_amd (A) ;
 %       nnz (chol (A))
 %       nnz (chol (A (p,p)))
 %
 %   See also AMD, COLAMD, SYMAMD.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_amd mexFunction not found') ;

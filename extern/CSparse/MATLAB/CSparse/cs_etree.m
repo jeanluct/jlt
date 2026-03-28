@@ -8,11 +8,12 @@ function [parent, post] = cs_etree (A, mode)                                %#ok
 %   [parent,post] = cs_etree(...) also returns a postorder of the tree.
 %
 %   Example:
-%       Prob = UFget ('HB/bcsstk01') ; A = Prob.A ;
+%       Prob = ssget ('HB/bcsstk01') ; A = Prob.A ;
 %       parent = cs_etree (A) ; treeplot (parent) ;
 %
 %   See also ETREE, TREEPLOT.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 error ('cs_etree mexFunction not found') ;

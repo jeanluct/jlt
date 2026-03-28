@@ -5,13 +5,14 @@ function [a,b] = cs_esep (A)
 %   set of entries in A(a,b).
 %
 %   Example:
-%       Prob = UFget ('HB/bcsstk01') ; A = Prob.A ;
+%       Prob = ssget ('HB/bcsstk01') ; A = Prob.A ;
 %       [a,b] = cs_esep (A) ;
 %       cspy (A (a,b)) ;
 %
 %   See also CS_NSEP, CS_SEP, CS_ND, SYMRCM.
 
-% Copyright 2006-2012, Timothy A. Davis, http://www.suitesparse.com
+% CSparse, Copyright (c) 2006-2022, Timothy A. Davis. All Rights Reserved.
+% SPDX-License-Identifier: LGPL-2.1+
 
 p = symrcm (A) ;
 n2 = fix (size(A,1)/2) ;
