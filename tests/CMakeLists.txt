@@ -173,15 +173,25 @@ endif()
 # Included in extern/CSparse/ directory (GNU LGPL license)
 set(CSPARSE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../extern/CSparse")
 set(CSPARSE_INCLUDE_DIR "${CSPARSE_DIR}/Include")
-set(CSPARSE_LIBRARY "${CSPARSE_DIR}/build/libcsparse.a")
+
+# Build CSparse as part of the tests build.
+add_subdirectory("${CSPARSE_DIR}" "${CMAKE_BINARY_DIR}/csparse-build")
 
 message(STATUS "CSparse - building sparse matrix tests")
 message(STATUS "  Include: ${CSPARSE_INCLUDE_DIR}")
-message(STATUS "  Library: ${CSPARSE_LIBRARY}")
+
+if(TARGET csparse_static)
+    set(CSPARSE_TARGET csparse_static)
+elseif(TARGET csparse)
+    set(CSPARSE_TARGET csparse)
+else()
+    message(FATAL_ERROR "CSparse target not found after add_subdirectory")
+endif()
+message(STATUS "  Target: ${CSPARSE_TARGET}")
 
 add_executable(test_csparse test_csparse.cpp)
 target_include_directories(test_csparse PRIVATE ${CSPARSE_INCLUDE_DIR})
-target_link_libraries(test_csparse catch2 ${CSPARSE_LIBRARY})
+target_link_libraries(test_csparse catch2 ${CSPARSE_TARGET})
 add_test(NAME test_csparse COMMAND test_csparse)
 set_tests_properties(test_csparse PROPERTIES LABELS "csparse")
 
