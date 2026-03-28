@@ -266,7 +266,7 @@ public:
 // MATfile versions (requires linking to Matlab libraries)
 //
 
-void printMatlabForm(MATFile *pmat,
+inline void printMatlabForm(MATFile *pmat,
 		     const double var,
 		     const std::string name = "",
 		     const std::string description = "")
@@ -287,7 +287,7 @@ void printMatlabForm(MATFile *pmat,
   }
 
 // Overload for "old" format.
-void printMatlabForm(MATFile *pmat,
+inline void printMatlabForm(MATFile *pmat,
 		     const std::string name,
 		     const double var,
 		     const std::string description = "")
@@ -296,7 +296,7 @@ void printMatlabForm(MATFile *pmat,
   }
 
 // Overload for string output.  Too much code duplication for now.
-void printMatlabForm(MATFile *pmat,
+inline void printMatlabForm(MATFile *pmat,
 		     const std::string str,
 		     const std::string name,
 		     const std::string description = "")
@@ -437,7 +437,7 @@ void printMatlabForm(MATFile *pmat,
 // iostream versions
 //
 
-std::ostream& printMatlabForm(std::ostream& strm,
+inline std::ostream& printMatlabForm(std::ostream& strm,
 			      const double var,
 			      const std::string name,
 			      const std::string description = "")
@@ -463,7 +463,7 @@ std::ostream& printMatlabForm(std::ostream& strm,
   }
 
 // Overload for "old" format.
-std::ostream& printMatlabForm(std::ostream& strm,
+inline std::ostream& printMatlabForm(std::ostream& strm,
 			      const std::string name,
 			      const double var,
 			      const std::string description = "")
@@ -472,7 +472,7 @@ std::ostream& printMatlabForm(std::ostream& strm,
   }
 
 // Overload for string output.  Too much code duplication for now.
-std::ostream& printMatlabForm(std::ostream& strm,
+inline std::ostream& printMatlabForm(std::ostream& strm,
 			      const std::string str,
 			      const std::string name,
 			      const std::string description = "")
@@ -604,14 +604,14 @@ std::ostream& printMatlabForm(std::ostream& strm,
 
 #ifdef JLT_MATLAB_LIB_SUPPORT
 
-void printMatlabForm(MatlabFile& mf, const double var,
+inline void printMatlabForm(MatlabFile& mf, const double var,
 		     const std::string name,
 		     const std::string description = "")
   {
     printMatlabForm(mf.getMatHandle(), var, name, description);
   }
 
-void printMatlabForm(MatlabFile& mf, const std::string str,
+inline void printMatlabForm(MatlabFile& mf, const std::string str,
 		     const std::string name,
 		     const std::string description = "")
   {
@@ -645,14 +645,14 @@ void printMatlabForm(MatlabFile& mf, const std::vector<std::vector<T>>& Avv,
 
 #else
 
-std::ostream& printMatlabForm(MatlabFile& mf, const double var,
+inline std::ostream& printMatlabForm(MatlabFile& mf, const double var,
 			      const std::string name,
 			      const std::string description = "")
   {
     return printMatlabForm(mf.getStream(), var, name, description);
   }
 
-std::ostream& printMatlabForm(MatlabFile& mf, const std::string str,
+inline std::ostream& printMatlabForm(MatlabFile& mf, const std::string str,
 			      const std::string name,
 			      const std::string description = "")
   {
