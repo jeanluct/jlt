@@ -57,7 +57,7 @@ csi cs_sprealloc (cs *A, csi nzmax) ;
 void *cs_malloc (csi n, size_t size) ;
 
 /* --- secondary CSparse routines and data structures ----------------------- */
-using css = struct cs_symbolic  /* symbolic Cholesky, LU, or QR analysis */
+typedef struct cs_symbolic  /* symbolic Cholesky, LU, or QR analysis */
 {
     csi *pinv ;     /* inverse row perm. for QR, fill red. perm for Chol */
     csi *q ;        /* fill-reducing column permutation for LU and QR */
@@ -67,17 +67,17 @@ using css = struct cs_symbolic  /* symbolic Cholesky, LU, or QR analysis */
     csi m2 ;        /* # of rows for QR, after adding fictitious rows */
     double lnz ;    /* # entries in L for LU or Cholesky; in V for QR */
     double unz ;    /* # entries in U for LU; in R for QR */
-} ;
+} css ;
 
-using csn = struct cs_numeric   /* numeric Cholesky, LU, or QR factorization */
+typedef struct cs_numeric   /* numeric Cholesky, LU, or QR factorization */
 {
     cs *L ;         /* L for LU and Cholesky, V for QR */
     cs *U ;         /* U for LU, R for QR, not used for Cholesky */
     csi *pinv ;     /* partial pivoting for LU */
     double *B ;     /* beta [0..n-1] for QR */
-} ;
+} csn ;
 
-using csd = struct cs_dmperm_results    /* cs_dmperm or cs_scc output */
+typedef struct cs_dmperm_results    /* cs_dmperm or cs_scc output */
 {
     csi *p ;        /* size m, row permutation */
     csi *q ;        /* size n, column permutation */
@@ -86,7 +86,7 @@ using csd = struct cs_dmperm_results    /* cs_dmperm or cs_scc output */
     csi nb ;        /* # of blocks in fine dmperm decomposition */
     csi rr [5] ;    /* coarse row decomposition */
     csi cc [5] ;    /* coarse column decomposition */
-} ;
+} csd ;
 
 csi *cs_amd (csi order, const cs *A) ;
 csn *cs_chol (const cs *A, const css *S) ;
