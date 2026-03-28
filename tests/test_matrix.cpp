@@ -168,7 +168,8 @@ TEST_CASE("matrix assignment", "[matrix]") {
 
     SECTION("self move assignment") {
         matrix<int> M(2, 2, {1, 2, 3, 4});
-        M = std::move(M);  // Should be safe (no-op or valid state)
+        matrix<int>* self = &M;
+        M = std::move(*self);  // Should be safe (no-op or valid state)
         REQUIRE(M.rows() == 2);
         REQUIRE(M.columns() == 2);
         REQUIRE(M(0, 0) == 1);

@@ -203,7 +203,7 @@ TEST_CASE("CSparse memory management", "[csparse][memory]") {
             REQUIRE(csM->m == size);
 
             mathmatrix<double> M2 = cs_sparse_matrix_to_mathmatrix<double>(csM);
-            REQUIRE(M2.rows() == size);
+            REQUIRE(M2.rows() == M.rows());
         }
         REQUIRE(true);
     }
