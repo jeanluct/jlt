@@ -52,9 +52,9 @@ lapackenv.AppendUnique(LIBS = ['blas','lapack'])
 
 # Clone env, add some flags for compiling against CSparse library.
 csparseenv = env.Clone()
-csparseenv.AppendUnique(CPPPATH = '../../CSparse/Include',
+csparseenv.AppendUnique(CPPPATH = '../extern/CSparse/Include',
                         LIBS = ['csparse'],
-                        LIBPATH = '../../CSparse/Lib')
+                        LIBPATH = '../extern/CSparse/build')
 
 # Clone env, add some flags for compiling against Boost timer library.
 boost_timerenv = env.Clone()
