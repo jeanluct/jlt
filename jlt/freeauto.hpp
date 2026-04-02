@@ -120,6 +120,20 @@ inline freeauto<T> operator*(const freeauto<T>& a, const freeauto<T>& b)
 }
 
 template<class T>
+std::ostream& printMathematicaForm(std::ostream& strm, const freeauto<T>& a)
+{
+  strm << "{";
+  for (std::size_t i = 1; i <= a.numgens(); ++i)
+    {
+      strm << i << " ->";
+      for (auto j : a[static_cast<T>(i)]) strm << " " << j;
+      if (i < a.numgens()) strm << ", ";
+    }
+  strm << "}";
+  return strm;
+}
+
+template<class T>
 std::ostream& operator<<(std::ostream& strm, const freeauto<T>& a)
 {
   constexpr int wid = 5;
