@@ -967,6 +967,20 @@ TEST_CASE("mathmatrix primitivity test", "[mathmatrix][primitive]") {
         REQUIRE(C.is_primitive());
     }
 
+    SECTION("Wielandt matrices attain the exponent bound n^2-2n+2") {
+        // W_n has ones at (i,i+1), (n-1,0) and (n-1,1); it is primitive with
+        // the largest possible exponent of primitivity, so it catches an
+        // implementation that takes too few powers.
+        for (int n = 3; n <= 9; ++n) {
+            mathmatrix<int> W(n, n, 0);
+            for (int i = 0; i + 1 < n; ++i) W(i, i+1) = 1;
+            W(n-1, 0) = 1;
+            W(n-1, 1) = 1;
+            REQUIRE(W.is_primitive());
+            REQUIRE_FALSE(W.is_reducible());
+        }
+    }
+
     SECTION("non-primitive matrices") {
         // Identity matrix for n > 1 is NOT primitive (has zeros off-diagonal)
         mathmatrix<double> I(2, 2, {
