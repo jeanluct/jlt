@@ -10,6 +10,8 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <stdexcept>
+#include <jlt/exceptions.hpp>
 
 namespace jlt {
 
@@ -30,7 +32,10 @@ T read_number(const std::string& prompt,
   const std::string err = "Out of range.  Try again.";
   std::string str;
 
-  if (nmin == nmax) return nmin;
+  // Note: a single-choice range (nmin == nmax) is still prompted for and
+  // still consumes a line.  Returning early without reading would make
+  // the number of lines consumed depend on the data, so a script that
+  // answers each prompt in turn would have the next answer swallowed.
 
   if (nmin > nmax)
     {
