@@ -171,8 +171,8 @@
   - Defines JLT_MATLAB_LIB_SUPPORT when building
   - Tests tagged with "matlab" label for filtering
 
-**Test Coverage: 23 test suites in tests/CMakeLists.txt (roughly 1660 assertions as of 2026-02-07, per commit 0ffed4f; counts are approximate)**
-- 17 core test suites, including test_bounds_checking (no external dependencies)
+**Test Coverage: 24 test suites in tests/CMakeLists.txt (roughly 1660 assertions as of 2026-02-07, per commit 0ffed4f; counts are approximate)**
+- 18 core test suites, including test_bounds_checking and test_prompt (no external dependencies)
 - 3 LAPACK test suites (built conditionally if LAPACK found)
   - test_lapack: ~45 assertions (LAPACK wrapper overload resolution)
   - test_eigensystem: ~32 assertions (eigenvalue/eigenvector decomposition, incl. hermitian)
@@ -286,7 +286,7 @@
   - Date: 2026-02-06
 
 ### Testing
-- Increase code coverage to >90% (currently: 23 test suites, see Test Coverage above)
+- Increase code coverage to >90% (currently: 24 test suites, see Test Coverage above)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability

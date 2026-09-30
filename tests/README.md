@@ -98,6 +98,7 @@ Catch2 summary (e.g. `./test_vector` ends with
 - [x] **matrixutil.hpp** (`test_matrixutil`) - LU decomposition, QR decomposition, matrix inverse, Gram-Schmidt orthonormalization, and exception safety with RAII
 - [x] **exceptions.hpp** (`test_exceptions`) - custom exception classes, throwing, catching, inheritance, and macros
 - [x] **finitediff.hpp** (`test_finitediff`) - finite difference schemes
+- [x] **prompt.hpp** (`test_prompt`) - `read_number` reads exactly one line per prompt, including when only one value is valid
 - [x] **matlab.hpp** (`test_matlab`) - `printMatlabForm` and `MatlabFile` in text (`.m`) mode
 - [x] **vector.hpp/matrix.hpp** (`test_bounds_checking`) - out-of-range accesses throw when `JLT_VECTOR_CHECK_BOUNDS`/`JLT_MATRIX_CHECK_BOUNDS` are defined (CMake defines them for this executable only)
   - Label: `bounds`

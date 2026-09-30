@@ -39,7 +39,7 @@ detailed build instructions.
 
 ## Testing
 
-Comprehensive test suite of **23 test suites** using Catch2 (ctest and
+Comprehensive test suite of **24 test suites** using Catch2 (ctest and
 each Catch2 executable report the current pass/assertion counts):
 
 ```bash

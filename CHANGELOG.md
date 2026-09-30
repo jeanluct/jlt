@@ -206,6 +206,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   uncommitted changes (e.g., "53f13c3+") (2026-02-06)
 
 ### Fixed
+- **prompt.hpp**: `read_number()` now always prompts and reads one line,
+  even when only one value is valid (it shows "(1-1) [1]" and accepts an
+  empty line or that value).  Previously it returned without reading input,
+  so a script answering prompts in turn fell out of step (ttauto issue
+  #15).  prompt.hpp now includes exceptions.hpp itself.  Added
+  `test_prompt` (2026-09-20)
+- **mathmatrix.hpp**: `is_primitive()` did one squaring too few, computing
+  A^(2^(pmax-1)) instead of A^(2^pmax), so it fell short of Wielandt's bound
+  and returned false for primitive matrices with a large exponent of
+  primitivity, including all Wielandt matrices.  Added a test on the
+  Wielandt matrices W_n, n = 3..9 (2026-09-19)
 - **matlab.hpp**: Marked the non-template `printMatlabForm()` overloads
   defined in the header `inline`, fixing One Definition Rule violations
   (duplicate symbol link errors) when matlab.hpp is included from more than
