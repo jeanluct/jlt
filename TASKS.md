@@ -218,6 +218,15 @@
     - jlt/mathvector.hpp
     - jlt/mathmatrix.hpp
     - jlt/matrix.hpp
+  - Consider raising the minimum standard from C++11 (C++17 or C++20):
+    - The tests build as C++11 (`CMAKE_CXX_STANDARD 11` in
+      tests/CMakeLists.txt), while examples/SConscript already uses
+      `-std=c++20` and conflat requires C++20.
+    - The headers already use `[[nodiscard]]` (C++17) unguarded; C++11
+      compilers accept it only as an extension.
+    - A higher minimum would let the `__cplusplus` version guards in
+      display_task.hpp and stlio.hpp go.
+    - Update AGENTS.md, README.md and the CHANGELOG if the minimum changes.
 - [ ] Add comprehensive documentation
 - [x] Consider header-only implementation (already header-only)
 - [ ] Set up CI/CD pipeline for automated testing
