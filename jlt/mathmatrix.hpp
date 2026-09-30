@@ -269,14 +269,18 @@ mathmatrix(size_type _m, size_type _n, std::initializer_list<T> _l)
 
       if (n == 0) return false;
 
-      // Compute A^(n²-2n+2) using repeated squaring with renormalization.
-      // Take log2 since we nest the multiplications.
+      // Compute A^(2^pmax) with 2^pmax >= n²-2n+2 (Wielandt's bound on
+      // the exponent of primitivity) by repeated squaring with
+      // renormalization.  Once a power of a primitive matrix is positive
+      // all higher powers are, so overshooting the bound is harmless.
       auto pmax = static_cast<size_type>(ceil(log2(n*n - 2*n + 2)));
 
       // Take powers of matrix.  Do this in place since we need to
-      // renormalise to avoid blow-up.
+      // renormalise to avoid blow-up.  pmax squarings of A give
+      // A^(2^pmax); an earlier version did one squaring too few and
+      // misclassified matrices with a large exponent (e.g. Wielandt's).
       mathmatrix<T,S> Mp(n,n), M(*this);
-      for (size_type p = 1; p < pmax; ++p)
+      for (size_type p = 0; p < pmax; ++p)
 	{
 	  for (size_type i = 0; i < n; ++i)
 	    {

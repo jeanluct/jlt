@@ -135,6 +135,10 @@ add_executable(test_math test_math.cpp)
 target_link_libraries(test_math catch2 jlt_test_warnings)
 add_test(NAME test_math COMMAND test_math)
 
+add_executable(test_prompt test_prompt.cpp)
+target_link_libraries(test_prompt catch2 jlt_test_warnings)
+add_test(NAME test_prompt COMMAND test_prompt)
+
 # Command execution tests
 add_executable(test_command test_command.cpp)
 target_link_libraries(test_command catch2 jlt_test_warnings)
