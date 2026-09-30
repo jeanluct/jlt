@@ -19,10 +19,10 @@ cd tests && mkdir -p build && cd build && cmake .. && make
 ctest
 
 # Run only non-LAPACK tests (works on any system)
-ctest -E lapack
+ctest -LE lapack
 
 # Run only LAPACK tests (requires LAPACK/BLAS)
-ctest -R lapack
+ctest -L lapack
 
 # Run a specific test executable (from tests/build/ directory)
 ./test_vector
@@ -40,11 +40,29 @@ ctest -R lapack
 # Run with verbose output
 ./test_vector -s
 
-# Run with bounds checking enabled (catches out-of-range accesses)
-# This builds with extra runtime checks - slower but catches bugs
-cmake .. -DCMAKE_CXX_FLAGS="-DJLT_VECTOR_CHECK_BOUNDS -DJLT_MATRIX_CHECK_BOUNDS" && make
+# Run the bounds-checking tests (CMake already compiles this one
+# executable with JLT_VECTOR_CHECK_BOUNDS and JLT_MATRIX_CHECK_BOUNDS)
 ./test_bounds_checking
+
+# Build with maximal warnings, optionally treating warnings as errors
+cmake .. -DJLT_TESTS_MAX_WARNINGS=ON -DJLT_TESTS_WARNINGS_AS_ERRORS=ON && make
 ```
+
+**CTest labels:** `-R`/`-E` filter by test *name*, so use labels
+(`-L`/`-LE`) to select tests by dependency:
+- `lapack` - `test_lapack`, `test_eigensystem`, `test_svdecomp`
+- `matlab` - `test_matlab_lib` (built only if Matlab libraries are found)
+- `csparse` - `test_csparse` (CSparse is built in-tree from `extern/CSparse/`)
+- `boost` - `test_tictoc` (built only if Boost timer is found)
+- `bounds` - `test_bounds_checking`
+
+**CMake options** (both `OFF` by default; `-Wall` is always on):
+- `JLT_TESTS_MAX_WARNINGS` - add `-Wextra -Wpedantic -Wconversion -Wshadow`
+  and many more (GCC/Clang)
+- `JLT_TESTS_WARNINGS_AS_ERRORS` - add `-Werror`
+
+**Note:** `test_vcs` expects to run inside a Git work tree; it fails
+if the build directory is outside the repository.
 
 **Note on Bounds Checking:** The library supports compile-time flags for bounds checking:
 - `JLT_VECTOR_CHECK_BOUNDS` - enables bounds checking in jlt::vector operator[]
@@ -52,6 +70,7 @@ cmake .. -DCMAKE_CXX_FLAGS="-DJLT_VECTOR_CHECK_BOUNDS -DJLT_MATRIX_CHECK_BOUNDS"
 - When enabled, out-of-range accesses throw `std::out_of_range`
 - By default (without these flags), no bounds checking is performed for maximum speed
 - The `test_bounds_checking` test executable verifies these checks work when enabled
+- Do not turn them on globally via `CMAKE_CXX_FLAGS`; that enables them for every test
 
 **Note:** The test executables are located in `tests/build/` and will not be found if you run from the repository root or tests/ directory.
 
@@ -171,6 +190,15 @@ public:
 };
 ```
 
+### Output to Matlab/Mathematica
+Output is done with free functions, never member functions:
+- `jlt::printMatlabForm(out, obj, name, description)` in `jlt/matlab.hpp`,
+  where `out` is a `std::ostream` or a `jlt::MatlabFile` (RAII handle that
+  writes `.mat` if `JLT_MATLAB_LIB_SUPPORT` is defined, `.m` text otherwise)
+- `jlt::printMathematicaForm(strm, obj, name)` in `jlt/mathematica.hpp`
+- Do not add `printMatlabForm`-style members to `vector`, `matrix`,
+  `mathvector` or `mathmatrix`
+
 ### Special Attributes
 Use `[[nodiscard]]` for functions where the return value should not be ignored:
 ```cpp
@@ -224,7 +252,8 @@ REQUIRE(result == Approx(expected_value));
 
 ## Compiler Requirements
 
-- C++11 standard minimum (`-std=c++11`)
+- C++11 standard minimum (`-std=c++11`); the tests build as C++11
+- `examples/SConscript` compiles with `-std=c++20`
 - GCC or Clang recommended
 - Flags: `-Wall -O3 -ffast-math`
 
@@ -233,6 +262,9 @@ REQUIRE(result == Approx(expected_value));
 ```
 jlt/
   *.hpp          # Library headers (header-only)
+  internal/      # Implementation details (lapack_fortran.hpp)
+extern/
+  CSparse/       # CSparse v4.3.2 (built in-tree by tests/CMakeLists.txt)
 tests/
   catch.hpp      # Catch2 testing framework
   test_*.cpp     # Unit tests

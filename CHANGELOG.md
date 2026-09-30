@@ -7,12 +7,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Changed
-- **BREAKING**: **vector.hpp**, **matrix.hpp**: Removed all `printMatlabForm()`
-  member functions - use standalone `jlt::printMatlabForm(stream, obj, ...)`
-  functions from matlab.hpp instead; improves consistency and keeps matlab.hpp
-  cleanly separated from core classes; no functional changes, just API style
-  (2026-02-07)
-- **BREAKING**: **vector.hpp**, **matrix.hpp**: Removed all
+- **extern/CSparse**: Updated the bundled CSparse from 3.1.1 to 3.1.3 (2014),
+  then to 4.3.2 (2024, taken from the CSparse folder of SuiteSparse); the
+  new version builds with CMake (the old `Lib/` and `Demo/` Makefiles are
+  gone) and `csi` is now `int64_t` rather than `ptrdiff_t` (2026-03-28)
+- **tests/CMakeLists.txt**: CSparse is now built automatically as part of
+  the tests build (`add_subdirectory` on extern/CSparse), and test_csparse
+  links against the resulting `csparse_static` (or `csparse`) target instead
+  of a prebuilt `extern/CSparse/build/libcsparse.a` (2026-03-28)
+- **examples/SConscript**: Point the CSparse build environment at
+  `../extern/CSparse/Include` and `../extern/CSparse/build` for the new
+  CSparse version (2026-03-29)
+- **matlab.hpp**: Now includes stlio.hpp (2026-02-07)
+- **BREAKING**: **vector.hpp**, **matrix.hpp** (and hence the derived
+  **mathvector.hpp**, **mathmatrix.hpp** classes, which inherited them):
+  Removed all `printMatlabForm()` member functions - use the standalone
+  `jlt::printMatlabForm(MatlabFile&, obj, name, ...)` overloads from
+  matlab.hpp instead (or the lower-level `std::ostream&` and `MATFile*`
+  overloads); improves consistency and keeps matlab.hpp cleanly separated
+  from core classes; no functional changes, just API style (2026-02-07)
+- **BREAKING**: **vector.hpp**, **matrix.hpp** (and hence **mathvector.hpp**,
+  **mathmatrix.hpp**): Removed all
   `printMathematicaForm()` member functions - use standalone
   `jlt::printMathematicaForm(stream, obj, ...)`  functions from
   mathematica.hpp instead; maintains consistency with matlab.hpp API; cleaner
@@ -32,8 +47,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   workspace requirements (3*N-1 for syev, 3*N for geev, 2*N for
   complex geev) instead of querying for optimal size; matches pattern
   in svdecomp.hpp (2026-02-07)
+- **internal/lapack_fortran.hpp**: Renamed from lapack.h, moved to
+  jlt/internal/ subdirectory, and updated header guard (JLT_LAPACK_H →
+  JLT_LAPACK_FORTRAN_HPP); clarified in comments that it provides C++
+  declarations with C linkage (not pure C code) and is for internal use only;
+  added #include <complex> for std::complex support (2026-02-07)
+- **lapack.hpp**: Updated to include <jlt/internal/lapack_fortran.hpp> instead
+  of <jlt/lapack.h> (2026-02-07)
+- **matrix.hpp**: Optimized in-place transpose() to use `std::swap()` instead
+  of manual 3-way swap for cleaner, more idiomatic code (2026-02-07)
+- **tictoc.hpp**: **BREAKING CHANGE** - Output format changed to labeled
+  format with w/u/s suffixes for better readability. Old format was
+  tab-separated numbers without context. New format: `0.5w 0.5u 0s (1.2w 1.2u
+  0s)` clearly shows which time is which: w=wall, u=user, s=system times in
+  seconds, elapsed times followed by cumulative times in parentheses.
+  (2026-02-06)
+- **tictoc.hpp**: Refactored internal timing storage to use mathvector<double,
+  double> for cleaner vector operations (subtraction, indexing) instead of
+  tracking three separate nanosecond_type variables (2026-02-06)
+- **tictoc.hpp**: Moved nanoseconds_per_second constant to static class member
+  for better code organization (2026-02-06)
+- **stlio.hpp**: Removed deprecated `jlt::write_to` API and simplified
+  printing helpers (2026-02-06)
+- **stlio.hpp**: Replaced `JLT_FIELD_SEP_STRING` macro with
+  version-guarded `field_sep` for C++17 compatibility (2026-02-06)
+- **matlab.hpp**: Refactored duplicate vector<vector<T>> to matrix<T>
+  conversion logic into `detail::vector_of_vectors_to_matrix()` helper
+  function (2026-02-06)
+- **matrix.hpp**: Refactored print functions (printOn, printMatrixForm,
+  printMathematicaForm) to use shared `detail::print_elements_with_separator()`
+  helper, eliminating code duplication (2026-02-06)
 
 ### Added
+- **freeauto.hpp**: Added `printMathematicaForm(std::ostream&, const
+  freeauto<T>&)`, which prints the automorphism as a list of generator-action
+  rules `{1 -> ..., 2 -> ..., ...}` (2026-04-02)
+- **freeword.hpp**, **freeauto.hpp**: New headers for free groups.
+  `freeword` represents reduced words in a finitely generated free group,
+  with inversion and adjacent-cancellation reduction; `freeauto` represents
+  automorphisms of free groups as images of the generators, with composition
+  by substitution (`operator*`); example programs freeword_test.cpp and
+  freeauto_test.cpp added to examples/ (2026-03-29)
+- **tests/CMakeLists.txt**: Added an opt-in strict warning profile via two
+  CMake options, both OFF by default: `JLT_TESTS_MAX_WARNINGS` adds `-Wextra
+  -Wpedantic -Wconversion -Wshadow -Wold-style-cast` and many more (plus some
+  GCC-only flags), and `JLT_TESTS_WARNINGS_AS_ERRORS` adds `-Werror`; `-Wall`
+  is always on for GCC/Clang; flags are applied through a
+  `jlt_test_warnings` interface target linked by every test (2026-03-28)
 - **mathematica.hpp**: New header with standalone `printMathematicaForm()`
   functions for vector and matrix output in Mathematica/Wolfram Language
   format; uses compact single-line syntax {elem1,elem2,...} for vectors and
@@ -104,8 +164,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   values-only computation (2026-02-07)
 - **internal/lapack_fortran.hpp**: Added complex SVD support (cgesvd, zgesvd,
   cgesdd, zgesdd) for computing singular value decomposition of complex
-  matrices; renamed from lapack.h and moved to jlt/internal/ to indicate it's
-  not for direct user access (2026-02-07)
+  matrices (2026-02-07)
 - **lapack.hpp**: Added overloaded gesvd() and gesdd() functions for
   std::complex<float> and std::complex<double> to enable complex matrix SVD
   computations (2026-02-07)
@@ -131,10 +190,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   assertions) and mathmatrix (+116 assertions) - includes division by zero
   tests, size mismatch documentation, normalization tests, matrix-vector
   multiplication, and mathematical identity verification (2026-02-07)
-- **tictoc.hpp**: Now outputs all three timing metrics with labeled format:
-  `0.5w 0.5u 0s (1.2w 1.2u 0s)` where w=wall, u=user, s=system times in
-  seconds, showing elapsed times followed by cumulative times in parentheses
-  (2026-02-06)
 - **tictoc.hpp**: Added `get_timing()` method for programmatic access to
   timing information including wall, user, and system times (elapsed and
   cumulative) (2026-02-06)
@@ -151,6 +206,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   uncommitted changes (e.g., "53f13c3+") (2026-02-06)
 
 ### Fixed
+- **matlab.hpp**: Marked the non-template `printMatlabForm()` overloads
+  defined in the header `inline`, fixing One Definition Rule violations
+  (duplicate symbol link errors) when matlab.hpp is included from more than
+  one translation unit (2026-03-28)
+- **mathmatrix.hpp**: Removed unused `pmax` variable in `is_reducible()`,
+  silencing a `-Wall` unused-variable warning (2026-03-28)
+- **extern/CSparse/Include/cs.h**: Reverted the `css`, `csn`, `csd`
+  declarations from C++ `using` aliases back to C `typedef struct`, since
+  cs.h is a C header (2026-03-28)
+- **Tests**: Cleaned up compiler warnings - signed/unsigned comparison in
+  test_csparse.cpp, and direct self-move diagnostic in test_matrix.cpp (the
+  self-move test now moves through an alias pointer) (2026-03-28)
 - **stlio.hpp**: Fixed formatting bug where library was overriding
   caller's stream format flags (fixed, scientific, precision) - now
   correctly preserves caller's formatting preferences (2026-02-06)
@@ -160,37 +227,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   from `std::vector<T>::at()` for better error messages and less code
   duplication (2026-02-06)
 
-### Changed
-- **internal/lapack_fortran.hpp**: Renamed from lapack.h, moved to
-  jlt/internal/ subdirectory, and updated header guard (JLT_LAPACK_H →
-  JLT_LAPACK_FORTRAN_HPP); clarified in comments that it provides C++
-  declarations with C linkage (not pure C code) and is for internal use only;
-  added #include <complex> for std::complex support (2026-02-07)
-- **lapack.hpp**: Updated to include <jlt/internal/lapack_fortran.hpp> instead
-  of <jlt/lapack.h> (2026-02-07)
-- **matrix.hpp**: Optimized in-place transpose() to use `std::swap()` instead
-  of manual 3-way swap for cleaner, more idiomatic code (2026-02-07)
-- **tictoc.hpp**: **BREAKING CHANGE** - Output format changed to labeled
-  format with w/u/s suffixes for better readability. Old format was
-  tab-separated numbers without context. New format: `0.5w 0.5u 0s (1.2w 1.2u
-  0s)` clearly shows which time is which. (2026-02-06)
-- **tictoc.hpp**: Refactored internal timing storage to use mathvector<double,
-  double> for cleaner vector operations (subtraction, indexing) instead of
-  tracking three separate nanosecond_type variables (2026-02-06)
-- **tictoc.hpp**: Moved nanoseconds_per_second constant to static class member
-  for better code organization (2026-02-06)
-- **stlio.hpp**: Removed deprecated `jlt::write_to` API and simplified
-  printing helpers (2026-02-06)
-- **stlio.hpp**: Replaced `JLT_FIELD_SEP_STRING` macro with
-  version-guarded `field_sep` for C++17 compatibility
-- **matlab.hpp**: Refactored duplicate vector<vector<T>> to matrix<T>
-  conversion logic into `detail::vector_of_vectors_to_matrix()` helper
-  function (2026-02-06)
-- **matrix.hpp**: Refactored print functions (printOn, printMatrixForm,
-  printMathematicaForm) to use shared `detail::print_elements_with_separator()`
-  helper, eliminating code duplication (2026-02-06)
-
-## [2026.1] - 2026-01-XX
+## [2026.1] - 2026-02-05
 
 ### Added
 - **stlio.hpp**: Added comprehensive tuple and optional support for C++11/14/17
@@ -409,7 +446,7 @@ numerical library.
      ↓
 2012-12-31: Mercurial (tag: svn-to-hg)
      ↓
-2014-12-12: Git (tag: hg-to-git)
+2014-12-12: Git (tag: hg-to-git, on the last Hg commit of 2014-11-12)
      ↓
 2004-2026:  254+ commits
 ```

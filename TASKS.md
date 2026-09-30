@@ -4,12 +4,12 @@
 
 ### Documentation
 - [x] Create AGENTS.md for AI coding agents
-  - File: /home/jeanluc/C/jlt/AGENTS.md
+  - File: AGENTS.md
   - Date: 2026-02-03
   - Content: Build/lint/test commands, code style guidelines, project structure
   - Lines: ~150
 - [x] Create CHANGELOG.md documenting project history
-  - File: /home/jeanluc/C/jlt/CHANGELOG.md
+  - File: CHANGELOG.md
   - Date: 2026-02-06
   - Content: Comprehensive 22-year history (2004-2026), version control migrations, architectural decisions
   - Lines: 279
@@ -171,15 +171,15 @@
   - Defines JLT_MATLAB_LIB_SUPPORT when building
   - Tests tagged with "matlab" label for filtering
 
-**Test Coverage: 1607 assertions across 23 test suites - ALL PASSING**
-- 16 core test suites: 1280 assertions (no external dependencies)
-- 3 LAPACK test suites: 162 assertions (built conditionally if LAPACK found)
-  - test_lapack: 45 assertions (LAPACK wrapper overload resolution)
-  - test_eigensystem: 20 assertions (eigenvalue/eigenvector decomposition)
-  - test_svdecomp: 97 assertions (SVD for real and complex matrices)
-- 1 Matlab test suite: 61 assertions (built conditionally if Matlab found)
-- 1 CSparse test suite: 65 assertions (built conditionally if CSparse found)
-- 1 Boost test suite: 44 assertions (built conditionally if Boost timer found)
+**Test Coverage: 23 test suites in tests/CMakeLists.txt (roughly 1660 assertions as of 2026-02-07, per commit 0ffed4f; counts are approximate)**
+- 17 core test suites, including test_bounds_checking (no external dependencies)
+- 3 LAPACK test suites (built conditionally if LAPACK found)
+  - test_lapack: ~45 assertions (LAPACK wrapper overload resolution)
+  - test_eigensystem: ~32 assertions (eigenvalue/eigenvector decomposition, incl. hermitian)
+  - test_svdecomp: ~97 assertions (SVD for real and complex matrices)
+- 1 Matlab test suite: ~61 assertions (built conditionally if Matlab found)
+- 1 CSparse test suite: ~65 assertions (always built; CSparse is built in-tree from extern/CSparse by the tests CMake)
+- 1 Boost test suite: ~44 assertions (built conditionally if Boost timer found)
 
 ## In Progress
 
@@ -219,7 +219,7 @@
     - jlt/mathmatrix.hpp
     - jlt/matrix.hpp
 - [ ] Add comprehensive documentation
-- [ ] Consider header-only implementation
+- [x] Consider header-only implementation (already header-only)
 - [ ] Set up CI/CD pipeline for automated testing
 - [ ] Implement expression templates for lazy matrix evaluation
 
@@ -270,13 +270,14 @@
 - ✅ **COMPLETED** Refactor matrix print functions in matrix.hpp
   - Extracted `detail::print_elements_with_separator()` helper function
   - Refactored printOn(), printMatrixForm(), and printMathematicaForm()
+  - Note: printMathematicaForm() has since moved out of matrix.hpp into standalone functions in mathematica.hpp (2026-02-07)
   - Benefits: DRY principle, eliminated nested loops, clearer intent with lambdas
   - Reduced code duplication: 3 methods now share common iteration logic
   - Tests: All 83 matrix assertions still passing
   - Date: 2026-02-06
 
 ### Testing
-- Increase code coverage to >90% (currently: 18 test suites, 1040+ assertions)
+- Increase code coverage to >90% (currently: 23 test suites, see Test Coverage above)
 - Add edge case tests (empty matrices, single element, etc.)
 - Add performance benchmarks
 - Add fuzzing tests for numerical stability
@@ -300,22 +301,25 @@ The following components in `jlt/` still need test coverage:
 - [x] **display_task.hpp** - Task display utilities ✅ **COMPLETED** - 43 assertions
 - [x] **vcs.hpp** - Version control system info extraction ✅ **COMPLETED** - 32 assertions
 - [x] **finitediff.hpp** - Finite difference calculations ✅ **COMPLETED** - 137 assertions
+- [ ] **freeword.hpp** - Reduced words in free groups (added 2026-03-29) - no tests in tests/ yet (only the examples/freeword_test.cpp demo)
+- [ ] **freeauto.hpp** - Free-group automorphisms, incl. its printMathematicaForm() (added 2026-03-29) - no tests in tests/ yet (only the examples/freeauto_test.cpp demo)
+- [ ] **mathematica.hpp** - Standalone printMathematicaForm() for vector and matrix - no tests yet
 
 ### External Dependency Tests (Optional)
 These tests would only be built if the respective libraries are found:
 
 - [x] **matlab.hpp** - Matlab output format (text mode) ✅ **COMPLETED** - 42 assertions
   - Tests text mode output (default, no external libraries required)
-  - Note: Binary MAT-file mode requires Matlab libraries (`-leng -lmat -lmex -lut -lmx`)
+  - Note: Binary MAT-file mode requires Matlab libraries (tests/CMakeLists.txt links `mat`, `mx`, `eng`)
   - Compile flag: `JLT_MATLAB_LIB_SUPPORT` enables binary mode
 
 - [x] **matlab.hpp** - Binary MAT-file export (requires Matlab libraries) ✅ **COMPLETED** - 61 assertions
-  - Requires: Matlab libraries (`-leng -lmat -lmex -lut -lmx`)
+  - Requires: Matlab libraries (`-lmat -lmx -leng`, as linked by tests/CMakeLists.txt)
   - Compile flag: `JLT_MATLAB_LIB_SUPPORT`
   - Note: Requires Matlab installation
 
 - [x] **csparse.hpp** - CSparse sparse matrix library interface ✅ **COMPLETED** - 65 assertions
-  - Requires: CSparse library (`-lcsparse`)
+  - Requires: CSparse library (bundled in extern/CSparse and built automatically by tests/CMakeLists.txt)
   - Tests: unique_ptr wrappers, mathmatrix↔CSparse conversion, round-trip conversion, memory management
   - Note: Wrapper for Timothy A. Davis's CSparse library
   - Date: 2026-02-06
@@ -345,16 +349,16 @@ These may require verifying/fixing jlt code behavior:
   - [ ] Test size mismatch operations (should they throw?)
   - [ ] Verify exception messages in `at()` out-of-range throws
 
-- [ ] **test_mathvector.hpp improvements:**
-  - Test zero division in `operator/=` (verify behavior)
-  - Test operations with vectors of different sizes (should throw exception)
-  - Add normalization/unit vector tests (verify `normalize()` exists and works)
+- [x] **test_mathvector.hpp improvements:** - COMPLETED 2026-02-07 (f3950d1)
+  - ✅ Test zero division in `operator/=` (IEEE 754 inf/NaN behavior)
+  - ✅ Test operations with vectors of different sizes (behavior documented; no exception is thrown)
+  - ✅ Add normalization/unit vector tests (normalization done manually; there is no `normalize()` member, see below)
 
 - [ ] **test_mathmatrix.hpp improvements:**
-  - Test matrix-vector multiplication
-  - Test invalid operations (multiplying incompatible sizes - should throw)
-  - Test `trace()` with non-square matrices (verify it throws or handles gracefully)
-  - Add comprehensive tests for mathematical identities (e.g., (AB)^T = B^T A^T)
+  - ✅ **COMPLETED** Test matrix-vector multiplication (f3950d1)
+  - ✅ **COMPLETED** Test invalid operations (incompatible sizes - behavior documented) (f3950d1)
+  - [ ] Test `trace()` with non-square matrices (verify it throws or handles gracefully)
+  - ✅ **COMPLETED** Add comprehensive tests for mathematical identities (e.g., (AB)^T = B^T A^T) (f3950d1)
 
 - [x] **test_matrixutil.hpp improvements:**
   - ✅ **COMPLETED** Test singular matrix handling in `inverse()` - added exception safety tests
@@ -392,9 +396,9 @@ These may require verifying/fixing jlt code behavior:
   - [ ] Future: Test very large condition numbers
 
 - [ ] **Output format tests:**
-  - Test `printMatlabForm()` output format for vector and matrix
-  - Test `printMathematicaForm()` output format
-  - Test STL container printing via `stlio.hpp`
+  - ✅ **COMPLETED** Test `printMatlabForm()` output format for vector and matrix - covered in test_matlab.cpp
+  - [ ] Test `printMathematicaForm()` output format (mathematica.hpp, and the freeauto overload in freeauto.hpp) - no tests yet
+  - ✅ **COMPLETED** Test STL container printing via `stlio.hpp` - covered in test_stlio.cpp
 
 ### Code Improvements Required
 Some test additions may require jlt code improvements:

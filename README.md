@@ -39,23 +39,30 @@ detailed build instructions.
 
 ## Testing
 
-Comprehensive test suite with **1687 assertions across 23 test suites** using Catch2:
+Comprehensive test suite of **23 test suites** using Catch2 (ctest and
+each Catch2 executable report the current pass/assertion counts):
 
 ```bash
 cd tests && mkdir -p build && cd build
 cmake .. && make
 ctest                    # Run all tests
-ctest -E lapack          # Skip LAPACK tests (if not installed)
-ctest -R lapack          # Run only LAPACK tests
+ctest -LE lapack         # Skip LAPACK tests (if not installed)
+ctest -L lapack          # Run only LAPACK tests
 ```
 
+Tests with optional dependencies carry CTest labels: `lapack`
+(`test_lapack`, `test_eigensystem`, `test_svdecomp`), `matlab`
+(`test_matlab_lib`), `csparse` (`test_csparse`), `boost` (`test_tictoc`)
+and `bounds` (`test_bounds_checking`).  Use `ctest -L <label>` /
+`ctest -LE <label>`; note that `-R`/`-E` match test *names*, not labels.
+
 Test coverage includes:
-- **Core library** (1313 assertions): vector, matrix, mathvector,
-  mathmatrix, polynomial, etc.
-- **LAPACK integration** (174 assertions): LAPACK wrappers (45), eigensystems (32),
-  SVD decomposition for real and complex matrices (97)
-- **Optional libraries**: Matlab MAT-file I/O (61 assertions), CSparse
-  (65 assertions), Boost timer (44 assertions)
+- **Core library**: vector, matrix, mathvector, mathmatrix, polynomial,
+  finite differences, Matlab text output, bounds checking, etc.
+- **LAPACK integration**: LAPACK wrappers, eigensystems, SVD
+  decomposition for real and complex matrices
+- **Optional libraries**: Matlab MAT-file I/O, CSparse (built in-tree
+  from `extern/CSparse/`), Boost timer
 
 See `tests/README.md` for detailed testing documentation.
 
@@ -66,15 +73,17 @@ See `tests/README.md` for detailed testing documentation.
 #### `jlt::vector` - Enhanced std::vector
 - Derived from `std::vector` with additional features
 - Optional compile-time bounds checking (`-DJLT_VECTOR_CHECK_BOUNDS`)
-- Matlab and Mathematica output formats
-- Example: `examples/vector_test.cpp`
+- Matlab and Mathematica output via the free functions
+  `jlt::printMatlabForm` (`jlt/matlab.hpp`) and
+  `jlt::printMathematicaForm` (`jlt/mathematica.hpp`)
 
 #### `jlt::matrix` - 2D Matrix Class
 - Efficient row-major storage using `std::vector` (RAII)
 - Move semantics (C++11)
 - Optional bounds checking (`-DJLT_MATRIX_CHECK_BOUNDS`)
-- Multiple output formats (Matlab, Mathematica)
-- Example: `examples/matrix_test.cpp`
+- Matlab and Mathematica output via `jlt::printMatlabForm` and
+  `jlt::printMathematicaForm` (free functions, not members)
+- Example: `examples/matlab_mathematica_test.cpp`
 
 #### `jlt::mathvector` and `jlt::mathmatrix` - Mathematical Operations
 - Full arithmetic operations (+, -, *, /, dot product, cross product)
@@ -91,7 +100,8 @@ See `tests/README.md` for detailed testing documentation.
 - Wrappers for Timothy A. Davis's [CSparse](http://www.suitesparse.com) library
 - Conversion to/from `jlt::mathmatrix`
 - Type-safe `cs_unique_ptr` with automatic memory management
-- CSparse v3.1.1 included in `extern/CSparse/`
+- CSparse v4.3.2 included in `extern/CSparse/` (the CMake test build
+  compiles it in-tree automatically)
 - **Requires**: `-lcsparse` or use included version
 - Example: `examples/csparse_test.cpp`
 
@@ -118,12 +128,20 @@ See `tests/README.md` for detailed testing documentation.
 ### I/O and Utilities
 
 #### `jlt/matlab.hpp` - Matlab Integration
-- Export to Matlab MAT-file format (binary) or text format
+- `jlt::MatlabFile`: RAII file handle; `MatlabFile mf("data")` writes
+  `data.mat` (binary) if `JLT_MATLAB_LIB_SUPPORT` is defined, otherwise
+  `data.m` (text)
+- `jlt::printMatlabForm(out, obj, name, description)`, where `out` is a
+  `std::ostream` or a `MatlabFile`
 - Works with scalars, vectors, matrices, and strings
 - **Binary mode requires**: Matlab libraries (`-lmat -lmx -leng`) and
   `JLT_MATLAB_LIB_SUPPORT` defined
 - **Text mode**: No external dependencies
-- Example: `examples/matlab_test.cpp`
+- Example: `examples/matlab_mathematica_test.cpp`
+
+#### `jlt/mathematica.hpp` - Mathematica Output
+- `jlt::printMathematicaForm(strm, obj, name)` for vectors and matrices
+- Example: `examples/matlab_mathematica_test.cpp`
 
 #### `jlt/stlio.hpp` - STL Container I/O
 - Simple iostream operators for STL containers
@@ -162,7 +180,10 @@ See `tests/README.md` for detailed testing documentation.
 - **`jlt/prompt.hpp`**: Terminal prompts for interactive programs
 - **`jlt/command.hpp`**: Execute Unix commands and capture output
 - **`jlt/math.hpp`**: Mathematical utilities (Mod, Sign functions)
-- **`jlt/lapack.h`**: C++ wrappers for LAPACK Fortran functions
+- **`jlt/lapack.hpp`**: C++ wrappers for LAPACK Fortran functions
+  (Fortran declarations in `jlt/internal/lapack_fortran.hpp`)
+- **`jlt/freeword.hpp`**: Reduced words in a free group
+- **`jlt/freeauto.hpp`**: Automorphisms acting on a free group
 
 ## Matlab Functions
 
@@ -179,11 +200,11 @@ See `AGENTS.md` for:
 
 ## Project History
 
-- **2004**: Initial development
-- **2014**: Migration from Subversion to Mercurial
-- **2018**: Migration to Git
+- **2004**: Imported from CVS (later moved to Subversion)
+- **2012**: Migration from Subversion to Mercurial
+- **2014**: Migration to Git
 - **2020s**: Modernization (C++11, RAII, comprehensive test suite)
-- **2026**: 1607 test assertions, complex matrix SVD, bounds checking, improved error handling
+- **2026**: Catch2 test suite, complex matrix SVD, bounds checking, improved error handling
 
 See `CHANGELOG.md` for detailed version history.
 
@@ -194,7 +215,7 @@ See `CHANGELOG.md` for detailed version history.
   - BLAS/LAPACK: For linear algebra operations
   - Boost timer: For `jlt::tictoc` timing utilities
   - Matlab libraries: For binary MAT-file I/O
-  - CSparse: For sparse matrix operations (v3.1.1 included)
+  - CSparse: For sparse matrix operations (v4.3.2 included)
 
 ## Contributors
 

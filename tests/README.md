@@ -21,11 +21,34 @@ cd tests && mkdir -p build && cd build && cmake .. && make
 ctest
 
 # Run only non-LAPACK tests (works on any system)
-ctest -E lapack
+ctest -LE lapack
 
 # Run only LAPACK tests (requires LAPACK installed)
-ctest -R lapack
+ctest -L lapack
+
+# Build with maximal warnings, optionally as errors (both OFF by default)
+cmake .. -DJLT_TESTS_MAX_WARNINGS=ON -DJLT_TESTS_WARNINGS_AS_ERRORS=ON
 ```
+
+### CTest labels
+
+`ctest -R`/`-E` match test *names*; to select tests by dependency use
+the labels with `ctest -L <label>` / `ctest -LE <label>`:
+
+| Label     | Tests                                              |
+|-----------|----------------------------------------------------|
+| `lapack`  | `test_lapack`, `test_eigensystem`, `test_svdecomp` |
+| `matlab`  | `test_matlab_lib`                                  |
+| `csparse` | `test_csparse`                                     |
+| `boost`   | `test_tictoc`                                      |
+| `bounds`  | `test_bounds_checking`                             |
+
+### CMake options
+
+- `JLT_TESTS_MAX_WARNINGS` (default `OFF`) - add `-Wextra`, `-Wpedantic`,
+  `-Wconversion`, `-Wshadow` and many more (GCC/Clang).  `-Wall` is
+  always on.
+- `JLT_TESTS_WARNINGS_AS_ERRORS` (default `OFF`) - add `-Werror`.
 
 ### Running Individual Test Executables:
 
@@ -53,60 +76,53 @@ g++ -std=c++11 -I.. test_vector.cpp catch_main.cpp -o test_vector
 
 ## Test Coverage
 
+Assertion counts change as tests are added, so they are not listed here;
+`ctest` reports pass/fail per suite, and each executable prints its own
+Catch2 summary (e.g. `./test_vector` ends with
+`All tests passed (N assertions in M test cases)`).
+
 ### Core Tests (No External Dependencies)
-All tests passing - 620 assertions total:
 
-- [x] **vector.hpp** - 32 assertions covering construction, element access, STL compatibility, and type variations
-- [x] **matrix.hpp** - 83 assertions covering construction, element access, assignment, iterators, row extraction, and move semantics
-- [x] **mathvector.hpp** - 81 assertions covering mathematical operations, dot/cross products, magnitudes, and complex numbers
-- [x] **mathmatrix.hpp** - 90+ assertions covering matrix operations, multiplication, inverse, determinant, trace, and identity operations
-- [x] **polynomial.hpp** - 88 assertions covering construction, coefficient access, arithmetic, evaluation, differentiation, and I/O
-- [x] **reciprocal_polynomial.hpp** - 59 assertions covering reciprocal polynomial construction, coefficient access, evaluation, derivative, and symmetry properties
-- [x] **stlio.hpp** - 46 assertions covering STL container output formatting (vector, valarray, list, map) and input
-- [x] **display_task.hpp** - 43 assertions covering task display with begin/end, log levels, scoped tasks, and output formatting
-- [x] **vcs.hpp** - 29 assertions covering Git/Mercurial detection, SVN keyword extraction, VCS revision/date extraction
-- [x] **command.hpp** - 24 assertions covering Unix command execution and output capture
-- [x] **math.hpp** - 53 assertions covering Mod function (modulo with sign preservation) and Sign function
-- [x] **matrixutil.hpp** - 52 assertions covering LU decomposition, QR decomposition, matrix inverse, Gram-Schmidt orthonormalization, and exception safety with RAII
-- [x] **exceptions.hpp** - 43 assertions covering custom exception classes, throwing, catching, inheritance, and macros
+- [x] **vector.hpp** (`test_vector`) - construction, element access, STL compatibility, and type variations
+- [x] **matrix.hpp** (`test_matrix`) - construction, element access, assignment, iterators, row extraction, and move semantics
+- [x] **matrix.hpp** (`test_matrix_transpose`) - transpose of square and non-square matrices
+- [x] **mathvector.hpp** (`test_mathvector`) - mathematical operations, dot/cross products, magnitudes, and complex numbers
+- [x] **mathmatrix.hpp** (`test_mathmatrix`) - matrix operations, multiplication, inverse, determinant, trace, and identity operations
+- [x] **polynomial.hpp** (`test_polynomial`) - construction, coefficient access, arithmetic, evaluation, differentiation, and I/O
+- [x] **reciprocal_polynomial.hpp** (`test_reciprocal_polynomial`) - construction, coefficient access, evaluation, derivative, and symmetry properties
+- [x] **stlio.hpp** (`test_stlio`) - STL container output formatting and input
+- [x] **display_task.hpp** (`test_display_task`) - task display with begin/end, log levels, scoped tasks, and output formatting
+- [x] **vcs.hpp** (`test_vcs`) - Git/Mercurial detection, SVN keyword extraction, VCS revision/date extraction
+- [x] **command.hpp** (`test_command`) - Unix command execution and output capture
+- [x] **math.hpp** (`test_math`) - Mod function (modulo with sign preservation) and Sign function
+- [x] **matrixutil.hpp** (`test_matrixutil`) - LU decomposition, QR decomposition, matrix inverse, Gram-Schmidt orthonormalization, and exception safety with RAII
+- [x] **exceptions.hpp** (`test_exceptions`) - custom exception classes, throwing, catching, inheritance, and macros
+- [x] **finitediff.hpp** (`test_finitediff`) - finite difference schemes
+- [x] **matlab.hpp** (`test_matlab`) - `printMatlabForm` and `MatlabFile` in text (`.m`) mode
+- [x] **vector.hpp/matrix.hpp** (`test_bounds_checking`) - out-of-range accesses throw when `JLT_VECTOR_CHECK_BOUNDS`/`JLT_MATRIX_CHECK_BOUNDS` are defined (CMake defines them for this executable only)
+  - Label: `bounds`
 
-### LAPACK-Dependent Tests (Optional)
-These tests are only built if LAPACK is found on your system:
+**Note:** `test_vcs` expects to run inside a Git work tree, so it fails
+if the build directory is outside the repository (use `tests/build/`).
 
-- [x] **eigensystem.hpp** - 20 assertions covering symmetric matrix eigensystem, real and complex eigenvalues
-  - Tag: `[lapack][eigensystem]`
-  - Requires: LAPACK/BLAS libraries
-  
-- [x] **svdecomp.hpp** - 40 assertions covering SVD decomposition (full and singular values only)
-  - Tag: `[lapack][svd]`
-  - Requires: LAPACK/BLAS libraries
+### Optional-Dependency Tests
+These tests are only built if the dependency is found during CMake
+configuration; otherwise they are skipped automatically.
 
-**Note:** If LAPACK is not installed, these tests are automatically skipped during the CMake configuration phase.
+- [x] **lapack.hpp** (`test_lapack`) - LAPACK wrapper overload resolution and basic functionality
+  - Label: `lapack`; requires LAPACK/BLAS libraries
+- [x] **eigensystem.hpp** (`test_eigensystem`) - symmetric matrix eigensystem, real and complex eigenvalues
+  - Tag: `[lapack][eigensystem]`; label: `lapack`
+- [x] **svdecomp.hpp** (`test_svdecomp`) - SVD decomposition of real and complex matrices (full and singular values only)
+  - Tag: `[lapack][svd]`; label: `lapack`
+- [x] **matlab.hpp** (`test_matlab_lib`) - binary MAT-file output with `JLT_MATLAB_LIB_SUPPORT`
+  - Label: `matlab`; requires Matlab `mat`/`mx` libraries under `/usr/local/MATLAB` or `/opt/MATLAB`
+- [x] **csparse.hpp** (`test_csparse`) - CSparse wrappers
+  - Label: `csparse`; CSparse is always built in-tree from `extern/CSparse/`
+- [x] **tictoc.hpp** (`test_tictoc`) - timing utilities
+  - Label: `boost`; requires Boost timer (and chrono)
 
-### Test Results Summary
-```
-test_vector:        32 assertions - ALL PASSED
-test_matrix:        83 assertions - ALL PASSED
-test_mathvector:    81 assertions - ALL PASSED
-test_mathmatrix:    90+ assertions - ALL PASSED
-test_polynomial:    88 assertions - ALL PASSED
-test_matrixutil:    52 assertions - ALL PASSED
-test_exceptions:    43 assertions - ALL PASSED
-test_math:          53 assertions - ALL PASSED
-test_command:       24 assertions - ALL PASSED
-test_vcs:           29 assertions - ALL PASSED
-test_display_task:  43 assertions - ALL PASSED
-test_stlio:         46 assertions - ALL PASSED
-test_reciprocal_polynomial: 59 assertions - ALL PASSED
---------------------------------------------------
-Core Total:        666 assertions - ALL PASSED
-
-LAPACK Tests (if available):
-test_eigensystem:   20 assertions - ALL PASSED
-test_svdecomp:      40 assertions - ALL PASSED
---------------------------------------------------
-Grand Total:       784+ assertions - ALL PASSED
-```
+`freeword.hpp` and `freeauto.hpp` have no tests yet.
 
 ## Installing LAPACK (Optional)
 
@@ -149,7 +165,9 @@ To add tests for a new component:
 2. Include `"catch.hpp"` and the component header
 3. Add `TEST_CASE` blocks with descriptive names and tags
 4. Update `CMakeLists.txt` to add the new test executable
-5. If LAPACK-dependent, wrap in `if(LAPACK_FOUND)` block
+5. If LAPACK-dependent, wrap in `if(LAPACK_FOUND)` block and give it
+   the `lapack` label (`set_tests_properties(... PROPERTIES LABELS "lapack")`)
+6. Link against `jlt_test_warnings` so the warning options apply
 
 Example:
 ```cpp
